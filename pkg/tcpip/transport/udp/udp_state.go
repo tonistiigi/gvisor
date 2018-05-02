@@ -14,12 +14,16 @@ func (x *udpPacket) save(m state.Map) {
 	m.SaveValue("data", data)
 	m.Save("udpPacketEntry", &x.udpPacketEntry)
 	m.Save("senderAddress", &x.senderAddress)
+	m.Save("timestamp", &x.timestamp)
+	m.Save("hasTimestamp", &x.hasTimestamp)
 }
 
 func (x *udpPacket) afterLoad() {}
 func (x *udpPacket) load(m state.Map) {
 	m.Load("udpPacketEntry", &x.udpPacketEntry)
 	m.Load("senderAddress", &x.senderAddress)
+	m.Load("timestamp", &x.timestamp)
+	m.Load("hasTimestamp", &x.hasTimestamp)
 	m.LoadValue("data", new(buffer.VectorisedView), func(y interface{}) { x.loadData(y.(buffer.VectorisedView)) })
 }
 
@@ -41,6 +45,7 @@ func (x *endpoint) save(m state.Map) {
 	m.Save("rcvList", &x.rcvList)
 	m.Save("rcvBufSize", &x.rcvBufSize)
 	m.Save("rcvClosed", &x.rcvClosed)
+	m.Save("rcvTimestamp", &x.rcvTimestamp)
 	m.Save("sndBufSize", &x.sndBufSize)
 	m.Save("id", &x.id)
 	m.Save("state", &x.state)
@@ -59,6 +64,7 @@ func (x *endpoint) load(m state.Map) {
 	m.Load("rcvList", &x.rcvList)
 	m.Load("rcvBufSize", &x.rcvBufSize)
 	m.Load("rcvClosed", &x.rcvClosed)
+	m.Load("rcvTimestamp", &x.rcvTimestamp)
 	m.Load("sndBufSize", &x.sndBufSize)
 	m.Load("id", &x.id)
 	m.Load("state", &x.state)

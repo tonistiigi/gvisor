@@ -16,6 +16,7 @@ func (x *SocketOperations) save(m state.Map) {
 	m.Save("Endpoint", &x.Endpoint)
 	m.Save("skType", &x.skType)
 	m.Save("readView", &x.readView)
+	m.Save("readCM", &x.readCM)
 	m.Save("sender", &x.sender)
 }
 
@@ -28,6 +29,7 @@ func (x *SocketOperations) load(m state.Map) {
 	m.Load("Endpoint", &x.Endpoint)
 	m.Load("skType", &x.skType)
 	m.Load("readView", &x.readView)
+	m.Load("readCM", &x.readCM)
 	m.Load("sender", &x.sender)
 }
 

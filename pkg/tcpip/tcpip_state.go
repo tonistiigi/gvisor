@@ -17,6 +17,15 @@ func (x *Error) load(m state.Map) {
 	m.Load("string", &x.string)
 }
 
+func (x *StdClock) beforeSave() {}
+func (x *StdClock) save(m state.Map) {
+	x.beforeSave()
+}
+
+func (x *StdClock) afterLoad() {}
+func (x *StdClock) load(m state.Map) {
+}
+
 func (x *Address) save(m state.Map) {
 	m.SaveValue("", (string)(*x))
 }
@@ -83,6 +92,19 @@ func (x *SlicePayload) save(m state.Map) {
 
 func (x *SlicePayload) load(m state.Map) {
 	m.LoadValue("", new([]byte), func(y interface{}) { *x = (SlicePayload)(y.([]byte)) })
+}
+
+func (x *ControlMessages) beforeSave() {}
+func (x *ControlMessages) save(m state.Map) {
+	x.beforeSave()
+	m.Save("HasTimestamp", &x.HasTimestamp)
+	m.Save("Timestamp", &x.Timestamp)
+}
+
+func (x *ControlMessages) afterLoad() {}
+func (x *ControlMessages) load(m state.Map) {
+	m.Load("HasTimestamp", &x.HasTimestamp)
+	m.Load("Timestamp", &x.Timestamp)
 }
 
 func (x *WriteOptions) beforeSave() {}
@@ -171,6 +193,14 @@ func (x *PasscredOption) save(m state.Map) {
 
 func (x *PasscredOption) load(m state.Map) {
 	m.LoadValue("", new(int), func(y interface{}) { *x = (PasscredOption)(y.(int)) })
+}
+
+func (x *TimestampOption) save(m state.Map) {
+	m.SaveValue("", (int)(*x))
+}
+
+func (x *TimestampOption) load(m state.Map) {
+	m.LoadValue("", new(int), func(y interface{}) { *x = (TimestampOption)(y.(int)) })
 }
 
 func (x *TCPInfoOption) beforeSave() {}
@@ -263,6 +293,7 @@ func (x *ProtocolAddress) load(m state.Map) {
 
 func init() {
 	state.Register("tcpip.Error", (*Error)(nil), state.Fns{Save: (*Error).save, Load: (*Error).load})
+	state.Register("tcpip.StdClock", (*StdClock)(nil), state.Fns{Save: (*StdClock).save, Load: (*StdClock).load})
 	state.Register("tcpip.Address", (*Address)(nil), state.Fns{Save: (*Address).save, Load: (*Address).load})
 	state.Register("tcpip.AddressMask", (*AddressMask)(nil), state.Fns{Save: (*AddressMask).save, Load: (*AddressMask).load})
 	state.Register("tcpip.Subnet", (*Subnet)(nil), state.Fns{Save: (*Subnet).save, Load: (*Subnet).load})
@@ -270,6 +301,7 @@ func init() {
 	state.Register("tcpip.ShutdownFlags", (*ShutdownFlags)(nil), state.Fns{Save: (*ShutdownFlags).save, Load: (*ShutdownFlags).load})
 	state.Register("tcpip.FullAddress", (*FullAddress)(nil), state.Fns{Save: (*FullAddress).save, Load: (*FullAddress).load})
 	state.Register("tcpip.SlicePayload", (*SlicePayload)(nil), state.Fns{Save: (*SlicePayload).save, Load: (*SlicePayload).load})
+	state.Register("tcpip.ControlMessages", (*ControlMessages)(nil), state.Fns{Save: (*ControlMessages).save, Load: (*ControlMessages).load})
 	state.Register("tcpip.WriteOptions", (*WriteOptions)(nil), state.Fns{Save: (*WriteOptions).save, Load: (*WriteOptions).load})
 	state.Register("tcpip.ErrorOption", (*ErrorOption)(nil), state.Fns{Save: (*ErrorOption).save, Load: (*ErrorOption).load})
 	state.Register("tcpip.SendBufferSizeOption", (*SendBufferSizeOption)(nil), state.Fns{Save: (*SendBufferSizeOption).save, Load: (*SendBufferSizeOption).load})
@@ -280,6 +312,7 @@ func init() {
 	state.Register("tcpip.NoDelayOption", (*NoDelayOption)(nil), state.Fns{Save: (*NoDelayOption).save, Load: (*NoDelayOption).load})
 	state.Register("tcpip.ReuseAddressOption", (*ReuseAddressOption)(nil), state.Fns{Save: (*ReuseAddressOption).save, Load: (*ReuseAddressOption).load})
 	state.Register("tcpip.PasscredOption", (*PasscredOption)(nil), state.Fns{Save: (*PasscredOption).save, Load: (*PasscredOption).load})
+	state.Register("tcpip.TimestampOption", (*TimestampOption)(nil), state.Fns{Save: (*TimestampOption).save, Load: (*TimestampOption).load})
 	state.Register("tcpip.TCPInfoOption", (*TCPInfoOption)(nil), state.Fns{Save: (*TCPInfoOption).save, Load: (*TCPInfoOption).load})
 	state.Register("tcpip.Route", (*Route)(nil), state.Fns{Save: (*Route).save, Load: (*Route).load})
 	state.Register("tcpip.LinkEndpointID", (*LinkEndpointID)(nil), state.Fns{Save: (*LinkEndpointID).save, Load: (*LinkEndpointID).load})

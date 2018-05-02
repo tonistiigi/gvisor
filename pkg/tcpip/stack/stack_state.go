@@ -235,6 +235,7 @@ func (x *Stack) save(m state.Map) {
 	m.Save("routeTable", &x.routeTable)
 	m.Save("PortManager", &x.PortManager)
 	m.Save("tcpProbeFunc", &x.tcpProbeFunc)
+	m.Save("clock", &x.clock)
 }
 
 func (x *Stack) afterLoad() {}
@@ -250,6 +251,7 @@ func (x *Stack) load(m state.Map) {
 	m.Load("routeTable", &x.routeTable)
 	m.Load("PortManager", &x.PortManager)
 	m.Load("tcpProbeFunc", &x.tcpProbeFunc)
+	m.Load("clock", &x.clock)
 }
 
 func (x *NICInfo) beforeSave() {}
