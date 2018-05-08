@@ -1,7 +1,7 @@
 module gvisor.googlesource.com/gvisor
 
 require (
-	github.com/golang/protobuf v1.0.0
+	github.com/golang/protobuf v1.1.0
 	github.com/google/subcommands v0.0.0-20170224175846-ce3d4cfc062f
 	github.com/kr/pty v1.1.1
 	github.com/opencontainers/runtime-spec v0.1.2-0.20171211145439-b2d941ef6a78
