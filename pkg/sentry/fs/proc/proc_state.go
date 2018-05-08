@@ -402,6 +402,17 @@ func (x *taskStatData) load(m state.Map) {
 	m.Load("pidns", &x.pidns)
 }
 
+func (x *statmData) beforeSave() {}
+func (x *statmData) save(m state.Map) {
+	x.beforeSave()
+	m.Save("t", &x.t)
+}
+
+func (x *statmData) afterLoad() {}
+func (x *statmData) load(m state.Map) {
+	m.Load("t", &x.t)
+}
+
 func (x *statusData) beforeSave() {}
 func (x *statusData) save(m state.Map) {
 	x.beforeSave()
@@ -544,6 +555,7 @@ func init() {
 	state.Register("proc.namespaceFile", (*namespaceFile)(nil), state.Fns{Save: (*namespaceFile).save, Load: (*namespaceFile).load})
 	state.Register("proc.mapsData", (*mapsData)(nil), state.Fns{Save: (*mapsData).save, Load: (*mapsData).load})
 	state.Register("proc.taskStatData", (*taskStatData)(nil), state.Fns{Save: (*taskStatData).save, Load: (*taskStatData).load})
+	state.Register("proc.statmData", (*statmData)(nil), state.Fns{Save: (*statmData).save, Load: (*statmData).load})
 	state.Register("proc.statusData", (*statusData)(nil), state.Fns{Save: (*statusData).save, Load: (*statusData).load})
 	state.Register("proc.ioData", (*ioData)(nil), state.Fns{Save: (*ioData).save, Load: (*ioData).load})
 	state.Register("proc.comm", (*comm)(nil), state.Fns{Save: (*comm).save, Load: (*comm).load})
