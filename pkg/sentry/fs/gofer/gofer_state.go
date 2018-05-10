@@ -22,11 +22,11 @@ func (x *fileOperations) load(m state.Map) {
 }
 
 func (x *cachePolicy) save(m state.Map) {
-	m.SaveValue("", (string)(*x))
+	m.SaveValue("", (int)(*x))
 }
 
 func (x *cachePolicy) load(m state.Map) {
-	m.LoadValue("", new(string), func(y interface{}) { *x = (cachePolicy)(y.(string)) })
+	m.LoadValue("", new(int), func(y interface{}) { *x = (cachePolicy)(y.(int)) })
 }
 
 func (x *filesystem) beforeSave() {}
