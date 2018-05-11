@@ -37,11 +37,12 @@ func (x *endpointState) load(m state.Map) {
 
 func (x *endpoint) save(m state.Map) {
 	x.beforeSave()
+	var rcvBufSizeMax int = x.saveRcvBufSizeMax()
+	m.SaveValue("rcvBufSizeMax", rcvBufSizeMax)
 	m.Save("netProto", &x.netProto)
 	m.Save("waiterQueue", &x.waiterQueue)
 	m.Save("rcvReady", &x.rcvReady)
 	m.Save("rcvList", &x.rcvList)
-	m.Save("rcvBufSizeMax", &x.rcvBufSizeMax)
 	m.Save("rcvBufSize", &x.rcvBufSize)
 	m.Save("rcvClosed", &x.rcvClosed)
 	m.Save("rcvTimestamp", &x.rcvTimestamp)
@@ -58,7 +59,6 @@ func (x *endpoint) load(m state.Map) {
 	m.Load("waiterQueue", &x.waiterQueue)
 	m.Load("rcvReady", &x.rcvReady)
 	m.Load("rcvList", &x.rcvList)
-	m.Load("rcvBufSizeMax", &x.rcvBufSizeMax)
 	m.Load("rcvBufSize", &x.rcvBufSize)
 	m.Load("rcvClosed", &x.rcvClosed)
 	m.Load("rcvTimestamp", &x.rcvTimestamp)
@@ -68,6 +68,7 @@ func (x *endpoint) load(m state.Map) {
 	m.Load("bindNICID", &x.bindNICID)
 	m.Load("bindAddr", &x.bindAddr)
 	m.Load("regNICID", &x.regNICID)
+	m.LoadValue("rcvBufSizeMax", new(int), func(y interface{}) { x.loadRcvBufSizeMax(y.(int)) })
 	m.AfterLoad(x.afterLoad)
 }
 
