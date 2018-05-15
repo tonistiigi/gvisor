@@ -17,12 +17,10 @@ func (x *commandKind) load(m state.Map) {
 func (x *Protocol) beforeSave() {}
 func (x *Protocol) save(m state.Map) {
 	x.beforeSave()
-	m.Save("stack", &x.stack)
 }
 
 func (x *Protocol) afterLoad() {}
 func (x *Protocol) load(m state.Map) {
-	m.Load("stack", &x.stack)
 }
 
 func init() {
