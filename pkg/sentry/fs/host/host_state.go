@@ -113,8 +113,8 @@ func (x *endpoint) load(m state.Map) {
 	m.AfterLoad(x.afterLoad)
 }
 
-func (x *connectedEndpoint) beforeSave() {}
-func (x *connectedEndpoint) save(m state.Map) {
+func (x *ConnectedEndpoint) beforeSave() {}
+func (x *ConnectedEndpoint) save(m state.Map) {
 	x.beforeSave()
 	m.Save("queue", &x.queue)
 	m.Save("path", &x.path)
@@ -125,8 +125,8 @@ func (x *connectedEndpoint) save(m state.Map) {
 	m.Save("writeClosed", &x.writeClosed)
 }
 
-func (x *connectedEndpoint) afterLoad() {}
-func (x *connectedEndpoint) load(m state.Map) {
+func (x *ConnectedEndpoint) afterLoad() {}
+func (x *ConnectedEndpoint) load(m state.Map) {
 	m.Load("queue", &x.queue)
 	m.Load("path", &x.path)
 	m.Load("ref", &x.ref)
@@ -145,5 +145,5 @@ func init() {
 	state.Register("host.inodeOperations", (*inodeOperations)(nil), state.Fns{Save: (*inodeOperations).save, Load: (*inodeOperations).load})
 	state.Register("host.inodeFileState", (*inodeFileState)(nil), state.Fns{Save: (*inodeFileState).save, Load: (*inodeFileState).load})
 	state.Register("host.endpoint", (*endpoint)(nil), state.Fns{Save: (*endpoint).save, Load: (*endpoint).load})
-	state.Register("host.connectedEndpoint", (*connectedEndpoint)(nil), state.Fns{Save: (*connectedEndpoint).save, Load: (*connectedEndpoint).load})
+	state.Register("host.ConnectedEndpoint", (*ConnectedEndpoint)(nil), state.Fns{Save: (*ConnectedEndpoint).save, Load: (*ConnectedEndpoint).load})
 }
