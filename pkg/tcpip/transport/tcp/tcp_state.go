@@ -29,6 +29,7 @@ func (x *SACKInfo) load(m state.Map) {
 
 func (x *endpoint) save(m state.Map) {
 	x.beforeSave()
+	if !state.IsZeroValue(x.workerCleanup) { m.Failf("workerCleanup is %v, expected zero", x.workerCleanup) }
 	if !state.IsZeroValue(x.segmentQueue) { m.Failf("segmentQueue is %v, expected zero", x.segmentQueue) }
 	if !state.IsZeroValue(x.notifyFlags) { m.Failf("notifyFlags is %v, expected zero", x.notifyFlags) }
 	var lastError string = x.saveLastError()
@@ -46,11 +47,9 @@ func (x *endpoint) save(m state.Map) {
 	m.Save("id", &x.id)
 	m.Save("state", &x.state)
 	m.Save("isRegistered", &x.isRegistered)
-	m.Save("boundNICID", &x.boundNICID)
 	m.Save("v6only", &x.v6only)
 	m.Save("isConnectNotified", &x.isConnectNotified)
 	m.Save("workerRunning", &x.workerRunning)
-	m.Save("workerCleanup", &x.workerCleanup)
 	m.Save("sendTSOk", &x.sendTSOk)
 	m.Save("recentTS", &x.recentTS)
 	m.Save("tsOffset", &x.tsOffset)
@@ -81,11 +80,9 @@ func (x *endpoint) load(m state.Map) {
 	m.Load("id", &x.id)
 	m.Load("state", &x.state)
 	m.Load("isRegistered", &x.isRegistered)
-	m.Load("boundNICID", &x.boundNICID)
 	m.Load("v6only", &x.v6only)
 	m.Load("isConnectNotified", &x.isConnectNotified)
 	m.Load("workerRunning", &x.workerRunning)
-	m.Load("workerCleanup", &x.workerCleanup)
 	m.Load("sendTSOk", &x.sendTSOk)
 	m.Load("recentTS", &x.recentTS)
 	m.Load("tsOffset", &x.tsOffset)
@@ -108,17 +105,6 @@ func (x *endpoint) load(m state.Map) {
 	m.LoadValue("hardError", new(string), func(y interface{}) { x.loadHardError(y.(string)) })
 	m.LoadValue("acceptedChan", new(endpointChan), func(y interface{}) { x.loadAcceptedChan(y.(endpointChan)) })
 	m.AfterLoad(x.afterLoad)
-}
-
-func (x *ErrSaveRejection) beforeSave() {}
-func (x *ErrSaveRejection) save(m state.Map) {
-	x.beforeSave()
-	m.Save("Err", &x.Err)
-}
-
-func (x *ErrSaveRejection) afterLoad() {}
-func (x *ErrSaveRejection) load(m state.Map) {
-	m.Load("Err", &x.Err)
 }
 
 func (x *endpointChan) beforeSave() {}
@@ -271,7 +257,6 @@ func init() {
 	state.Register("tcp.endpointState", (*endpointState)(nil), state.Fns{Save: (*endpointState).save, Load: (*endpointState).load})
 	state.Register("tcp.SACKInfo", (*SACKInfo)(nil), state.Fns{Save: (*SACKInfo).save, Load: (*SACKInfo).load})
 	state.Register("tcp.endpoint", (*endpoint)(nil), state.Fns{Save: (*endpoint).save, Load: (*endpoint).load})
-	state.Register("tcp.ErrSaveRejection", (*ErrSaveRejection)(nil), state.Fns{Save: (*ErrSaveRejection).save, Load: (*ErrSaveRejection).load})
 	state.Register("tcp.endpointChan", (*endpointChan)(nil), state.Fns{Save: (*endpointChan).save, Load: (*endpointChan).load})
 	state.Register("tcp.receiver", (*receiver)(nil), state.Fns{Save: (*receiver).save, Load: (*receiver).load})
 	state.Register("tcp.segmentHeap", (*segmentHeap)(nil), state.Fns{Save: (*segmentHeap).save, Load: (*segmentHeap).load})
