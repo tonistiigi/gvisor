@@ -9,12 +9,14 @@ import (
 func (x *Registry) beforeSave() {}
 func (x *Registry) save(m state.Map) {
 	x.beforeSave()
+	m.Save("userNS", &x.userNS)
 	m.Save("semaphores", &x.semaphores)
 	m.Save("lastIDUsed", &x.lastIDUsed)
 }
 
 func (x *Registry) afterLoad() {}
 func (x *Registry) load(m state.Map) {
+	m.Load("userNS", &x.userNS)
 	m.Load("semaphores", &x.semaphores)
 	m.Load("lastIDUsed", &x.lastIDUsed)
 }
@@ -22,6 +24,7 @@ func (x *Registry) load(m state.Map) {
 func (x *Set) beforeSave() {}
 func (x *Set) save(m state.Map) {
 	x.beforeSave()
+	m.Save("registry", &x.registry)
 	m.Save("ID", &x.ID)
 	m.Save("key", &x.key)
 	m.Save("creator", &x.creator)
@@ -35,6 +38,7 @@ func (x *Set) save(m state.Map) {
 
 func (x *Set) afterLoad() {}
 func (x *Set) load(m state.Map) {
+	m.Load("registry", &x.registry)
 	m.Load("ID", &x.ID)
 	m.Load("key", &x.key)
 	m.Load("creator", &x.creator)
