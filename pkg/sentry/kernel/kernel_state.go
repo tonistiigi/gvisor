@@ -117,12 +117,16 @@ func (x *FSContext) load(m state.Map) {
 func (x *IPCNamespace) beforeSave() {}
 func (x *IPCNamespace) save(m state.Map) {
 	x.beforeSave()
+	m.Save("userNS", &x.userNS)
 	m.Save("semaphores", &x.semaphores)
+	m.Save("shms", &x.shms)
 }
 
 func (x *IPCNamespace) afterLoad() {}
 func (x *IPCNamespace) load(m state.Map) {
+	m.Load("userNS", &x.userNS)
 	m.Load("semaphores", &x.semaphores)
+	m.Load("shms", &x.shms)
 }
 
 func (x *Kernel) beforeSave() {}
