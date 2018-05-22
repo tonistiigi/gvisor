@@ -269,6 +269,21 @@ func (x *NICInfo) load(m state.Map) {
 	m.Load("ProtocolAddresses", &x.ProtocolAddresses)
 }
 
+func (x *NICStateFlags) beforeSave() {}
+func (x *NICStateFlags) save(m state.Map) {
+	x.beforeSave()
+	m.Save("Up", &x.Up)
+	m.Save("Running", &x.Running)
+	m.Save("Promiscuous", &x.Promiscuous)
+}
+
+func (x *NICStateFlags) afterLoad() {}
+func (x *NICStateFlags) load(m state.Map) {
+	m.Load("Up", &x.Up)
+	m.Load("Running", &x.Running)
+	m.Load("Promiscuous", &x.Promiscuous)
+}
+
 func init() {
 	state.Register("stack.NetworkEndpointID", (*NetworkEndpointID)(nil), state.Fns{Save: (*NetworkEndpointID).save, Load: (*NetworkEndpointID).load})
 	state.Register("stack.TransportEndpointID", (*TransportEndpointID)(nil), state.Fns{Save: (*TransportEndpointID).save, Load: (*TransportEndpointID).load})
@@ -283,4 +298,5 @@ func init() {
 	state.Register("stack.TCPEndpointState", (*TCPEndpointState)(nil), state.Fns{Save: (*TCPEndpointState).save, Load: (*TCPEndpointState).load})
 	state.Register("stack.Stack", (*Stack)(nil), state.Fns{Save: (*Stack).save, Load: (*Stack).load})
 	state.Register("stack.NICInfo", (*NICInfo)(nil), state.Fns{Save: (*NICInfo).save, Load: (*NICInfo).load})
+	state.Register("stack.NICStateFlags", (*NICStateFlags)(nil), state.Fns{Save: (*NICStateFlags).save, Load: (*NICStateFlags).load})
 }
