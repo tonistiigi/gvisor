@@ -17,17 +17,6 @@ func (x *Error) load(m state.Map) {
 	m.Load("string", &x.string)
 }
 
-func (x *ErrSaveRejection) beforeSave() {}
-func (x *ErrSaveRejection) save(m state.Map) {
-	x.beforeSave()
-	m.Save("Err", &x.Err)
-}
-
-func (x *ErrSaveRejection) afterLoad() {}
-func (x *ErrSaveRejection) load(m state.Map) {
-	m.Load("Err", &x.Err)
-}
-
 func (x *StdClock) beforeSave() {}
 func (x *StdClock) save(m state.Map) {
 	x.beforeSave()
@@ -304,7 +293,6 @@ func (x *ProtocolAddress) load(m state.Map) {
 
 func init() {
 	state.Register("tcpip.Error", (*Error)(nil), state.Fns{Save: (*Error).save, Load: (*Error).load})
-	state.Register("tcpip.ErrSaveRejection", (*ErrSaveRejection)(nil), state.Fns{Save: (*ErrSaveRejection).save, Load: (*ErrSaveRejection).load})
 	state.Register("tcpip.StdClock", (*StdClock)(nil), state.Fns{Save: (*StdClock).save, Load: (*StdClock).load})
 	state.Register("tcpip.Address", (*Address)(nil), state.Fns{Save: (*Address).save, Load: (*Address).load})
 	state.Register("tcpip.AddressMask", (*AddressMask)(nil), state.Fns{Save: (*AddressMask).save, Load: (*AddressMask).load})
