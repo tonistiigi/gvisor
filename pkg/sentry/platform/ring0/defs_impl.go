@@ -1,12 +1,12 @@
 package ring0
 
 import (
-	"fmt"
 	"gvisor.googlesource.com/gvisor/pkg/cpuid"
 	"io"
 	"reflect"
 	"syscall"
 
+	"fmt"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/platform/ring0/pagetables"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/usermem"
 )
@@ -81,6 +81,25 @@ type CPU struct {
 //go:nosplit
 func (c *CPU) Registers() *syscall.PtraceRegs {
 	return &c.registers
+}
+
+// SwitchOpts are passed to the Switch function.
+type SwitchOpts struct {
+	// Registers are the user register state.
+	Registers *syscall.PtraceRegs
+
+	// FloatingPointState is a byte pointer where floating point state is
+	// saved and restored.
+	FloatingPointState *byte
+
+	// PageTables are the application page tables.
+	PageTables *pagetables.PageTables
+
+	// Flush indicates that a TLB flush should be forced on switch.
+	Flush bool
+
+	// FullRestore indicates that an iret-based restore should be used.
+	FullRestore bool
 }
 
 // Segment indices and Selectors.
