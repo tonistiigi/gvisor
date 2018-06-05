@@ -202,6 +202,19 @@ func (x *proc) load(m state.Map) {
 	m.Load("pidns", &x.pidns)
 }
 
+func (x *stubProcFSFile) beforeSave() {}
+func (x *stubProcFSFile) save(m state.Map) {
+	x.beforeSave()
+	m.Save("Entry", &x.Entry)
+	m.Save("contents", &x.contents)
+}
+
+func (x *stubProcFSFile) afterLoad() {}
+func (x *stubProcFSFile) load(m state.Map) {
+	m.Load("Entry", &x.Entry)
+	m.Load("contents", &x.contents)
+}
+
 func (x *self) beforeSave() {}
 func (x *self) save(m state.Map) {
 	x.beforeSave()
@@ -540,6 +553,7 @@ func init() {
 	state.Register("proc.ifinet6", (*ifinet6)(nil), state.Fns{Save: (*ifinet6).save, Load: (*ifinet6).load})
 	state.Register("proc.netDev", (*netDev)(nil), state.Fns{Save: (*netDev).save, Load: (*netDev).load})
 	state.Register("proc.proc", (*proc)(nil), state.Fns{Save: (*proc).save, Load: (*proc).load})
+	state.Register("proc.stubProcFSFile", (*stubProcFSFile)(nil), state.Fns{Save: (*stubProcFSFile).save, Load: (*stubProcFSFile).load})
 	state.Register("proc.self", (*self)(nil), state.Fns{Save: (*self).save, Load: (*self).load})
 	state.Register("proc.statData", (*statData)(nil), state.Fns{Save: (*statData).save, Load: (*statData).load})
 	state.Register("proc.cpuStats", (*cpuStats)(nil), state.Fns{Save: (*cpuStats).save, Load: (*cpuStats).load})
