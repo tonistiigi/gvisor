@@ -1,10 +1,10 @@
 package ring0
 
 import (
-	"gvisor.googlesource.com/gvisor/pkg/cpuid"
 	"syscall"
 
 	"fmt"
+	"gvisor.googlesource.com/gvisor/pkg/cpuid"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/platform/ring0/pagetables"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/usermem"
 	"io"
@@ -187,6 +187,14 @@ type CPUArchState struct {
 //go:nosplit
 func (c *CPU) ErrorCode() (value uintptr, user bool) {
 	return c.errorCode, c.errorType != 0
+}
+
+// ClearErrorCode resets the error code.
+//
+//go:nosplit
+func (c *CPU) ClearErrorCode() {
+	c.errorCode = 0
+	c.errorType = 1
 }
 
 // SwitchArchOpts are embedded in SwitchOpts.
