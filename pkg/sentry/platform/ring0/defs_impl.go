@@ -1,14 +1,14 @@
 package ring0
 
 import (
+	"gvisor.googlesource.com/gvisor/pkg/cpuid"
+	"reflect"
 	"syscall"
 
 	"fmt"
-	"gvisor.googlesource.com/gvisor/pkg/cpuid"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/platform/ring0/pagetables"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/usermem"
 	"io"
-	"reflect"
 )
 
 var (
@@ -235,7 +235,8 @@ func Emit(w io.Writer) {
 	fmt.Fprintf(w, "#define CPU_KERNEL_SYSCALL   0x%02x\n", reflect.ValueOf(&c.KernelSyscall).Pointer()-reflect.ValueOf(c).Pointer())
 
 	fmt.Fprintf(w, "\n// Bits.\n")
-	fmt.Fprintf(w, "#define _RFLAGS_IF 0x%02x\n", _RFLAGS_IF)
+	fmt.Fprintf(w, "#define _RFLAGS_IF           0x%02x\n", _RFLAGS_IF)
+	fmt.Fprintf(w, "#define _KERNEL_FLAGS        0x%02x\n", KernelFlagsSet)
 
 	fmt.Fprintf(w, "\n// Vectors.\n")
 	fmt.Fprintf(w, "#define DivideByZero               0x%02x\n", DivideByZero)
@@ -293,6 +294,7 @@ func Emit(w io.Writer) {
 const (
 	_CR0_PE = 1 << 0
 	_CR0_ET = 1 << 4
+	_CR0_AM = 1 << 18
 	_CR0_PG = 1 << 31
 
 	_CR4_PSE        = 1 << 4
@@ -322,6 +324,20 @@ const (
 	_MSR_LSTAR        = 0xc0000082
 	_MSR_CSTAR        = 0xc0000083
 	_MSR_SYSCALL_MASK = 0xc0000084
+)
+
+const (
+	// KernelFlagsSet should always be set in the kernel.
+	KernelFlagsSet = _RFLAGS_RESERVED
+
+	// UserFlagsSet are always set in userspace.
+	UserFlagsSet = _RFLAGS_RESERVED | _RFLAGS_IF
+
+	// KernelFlagsClear should always be clear in the kernel.
+	KernelFlagsClear = _RFLAGS_STEP | _RFLAGS_IF | _RFLAGS_IOPL | _RFLAGS_AC | _RFLAGS_NT
+
+	// UserFlagsClear are always cleared in userspace.
+	UserFlagsClear = _RFLAGS_NT | _RFLAGS_IOPL
 )
 
 // Vector is an exception vector.
