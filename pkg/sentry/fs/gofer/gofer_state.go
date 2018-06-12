@@ -113,16 +113,13 @@ func (x *dummyClockContext) load(m state.Map) {
 	m.Load("Context", &x.Context)
 }
 
-func (x *endpointMap) beforeSave() {}
 func (x *endpointMap) save(m state.Map) {
 	x.beforeSave()
-	m.Save("mu", &x.mu)
 	m.Save("m", &x.m)
 }
 
 func (x *endpointMap) afterLoad() {}
 func (x *endpointMap) load(m state.Map) {
-	m.Load("mu", &x.mu)
 	m.Load("m", &x.m)
 }
 
