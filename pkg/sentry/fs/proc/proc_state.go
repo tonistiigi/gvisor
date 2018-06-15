@@ -228,6 +228,19 @@ func (x *self) load(m state.Map) {
 	m.Load("pidns", &x.pidns)
 }
 
+func (x *threadSelf) beforeSave() {}
+func (x *threadSelf) save(m state.Map) {
+	x.beforeSave()
+	m.Save("Symlink", &x.Symlink)
+	m.Save("pidns", &x.pidns)
+}
+
+func (x *threadSelf) afterLoad() {}
+func (x *threadSelf) load(m state.Map) {
+	m.Load("Symlink", &x.Symlink)
+	m.Load("pidns", &x.pidns)
+}
+
 func (x *statData) beforeSave() {}
 func (x *statData) save(m state.Map) {
 	x.beforeSave()
@@ -555,6 +568,7 @@ func init() {
 	state.Register("proc.proc", (*proc)(nil), state.Fns{Save: (*proc).save, Load: (*proc).load})
 	state.Register("proc.stubProcFSFile", (*stubProcFSFile)(nil), state.Fns{Save: (*stubProcFSFile).save, Load: (*stubProcFSFile).load})
 	state.Register("proc.self", (*self)(nil), state.Fns{Save: (*self).save, Load: (*self).load})
+	state.Register("proc.threadSelf", (*threadSelf)(nil), state.Fns{Save: (*threadSelf).save, Load: (*threadSelf).load})
 	state.Register("proc.statData", (*statData)(nil), state.Fns{Save: (*statData).save, Load: (*statData).load})
 	state.Register("proc.cpuStats", (*cpuStats)(nil), state.Fns{Save: (*cpuStats).save, Load: (*cpuStats).load})
 	state.Register("proc.hostname", (*hostname)(nil), state.Fns{Save: (*hostname).save, Load: (*hostname).load})
