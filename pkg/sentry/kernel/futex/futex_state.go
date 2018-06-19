@@ -38,12 +38,11 @@ func (x *bucket) load(m state.Map) {
 func (x *Manager) beforeSave() {}
 func (x *Manager) save(m state.Map) {
 	x.beforeSave()
-	m.Save("buckets", &x.buckets)
+	if !state.IsZeroValue(x.buckets) { m.Failf("buckets is %v, expected zero", x.buckets) }
 }
 
 func (x *Manager) afterLoad() {}
 func (x *Manager) load(m state.Map) {
-	m.Load("buckets", &x.buckets)
 }
 
 func (x *waiterList) beforeSave() {}
