@@ -21,14 +21,6 @@ func (x *fileOperations) load(m state.Map) {
 	m.AfterLoad(x.afterLoad)
 }
 
-func (x *cachePolicy) save(m state.Map) {
-	m.SaveValue("", (int)(*x))
-}
-
-func (x *cachePolicy) load(m state.Map) {
-	m.LoadValue("", new(int), func(y interface{}) { *x = (cachePolicy)(y.(int)) })
-}
-
 func (x *filesystem) beforeSave() {}
 func (x *filesystem) save(m state.Map) {
 	x.beforeSave()
@@ -154,7 +146,6 @@ func (x *session) load(m state.Map) {
 
 func init() {
 	state.Register("gofer.fileOperations", (*fileOperations)(nil), state.Fns{Save: (*fileOperations).save, Load: (*fileOperations).load})
-	state.Register("gofer.cachePolicy", (*cachePolicy)(nil), state.Fns{Save: (*cachePolicy).save, Load: (*cachePolicy).load})
 	state.Register("gofer.filesystem", (*filesystem)(nil), state.Fns{Save: (*filesystem).save, Load: (*filesystem).load})
 	state.Register("gofer.opts", (*opts)(nil), state.Fns{Save: (*opts).save, Load: (*opts).load})
 	state.Register("gofer.inodeOperations", (*inodeOperations)(nil), state.Fns{Save: (*inodeOperations).save, Load: (*inodeOperations).load})
