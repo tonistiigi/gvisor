@@ -4,6 +4,7 @@ package kernel
 
 import (
 	"gvisor.googlesource.com/gvisor/pkg/state"
+	"gvisor.googlesource.com/gvisor/pkg/sentry/arch"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/kernel/kdefs"
 )
 
@@ -286,14 +287,13 @@ func (x *kernelCPUClockListener) load(m state.Map) {
 func (x *pendingSignals) beforeSave() {}
 func (x *pendingSignals) save(m state.Map) {
 	x.beforeSave()
-	m.Save("signals", &x.signals)
-	m.Save("pendingSet", &x.pendingSet)
+	var signals []*arch.SignalInfo = x.saveSignals()
+	m.SaveValue("signals", signals)
 }
 
 func (x *pendingSignals) afterLoad() {}
 func (x *pendingSignals) load(m state.Map) {
-	m.Load("signals", &x.signals)
-	m.Load("pendingSet", &x.pendingSet)
+	m.LoadValue("signals", new([]*arch.SignalInfo), func(y interface{}) { x.loadSignals(y.([]*arch.SignalInfo)) })
 }
 
 func (x *pendingSignalQueue) beforeSave() {}
@@ -320,32 +320,6 @@ func (x *pendingSignal) afterLoad() {}
 func (x *pendingSignal) load(m state.Map) {
 	m.Load("pendingSignalEntry", &x.pendingSignalEntry)
 	m.Load("SignalInfo", &x.SignalInfo)
-}
-
-func (x *pendingSignalList) beforeSave() {}
-func (x *pendingSignalList) save(m state.Map) {
-	x.beforeSave()
-	m.Save("head", &x.head)
-	m.Save("tail", &x.tail)
-}
-
-func (x *pendingSignalList) afterLoad() {}
-func (x *pendingSignalList) load(m state.Map) {
-	m.Load("head", &x.head)
-	m.Load("tail", &x.tail)
-}
-
-func (x *pendingSignalEntry) beforeSave() {}
-func (x *pendingSignalEntry) save(m state.Map) {
-	x.beforeSave()
-	m.Save("next", &x.next)
-	m.Save("prev", &x.prev)
-}
-
-func (x *pendingSignalEntry) afterLoad() {}
-func (x *pendingSignalEntry) load(m state.Map) {
-	m.Load("next", &x.next)
-	m.Load("prev", &x.prev)
 }
 
 func (x *processGroupList) beforeSave() {}
@@ -1474,8 +1448,6 @@ func init() {
 	state.Register("kernel.pendingSignals", (*pendingSignals)(nil), state.Fns{Save: (*pendingSignals).save, Load: (*pendingSignals).load})
 	state.Register("kernel.pendingSignalQueue", (*pendingSignalQueue)(nil), state.Fns{Save: (*pendingSignalQueue).save, Load: (*pendingSignalQueue).load})
 	state.Register("kernel.pendingSignal", (*pendingSignal)(nil), state.Fns{Save: (*pendingSignal).save, Load: (*pendingSignal).load})
-	state.Register("kernel.pendingSignalList", (*pendingSignalList)(nil), state.Fns{Save: (*pendingSignalList).save, Load: (*pendingSignalList).load})
-	state.Register("kernel.pendingSignalEntry", (*pendingSignalEntry)(nil), state.Fns{Save: (*pendingSignalEntry).save, Load: (*pendingSignalEntry).load})
 	state.Register("kernel.processGroupList", (*processGroupList)(nil), state.Fns{Save: (*processGroupList).save, Load: (*processGroupList).load})
 	state.Register("kernel.processGroupEntry", (*processGroupEntry)(nil), state.Fns{Save: (*processGroupEntry).save, Load: (*processGroupEntry).load})
 	state.Register("kernel.ptraceOptions", (*ptraceOptions)(nil), state.Fns{Save: (*ptraceOptions).save, Load: (*ptraceOptions).load})
