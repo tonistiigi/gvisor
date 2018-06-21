@@ -277,11 +277,11 @@ func (x *direntEntry) load(m state.Map) {
 func (x *File) beforeSave() {}
 func (x *File) save(m state.Map) {
 	x.beforeSave()
-	var flags FileFlags = x.saveFlags()
-	m.SaveValue("flags", flags)
 	m.Save("AtomicRefCount", &x.AtomicRefCount)
 	m.Save("UniqueID", &x.UniqueID)
 	m.Save("Dirent", &x.Dirent)
+	m.Save("flags", &x.flags)
+	m.Save("async", &x.async)
 	m.Save("FileOperations", &x.FileOperations)
 	m.Save("offset", &x.offset)
 }
@@ -290,9 +290,10 @@ func (x *File) load(m state.Map) {
 	m.Load("AtomicRefCount", &x.AtomicRefCount)
 	m.Load("UniqueID", &x.UniqueID)
 	m.Load("Dirent", &x.Dirent)
+	m.Load("flags", &x.flags)
+	m.Load("async", &x.async)
 	m.Load("FileOperations", &x.FileOperations)
 	m.Load("offset", &x.offset)
-	m.LoadValue("flags", new(FileFlags), func(y interface{}) { x.loadFlags(y.(FileFlags)) })
 	m.AfterLoad(x.afterLoad)
 }
 
@@ -374,6 +375,7 @@ func (x *FileFlags) save(m state.Map) {
 	m.Save("Pread", &x.Pread)
 	m.Save("Pwrite", &x.Pwrite)
 	m.Save("Directory", &x.Directory)
+	m.Save("Async", &x.Async)
 }
 
 func (x *FileFlags) afterLoad() {}
@@ -387,6 +389,7 @@ func (x *FileFlags) load(m state.Map) {
 	m.Load("Pread", &x.Pread)
 	m.Load("Pwrite", &x.Pwrite)
 	m.Load("Directory", &x.Directory)
+	m.Load("Async", &x.Async)
 }
 
 func (x *SettableFileFlags) beforeSave() {}
@@ -395,6 +398,7 @@ func (x *SettableFileFlags) save(m state.Map) {
 	m.Save("Direct", &x.Direct)
 	m.Save("NonBlocking", &x.NonBlocking)
 	m.Save("Append", &x.Append)
+	m.Save("Async", &x.Async)
 }
 
 func (x *SettableFileFlags) afterLoad() {}
@@ -402,6 +406,7 @@ func (x *SettableFileFlags) load(m state.Map) {
 	m.Load("Direct", &x.Direct)
 	m.Load("NonBlocking", &x.NonBlocking)
 	m.Load("Append", &x.Append)
+	m.Load("Async", &x.Async)
 }
 
 func (x *Inode) beforeSave() {}
