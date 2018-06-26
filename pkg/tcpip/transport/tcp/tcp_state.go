@@ -4,7 +4,6 @@ package tcp
 
 import (
 	"gvisor.googlesource.com/gvisor/pkg/state"
-	"gvisor.googlesource.com/gvisor/pkg/tcpip/buffer"
 )
 
 func (x *endpointState) save(m state.Map) {
@@ -30,12 +29,15 @@ func (x *SACKInfo) load(m state.Map) {
 
 func (x *endpoint) save(m state.Map) {
 	x.beforeSave()
+	if !state.IsZeroValue(x.workerCleanup) { m.Failf("workerCleanup is %v, expected zero", x.workerCleanup) }
+	if !state.IsZeroValue(x.segmentQueue) { m.Failf("segmentQueue is %v, expected zero", x.segmentQueue) }
+	if !state.IsZeroValue(x.notifyFlags) { m.Failf("notifyFlags is %v, expected zero", x.notifyFlags) }
 	var lastError string = x.saveLastError()
 	m.SaveValue("lastError", lastError)
-	var state endpointState = x.saveState()
-	m.SaveValue("state", state)
 	var hardError string = x.saveHardError()
 	m.SaveValue("hardError", hardError)
+	var acceptedChan endpointChan = x.saveAcceptedChan()
+	m.SaveValue("acceptedChan", acceptedChan)
 	m.Save("netProto", &x.netProto)
 	m.Save("waiterQueue", &x.waiterQueue)
 	m.Save("rcvList", &x.rcvList)
@@ -43,11 +45,11 @@ func (x *endpoint) save(m state.Map) {
 	m.Save("rcvBufSize", &x.rcvBufSize)
 	m.Save("rcvBufUsed", &x.rcvBufUsed)
 	m.Save("id", &x.id)
+	m.Save("state", &x.state)
 	m.Save("isRegistered", &x.isRegistered)
 	m.Save("v6only", &x.v6only)
 	m.Save("isConnectNotified", &x.isConnectNotified)
 	m.Save("workerRunning", &x.workerRunning)
-	m.Save("workerCleanup", &x.workerCleanup)
 	m.Save("sendTSOk", &x.sendTSOk)
 	m.Save("recentTS", &x.recentTS)
 	m.Save("tsOffset", &x.tsOffset)
@@ -56,7 +58,6 @@ func (x *endpoint) save(m state.Map) {
 	m.Save("sack", &x.sack)
 	m.Save("noDelay", &x.noDelay)
 	m.Save("reuseAddr", &x.reuseAddr)
-	m.Save("segmentQueue", &x.segmentQueue)
 	m.Save("sndBufSize", &x.sndBufSize)
 	m.Save("sndBufUsed", &x.sndBufUsed)
 	m.Save("sndClosed", &x.sndClosed)
@@ -64,26 +65,24 @@ func (x *endpoint) save(m state.Map) {
 	m.Save("sndQueue", &x.sndQueue)
 	m.Save("packetTooBigCount", &x.packetTooBigCount)
 	m.Save("sndMTU", &x.sndMTU)
-	m.Save("acceptedEndpoints", &x.acceptedEndpoints)
 	m.Save("rcv", &x.rcv)
 	m.Save("snd", &x.snd)
-	m.Save("bindAddress", &x.bindAddress)
 	m.Save("connectingAddress", &x.connectingAddress)
 }
 
 func (x *endpoint) load(m state.Map) {
 	m.Load("netProto", &x.netProto)
-	m.LoadWait("waiterQueue", &x.waiterQueue)
-	m.LoadWait("rcvList", &x.rcvList)
+	m.Load("waiterQueue", &x.waiterQueue)
+	m.Load("rcvList", &x.rcvList)
 	m.Load("rcvClosed", &x.rcvClosed)
 	m.Load("rcvBufSize", &x.rcvBufSize)
 	m.Load("rcvBufUsed", &x.rcvBufUsed)
 	m.Load("id", &x.id)
+	m.Load("state", &x.state)
 	m.Load("isRegistered", &x.isRegistered)
 	m.Load("v6only", &x.v6only)
 	m.Load("isConnectNotified", &x.isConnectNotified)
 	m.Load("workerRunning", &x.workerRunning)
-	m.Load("workerCleanup", &x.workerCleanup)
 	m.Load("sendTSOk", &x.sendTSOk)
 	m.Load("recentTS", &x.recentTS)
 	m.Load("tsOffset", &x.tsOffset)
@@ -92,23 +91,33 @@ func (x *endpoint) load(m state.Map) {
 	m.Load("sack", &x.sack)
 	m.Load("noDelay", &x.noDelay)
 	m.Load("reuseAddr", &x.reuseAddr)
-	m.LoadWait("segmentQueue", &x.segmentQueue)
 	m.Load("sndBufSize", &x.sndBufSize)
 	m.Load("sndBufUsed", &x.sndBufUsed)
 	m.Load("sndClosed", &x.sndClosed)
 	m.Load("sndBufInQueue", &x.sndBufInQueue)
-	m.LoadWait("sndQueue", &x.sndQueue)
+	m.Load("sndQueue", &x.sndQueue)
 	m.Load("packetTooBigCount", &x.packetTooBigCount)
 	m.Load("sndMTU", &x.sndMTU)
-	m.Load("acceptedEndpoints", &x.acceptedEndpoints)
-	m.LoadWait("rcv", &x.rcv)
-	m.LoadWait("snd", &x.snd)
-	m.Load("bindAddress", &x.bindAddress)
+	m.Load("rcv", &x.rcv)
+	m.Load("snd", &x.snd)
 	m.Load("connectingAddress", &x.connectingAddress)
 	m.LoadValue("lastError", new(string), func(y interface{}) { x.loadLastError(y.(string)) })
-	m.LoadValue("state", new(endpointState), func(y interface{}) { x.loadState(y.(endpointState)) })
 	m.LoadValue("hardError", new(string), func(y interface{}) { x.loadHardError(y.(string)) })
+	m.LoadValue("acceptedChan", new(endpointChan), func(y interface{}) { x.loadAcceptedChan(y.(endpointChan)) })
 	m.AfterLoad(x.afterLoad)
+}
+
+func (x *endpointChan) beforeSave() {}
+func (x *endpointChan) save(m state.Map) {
+	x.beforeSave()
+	m.Save("buffer", &x.buffer)
+	m.Save("cap", &x.cap)
+}
+
+func (x *endpointChan) afterLoad() {}
+func (x *endpointChan) load(m state.Map) {
+	m.Load("buffer", &x.buffer)
+	m.Load("cap", &x.cap)
 }
 
 func (x *receiver) beforeSave() {}
@@ -136,39 +145,6 @@ func (x *receiver) load(m state.Map) {
 	m.Load("pendingBufSize", &x.pendingBufSize)
 }
 
-func (x *segment) beforeSave() {}
-func (x *segment) save(m state.Map) {
-	x.beforeSave()
-	var data buffer.VectorisedView = x.saveData()
-	m.SaveValue("data", data)
-	var options []byte = x.saveOptions()
-	m.SaveValue("options", options)
-	m.Save("segmentEntry", &x.segmentEntry)
-	m.Save("refCnt", &x.refCnt)
-	m.Save("views", &x.views)
-	m.Save("viewToDeliver", &x.viewToDeliver)
-	m.Save("sequenceNumber", &x.sequenceNumber)
-	m.Save("ackNumber", &x.ackNumber)
-	m.Save("flags", &x.flags)
-	m.Save("window", &x.window)
-	m.Save("parsedOptions", &x.parsedOptions)
-}
-
-func (x *segment) afterLoad() {}
-func (x *segment) load(m state.Map) {
-	m.Load("segmentEntry", &x.segmentEntry)
-	m.Load("refCnt", &x.refCnt)
-	m.Load("views", &x.views)
-	m.Load("viewToDeliver", &x.viewToDeliver)
-	m.Load("sequenceNumber", &x.sequenceNumber)
-	m.Load("ackNumber", &x.ackNumber)
-	m.Load("flags", &x.flags)
-	m.Load("window", &x.window)
-	m.Load("parsedOptions", &x.parsedOptions)
-	m.LoadValue("data", new(buffer.VectorisedView), func(y interface{}) { x.loadData(y.(buffer.VectorisedView)) })
-	m.LoadValue("options", new([]byte), func(y interface{}) { x.loadOptions(y.([]byte)) })
-}
-
 func (x *segmentHeap) save(m state.Map) {
 	m.SaveValue("", ([]*segment)(*x))
 }
@@ -177,29 +153,11 @@ func (x *segmentHeap) load(m state.Map) {
 	m.LoadValue("", new([]*segment), func(y interface{}) { *x = (segmentHeap)(y.([]*segment)) })
 }
 
-func (x *segmentQueue) beforeSave() {}
-func (x *segmentQueue) save(m state.Map) {
-	x.beforeSave()
-	m.Save("list", &x.list)
-	m.Save("limit", &x.limit)
-	m.Save("used", &x.used)
-}
-
-func (x *segmentQueue) afterLoad() {}
-func (x *segmentQueue) load(m state.Map) {
-	m.LoadWait("list", &x.list)
-	m.Load("limit", &x.limit)
-	m.Load("used", &x.used)
-}
-
 func (x *sender) beforeSave() {}
 func (x *sender) save(m state.Map) {
 	x.beforeSave()
-	var lastSendTime unixTime = x.saveLastSendTime()
-	m.SaveValue("lastSendTime", lastSendTime)
-	var rttMeasureTime unixTime = x.saveRttMeasureTime()
-	m.SaveValue("rttMeasureTime", rttMeasureTime)
 	m.Save("ep", &x.ep)
+	m.Save("lastSendTime", &x.lastSendTime)
 	m.Save("dupAckCount", &x.dupAckCount)
 	m.Save("fr", &x.fr)
 	m.Save("sndCwnd", &x.sndCwnd)
@@ -211,6 +169,7 @@ func (x *sender) save(m state.Map) {
 	m.Save("sndNxt", &x.sndNxt)
 	m.Save("sndNxtList", &x.sndNxtList)
 	m.Save("rttMeasureSeqNum", &x.rttMeasureSeqNum)
+	m.Save("rttMeasureTime", &x.rttMeasureTime)
 	m.Save("closed", &x.closed)
 	m.Save("writeNext", &x.writeNext)
 	m.Save("writeList", &x.writeList)
@@ -223,8 +182,10 @@ func (x *sender) save(m state.Map) {
 	m.Save("maxSentAck", &x.maxSentAck)
 }
 
+func (x *sender) afterLoad() {}
 func (x *sender) load(m state.Map) {
 	m.Load("ep", &x.ep)
+	m.Load("lastSendTime", &x.lastSendTime)
 	m.Load("dupAckCount", &x.dupAckCount)
 	m.Load("fr", &x.fr)
 	m.Load("sndCwnd", &x.sndCwnd)
@@ -236,6 +197,7 @@ func (x *sender) load(m state.Map) {
 	m.Load("sndNxt", &x.sndNxt)
 	m.Load("sndNxtList", &x.sndNxtList)
 	m.Load("rttMeasureSeqNum", &x.rttMeasureSeqNum)
+	m.Load("rttMeasureTime", &x.rttMeasureTime)
 	m.Load("closed", &x.closed)
 	m.Load("writeNext", &x.writeNext)
 	m.Load("writeList", &x.writeList)
@@ -246,9 +208,6 @@ func (x *sender) load(m state.Map) {
 	m.Load("maxPayloadSize", &x.maxPayloadSize)
 	m.Load("sndWndScale", &x.sndWndScale)
 	m.Load("maxSentAck", &x.maxSentAck)
-	m.LoadValue("lastSendTime", new(unixTime), func(y interface{}) { x.loadLastSendTime(y.(unixTime)) })
-	m.LoadValue("rttMeasureTime", new(unixTime), func(y interface{}) { x.loadRttMeasureTime(y.(unixTime)) })
-	m.AfterLoad(x.afterLoad)
 }
 
 func (x *fastRecovery) beforeSave() {}
@@ -266,19 +225,6 @@ func (x *fastRecovery) load(m state.Map) {
 	m.Load("first", &x.first)
 	m.Load("last", &x.last)
 	m.Load("maxCwnd", &x.maxCwnd)
-}
-
-func (x *unixTime) beforeSave() {}
-func (x *unixTime) save(m state.Map) {
-	x.beforeSave()
-	m.Save("second", &x.second)
-	m.Save("nano", &x.nano)
-}
-
-func (x *unixTime) afterLoad() {}
-func (x *unixTime) load(m state.Map) {
-	m.Load("second", &x.second)
-	m.Load("nano", &x.nano)
 }
 
 func (x *segmentList) beforeSave() {}
@@ -311,13 +257,11 @@ func init() {
 	state.Register("tcp.endpointState", (*endpointState)(nil), state.Fns{Save: (*endpointState).save, Load: (*endpointState).load})
 	state.Register("tcp.SACKInfo", (*SACKInfo)(nil), state.Fns{Save: (*SACKInfo).save, Load: (*SACKInfo).load})
 	state.Register("tcp.endpoint", (*endpoint)(nil), state.Fns{Save: (*endpoint).save, Load: (*endpoint).load})
+	state.Register("tcp.endpointChan", (*endpointChan)(nil), state.Fns{Save: (*endpointChan).save, Load: (*endpointChan).load})
 	state.Register("tcp.receiver", (*receiver)(nil), state.Fns{Save: (*receiver).save, Load: (*receiver).load})
-	state.Register("tcp.segment", (*segment)(nil), state.Fns{Save: (*segment).save, Load: (*segment).load})
 	state.Register("tcp.segmentHeap", (*segmentHeap)(nil), state.Fns{Save: (*segmentHeap).save, Load: (*segmentHeap).load})
-	state.Register("tcp.segmentQueue", (*segmentQueue)(nil), state.Fns{Save: (*segmentQueue).save, Load: (*segmentQueue).load})
 	state.Register("tcp.sender", (*sender)(nil), state.Fns{Save: (*sender).save, Load: (*sender).load})
 	state.Register("tcp.fastRecovery", (*fastRecovery)(nil), state.Fns{Save: (*fastRecovery).save, Load: (*fastRecovery).load})
-	state.Register("tcp.unixTime", (*unixTime)(nil), state.Fns{Save: (*unixTime).save, Load: (*unixTime).load})
 	state.Register("tcp.segmentList", (*segmentList)(nil), state.Fns{Save: (*segmentList).save, Load: (*segmentList).load})
 	state.Register("tcp.segmentEntry", (*segmentEntry)(nil), state.Fns{Save: (*segmentEntry).save, Load: (*segmentEntry).load})
 }
