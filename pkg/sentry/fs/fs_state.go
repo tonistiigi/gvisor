@@ -524,9 +524,9 @@ func (x *Watch) save(m state.Map) {
 	x.beforeSave()
 	m.Save("owner", &x.owner)
 	m.Save("wd", &x.wd)
-	m.Save("mask", &x.mask)
 	m.Save("target", &x.target)
 	m.Save("unpinned", &x.unpinned)
+	m.Save("mask", &x.mask)
 	m.Save("pins", &x.pins)
 }
 
@@ -534,9 +534,9 @@ func (x *Watch) afterLoad() {}
 func (x *Watch) load(m state.Map) {
 	m.Load("owner", &x.owner)
 	m.Load("wd", &x.wd)
-	m.Load("mask", &x.mask)
 	m.Load("target", &x.target)
 	m.Load("unpinned", &x.unpinned)
+	m.Load("mask", &x.mask)
 	m.Load("pins", &x.pins)
 }
 
