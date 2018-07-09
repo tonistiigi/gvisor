@@ -1005,6 +1005,7 @@ func (x *TaskConfig) save(m state.Map) {
 	x.beforeSave()
 	m.Save("Kernel", &x.Kernel)
 	m.Save("Parent", &x.Parent)
+	m.Save("InheritParent", &x.InheritParent)
 	m.Save("ThreadGroup", &x.ThreadGroup)
 	m.Save("TaskContext", &x.TaskContext)
 	m.Save("TaskResources", &x.TaskResources)
@@ -1020,6 +1021,7 @@ func (x *TaskConfig) afterLoad() {}
 func (x *TaskConfig) load(m state.Map) {
 	m.Load("Kernel", &x.Kernel)
 	m.Load("Parent", &x.Parent)
+	m.Load("InheritParent", &x.InheritParent)
 	m.Load("ThreadGroup", &x.ThreadGroup)
 	m.Load("TaskContext", &x.TaskContext)
 	m.Load("TaskResources", &x.TaskResources)
