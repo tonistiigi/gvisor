@@ -136,7 +136,8 @@ func openAt(t *kernel.Task, dirFD kdefs.FD, addr usermem.Addr, flags uint) (fd u
 		return 0, err
 	}
 
-	err = fileOpOn(t, dirFD, path, true /* resolve */, func(root *fs.Dirent, d *fs.Dirent) error {
+	resolve := flags&linux.O_NOFOLLOW == 0
+	err = fileOpOn(t, dirFD, path, resolve, func(root *fs.Dirent, d *fs.Dirent) error {
 		// First check a few things about the filesystem before trying to get the file
 		// reference.
 		//
@@ -147,7 +148,13 @@ func openAt(t *kernel.Task, dirFD kdefs.FD, addr usermem.Addr, flags uint) (fd u
 			return err
 		}
 
+		if fs.IsSymlink(d.Inode.StableAttr) && !resolve {
+			return syserror.ELOOP
+		}
+
 		fileFlags := linuxToFlags(flags)
+		// Linux always adds the O_LARGEFILE flag when running in 64-bit mode.
+		fileFlags.LargeFile = true
 		if fs.IsDir(d.Inode.StableAttr) {
 			// Don't allow directories to be opened writable.
 			if fileFlags.Write {
@@ -162,7 +169,7 @@ func openAt(t *kernel.Task, dirFD kdefs.FD, addr usermem.Addr, flags uint) (fd u
 			if dirPath {
 				return syserror.ENOTDIR
 			}
-			if fileFlags.Write && flags&syscall.O_TRUNC != 0 {
+			if fileFlags.Write && flags&linux.O_TRUNC != 0 {
 				if err := d.Inode.Truncate(t, d, 0); err != nil {
 					return err
 				}
@@ -176,7 +183,7 @@ func openAt(t *kernel.Task, dirFD kdefs.FD, addr usermem.Addr, flags uint) (fd u
 		defer file.DecRef()
 
 		// Success.
-		fdFlags := kernel.FDFlags{CloseOnExec: flags&syscall.O_CLOEXEC != 0}
+		fdFlags := kernel.FDFlags{CloseOnExec: flags&linux.O_CLOEXEC != 0}
 		newFD, err := t.FDMap().NewFDFrom(0, file, fdFlags, t.ThreadGroup().Limits())
 		if err != nil {
 			return err
@@ -300,6 +307,10 @@ func createAt(t *kernel.Task, dirFD kdefs.FD, addr usermem.Addr, flags uint, mod
 			return syserror.ENOTDIR
 		}
 
+		fileFlags := linuxToFlags(flags)
+		// Linux always adds the O_LARGEFILE flag when running in 64-bit mode.
+		fileFlags.LargeFile = true
+
 		// Does this file exist already?
 		targetDirent, err := t.MountNamespace().FindInode(t, root, d, name, linux.MaxSymlinkTraversals)
 		var newFile *fs.File
@@ -309,7 +320,7 @@ func createAt(t *kernel.Task, dirFD kdefs.FD, addr usermem.Addr, flags uint, mod
 			defer targetDirent.DecRef()
 
 			// Check if we wanted to create.
-			if flags&syscall.O_EXCL != 0 {
+			if flags&linux.O_EXCL != 0 {
 				return syserror.EEXIST
 			}
 
@@ -321,14 +332,14 @@ func createAt(t *kernel.Task, dirFD kdefs.FD, addr usermem.Addr, flags uint, mod
 			}
 
 			// Should we truncate the file?
-			if flags&syscall.O_TRUNC != 0 {
+			if flags&linux.O_TRUNC != 0 {
 				if err := targetDirent.Inode.Truncate(t, targetDirent, 0); err != nil {
 					return err
 				}
 			}
 
 			// Create a new fs.File.
-			newFile, err = targetDirent.Inode.GetFile(t, targetDirent, linuxToFlags(flags))
+			newFile, err = targetDirent.Inode.GetFile(t, targetDirent, fileFlags)
 			if err != nil {
 				return syserror.ConvertIntr(err, kernel.ERESTARTSYS)
 			}
@@ -344,7 +355,7 @@ func createAt(t *kernel.Task, dirFD kdefs.FD, addr usermem.Addr, flags uint, mod
 
 			// Attempt a creation.
 			perms := fs.FilePermsFromMode(mode &^ linux.FileMode(t.FSContext().Umask()))
-			newFile, err = d.Create(t, root, name, linuxToFlags(flags), perms)
+			newFile, err = d.Create(t, root, name, fileFlags, perms)
 			if err != nil {
 				// No luck, bail.
 				return err
@@ -354,7 +365,7 @@ func createAt(t *kernel.Task, dirFD kdefs.FD, addr usermem.Addr, flags uint, mod
 		}
 
 		// Success.
-		fdFlags := kernel.FDFlags{CloseOnExec: flags&syscall.O_CLOEXEC != 0}
+		fdFlags := kernel.FDFlags{CloseOnExec: flags&linux.O_CLOEXEC != 0}
 		newFD, err := t.FDMap().NewFDFrom(0, newFile, fdFlags, t.ThreadGroup().Limits())
 		if err != nil {
 			return err
@@ -378,7 +389,7 @@ func createAt(t *kernel.Task, dirFD kdefs.FD, addr usermem.Addr, flags uint, mod
 func Open(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.SyscallControl, error) {
 	addr := args[0].Pointer()
 	flags := uint(args[1].Uint())
-	if flags&syscall.O_CREAT != 0 {
+	if flags&linux.O_CREAT != 0 {
 		mode := linux.FileMode(args[2].ModeT())
 		n, err := createAt(t, linux.AT_FDCWD, addr, flags, mode)
 		return n, nil, err
@@ -392,7 +403,7 @@ func Openat(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.Syscal
 	dirFD := kdefs.FD(args[0].Int())
 	addr := args[1].Pointer()
 	flags := uint(args[2].Uint())
-	if flags&syscall.O_CREAT != 0 {
+	if flags&linux.O_CREAT != 0 {
 		mode := linux.FileMode(args[3].ModeT())
 		n, err := createAt(t, dirFD, addr, flags, mode)
 		return n, nil, err
@@ -405,7 +416,7 @@ func Openat(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.Syscal
 func Creat(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.SyscallControl, error) {
 	addr := args[0].Pointer()
 	mode := linux.FileMode(args[1].ModeT())
-	n, err := createAt(t, linux.AT_FDCWD, addr, syscall.O_WRONLY|syscall.O_TRUNC, mode)
+	n, err := createAt(t, linux.AT_FDCWD, addr, linux.O_WRONLY|linux.O_TRUNC, mode)
 	return n, nil, err
 }
 
@@ -415,14 +426,14 @@ func Creat(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.Syscall
 // accessContext should only be used for access(2).
 type accessContext struct {
 	context.Context
-	creds auth.Credentials
+	creds *auth.Credentials
 }
 
 // Value implements context.Context.
 func (ac accessContext) Value(key interface{}) interface{} {
 	switch key {
 	case auth.CtxCredentials:
-		return &ac.creds
+		return ac.creds
 	default:
 		return ac.Context.Value(key)
 	}
@@ -451,7 +462,7 @@ func accessAt(t *kernel.Task, dirFD kdefs.FD, addr usermem.Addr, resolve bool, m
 		// uid/gid. We do this by temporarily clearing all FS-related
 		// capabilities and switching the fsuid/fsgid around to the
 		// real ones." -fs/open.c:faccessat
-		creds := t.Credentials()
+		creds := t.Credentials().Fork()
 		creds.EffectiveKUID = creds.RealKUID
 		creds.EffectiveKGID = creds.RealKGID
 		if creds.EffectiveKUID.In(creds.UserNamespace) == auth.RootUID {
@@ -745,7 +756,7 @@ func Dup3(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.SyscallC
 	}
 	defer oldFile.DecRef()
 
-	err := t.FDMap().NewFDAt(newfd, oldFile, kernel.FDFlags{CloseOnExec: flags&syscall.O_CLOEXEC != 0}, t.ThreadGroup().Limits())
+	err := t.FDMap().NewFDAt(newfd, oldFile, kernel.FDFlags{CloseOnExec: flags&linux.O_CLOEXEC != 0}, t.ThreadGroup().Limits())
 	if err != nil {
 		return 0, nil, err
 	}
@@ -800,24 +811,24 @@ func Fcntl(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.Syscall
 	switch cmd {
 	case linux.F_DUPFD, linux.F_DUPFD_CLOEXEC:
 		from := kdefs.FD(args[2].Int())
-		fdFlags := kernel.FDFlags{CloseOnExec: cmd == syscall.F_DUPFD_CLOEXEC}
+		fdFlags := kernel.FDFlags{CloseOnExec: cmd == linux.F_DUPFD_CLOEXEC}
 		fd, err := t.FDMap().NewFDFrom(from, file, fdFlags, t.ThreadGroup().Limits())
 		if err != nil {
 			return 0, nil, err
 		}
 		return uintptr(fd), nil, nil
 	case linux.F_GETFD:
-		return uintptr(fdFlagsToLinux(flags)), nil, nil
+		return uintptr(flags.ToLinuxFDFlags()), nil, nil
 	case linux.F_SETFD:
 		flags := args[2].Uint()
 		t.FDMap().SetFlags(fd, kernel.FDFlags{
-			CloseOnExec: flags&syscall.FD_CLOEXEC != 0,
+			CloseOnExec: flags&linux.FD_CLOEXEC != 0,
 		})
 	case linux.F_GETFL:
-		return uintptr(flagsToLinux(file.Flags())), nil, nil
+		return uintptr(file.Flags().ToLinux()), nil, nil
 	case linux.F_SETFL:
 		flags := uint(args[2].Uint())
-		file.SetFlags(linuxToSettableFlags(flags))
+		file.SetFlags(linuxToFlags(flags).Settable())
 	case linux.F_SETLK, linux.F_SETLKW:
 		// In Linux the file system can choose to provide lock operations for an inode.
 		// Normally pipe and socket types lack lock operations. We diverge and use a heavy
@@ -1111,15 +1122,32 @@ func Symlinkat(t *kernel.Task, args arch.SyscallArguments) (uintptr, *kernel.Sys
 //
 // This corresponds to Linux's fs/namei.c:may_linkat.
 func mayLinkAt(t *kernel.Task, target *fs.Inode) error {
+	// Linux will impose the following restrictions on hard links only if
+	// sysctl_protected_hardlinks is enabled. The kernel disables this
+	// setting by default for backward compatibility (see commit
+	// 561ec64ae67e), but also recommends that distributions enable it (and
+	// Debian does:
+	// https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=889098).
+	//
+	// gVisor currently behaves as though sysctl_protected_hardlinks is
+	// always enabled, and thus imposes the following restrictions on hard
+	// links.
+
 	// Technically Linux is more restrictive in 3.11.10 (requires CAP_FOWNER in
 	// root user namespace); this is from the later f2ca379642d7 "namei: permit
 	// linking with CAP_FOWNER in userns".
-	if !target.CheckOwnership(t) {
-		return syserror.EPERM
+	if target.CheckOwnership(t) {
+		// fs/namei.c:may_linkat: "Source inode owner (or CAP_FOWNER)
+		// can hardlink all they like."
+		return nil
 	}
 
-	// Check that the target is not a directory and that permissions are okay.
-	if fs.IsDir(target.StableAttr) || target.CheckPermission(t, fs.PermMask{Read: true, Write: true}) != nil {
+	// If we are not the owner, then the file must be regular and have
+	// Read+Write permissions.
+	if !fs.IsRegular(target.StableAttr) {
+		return syserror.EPERM
+	}
+	if target.CheckPermission(t, fs.PermMask{Read: true, Write: true}) != nil {
 		return syserror.EPERM
 	}
 

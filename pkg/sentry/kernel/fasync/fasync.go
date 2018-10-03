@@ -35,7 +35,7 @@ func New() fs.FileAsync {
 type FileAsync struct {
 	mu        sync.Mutex
 	e         waiter.Entry
-	requester auth.Credentials
+	requester *auth.Credentials
 
 	// Only one of the following is allowed to be non-nil.
 	recipientPG *kernel.ProcessGroup
@@ -47,6 +47,7 @@ type FileAsync struct {
 func (a *FileAsync) Callback(e *waiter.Entry) {
 	a.mu.Lock()
 	if a.e.Callback == nil {
+		a.mu.Unlock()
 		return
 	}
 	t := a.recipientT

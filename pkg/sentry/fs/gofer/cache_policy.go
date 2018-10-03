@@ -17,6 +17,7 @@ package gofer
 import (
 	"fmt"
 
+	"gvisor.googlesource.com/gvisor/pkg/sentry/context"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/fs"
 )
 
@@ -34,7 +35,32 @@ const (
 	// Use virtual file system cache for everything, but send writes to the
 	// fs agent immediately.
 	cacheAllWritethrough
+
+	// Use the (host) page cache for reads/writes, but don't cache anything
+	// else. This allows the sandbox filesystem to stay in sync with any
+	// changes to the remote filesystem.
+	//
+	// This policy should *only* be used with remote filesystems that
+	// donate their host FDs to the sandbox and thus use the host page
+	// cache, otherwise the dirent state will be inconsistent.
+	cacheRemoteRevalidating
 )
+
+// String returns the string name of the cache policy.
+func (cp cachePolicy) String() string {
+	switch cp {
+	case cacheNone:
+		return "cacheNone"
+	case cacheAll:
+		return "cacheAll"
+	case cacheAllWritethrough:
+		return "cacheAllWritethrough"
+	case cacheRemoteRevalidating:
+		return "cacheRemoteRevalidating"
+	default:
+		return "unknown"
+	}
+}
 
 func parseCachePolicy(policy string) (cachePolicy, error) {
 	switch policy {
@@ -44,6 +70,8 @@ func parseCachePolicy(policy string) (cachePolicy, error) {
 		return cacheNone, nil
 	case "fscache_writethrough":
 		return cacheAllWritethrough, nil
+	case "remote_revalidating":
+		return cacheRemoteRevalidating, nil
 	}
 	return cacheNone, fmt.Errorf("unsupported cache mode: %s", policy)
 }
@@ -63,14 +91,16 @@ func (cp cachePolicy) cacheReaddir() bool {
 }
 
 // usePageCache determines whether the page cache should be used for the given
-// inode.
+// inode. If the remote filesystem donates host FDs to the sentry, then the
+// host kernel's page cache will be used, otherwise we will use a
+// sentry-internal page cache.
 func (cp cachePolicy) usePageCache(inode *fs.Inode) bool {
 	// Do cached IO for regular files only. Some "character devices" expect
 	// no caching.
 	if !fs.IsFile(inode.StableAttr) {
 		return false
 	}
-	return cp == cacheAll || cp == cacheAllWritethrough
+	return cp == cacheAll || cp == cacheAllWritethrough || cp == cacheRemoteRevalidating
 }
 
 // writeThough indicates whether writes to the file should be synced to the
@@ -79,19 +109,68 @@ func (cp cachePolicy) writeThrough(inode *fs.Inode) bool {
 	return cp == cacheNone || cp == cacheAllWritethrough
 }
 
-// revalidateDirent indicates that dirents should be revalidated after they are
-// looked up.
-func (cp cachePolicy) revalidateDirent() bool {
-	return cp == cacheNone
+// revalidate revalidates the child Inode if the cache policy allows it.
+//
+// Depending on the cache policy, revalidate will walk from the parent to the
+// child inode, and if any unstable attributes have changed, will update the
+// cached attributes on the child inode. If the walk fails, or the returned
+// inode id is different from the one being revalidated, then the entire Dirent
+// must be reloaded.
+func (cp cachePolicy) revalidate(ctx context.Context, name string, parent, child *fs.Inode) bool {
+	if cp == cacheAll || cp == cacheAllWritethrough {
+		return false
+	}
+
+	if cp == cacheNone {
+		return true
+	}
+
+	childIops, ok := child.InodeOperations.(*inodeOperations)
+	if !ok {
+		panic(fmt.Sprintf("revalidating inode operations of unknown type %T", child.InodeOperations))
+	}
+	parentIops, ok := parent.InodeOperations.(*inodeOperations)
+	if !ok {
+		panic(fmt.Sprintf("revalidating inode operations with parent of unknown type %T", parent.InodeOperations))
+	}
+
+	// Walk from parent to child again.
+	//
+	// TODO: If we have a directory FD in the parent
+	// inodeOperations, then we can use fstatat(2) to get the inode
+	// attributes instead of making this RPC.
+	qids, _, mask, attr, err := parentIops.fileState.file.walkGetAttr(ctx, []string{name})
+	if err != nil {
+		// Can't look up the name. Trigger reload.
+		return true
+	}
+
+	// If the Path has changed, then we are not looking at the file file.
+	// We must reload.
+	if qids[0].Path != childIops.fileState.key.Inode {
+		return true
+	}
+
+	// If we are not caching unstable attrs, then there is nothing to
+	// update on this inode.
+	if !cp.cacheUAttrs(child) {
+		return false
+	}
+
+	// Update the inode's cached unstable attrs.
+	s := childIops.session()
+	childIops.cachingInodeOps.UpdateUnstable(unstable(ctx, mask, attr, s.mounter, s.client))
+
+	return false
 }
 
-// keepDirent indicates that dirents should be kept pinned in the dirent tree
-// even if there are no application references on the file.
-func (cp cachePolicy) keepDirent(inode *fs.Inode) bool {
+// keep indicates that dirents should be kept pinned in the dirent tree even if
+// there are no application references on the file.
+func (cp cachePolicy) keep(d *fs.Dirent) bool {
 	if cp == cacheNone {
 		return false
 	}
-	sattr := inode.StableAttr
+	sattr := d.Inode.StableAttr
 	// NOTE: Only cache files, directories, and symlinks.
 	return fs.IsFile(sattr) || fs.IsDir(sattr) || fs.IsSymlink(sattr)
 }

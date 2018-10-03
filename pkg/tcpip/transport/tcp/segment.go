@@ -36,6 +36,8 @@ const (
 // segment represents a TCP segment. It holds the payload and parsed TCP segment
 // information, and can be added to intrusive lists.
 // segment is mostly immutable, the only field allowed to change is viewToDeliver.
+//
+// +stateify savable
 type segment struct {
 	segmentEntry
 	refCnt int32
@@ -58,7 +60,7 @@ type segment struct {
 	options       []byte `state:".([]byte)"`
 }
 
-func newSegment(r *stack.Route, id stack.TransportEndpointID, vv *buffer.VectorisedView) *segment {
+func newSegment(r *stack.Route, id stack.TransportEndpointID, vv buffer.VectorisedView) *segment {
 	s := &segment{
 		refCnt: 1,
 		id:     id,

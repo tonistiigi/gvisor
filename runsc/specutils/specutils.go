@@ -21,11 +21,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
 
+	"github.com/cenkalti/backoff"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"gvisor.googlesource.com/gvisor/pkg/abi/linux"
 	"gvisor.googlesource.com/gvisor/pkg/log"
@@ -82,6 +84,12 @@ func ValidateSpec(spec *specs.Spec) error {
 		log.Warningf("Seccomp spec is being ignored")
 	}
 
+	for i, m := range spec.Mounts {
+		if !path.IsAbs(m.Destination) {
+			return fmt.Errorf("Spec.Mounts[%d] Mount.Destination must be an absolute path: %v", i, m)
+		}
+	}
+
 	// Two annotations are use by containerd to support multi-container pods.
 	//   "io.kubernetes.cri.container-type"
 	//   "io.kubernetes.cri.sandbox-id"
@@ -104,60 +112,55 @@ func ValidateSpec(spec *specs.Spec) error {
 	return nil
 }
 
+// absPath turns the given path into an absolute path (if it is not already
+// absolute) by prepending the base path.
+func absPath(base, rel string) string {
+	if filepath.IsAbs(rel) {
+		return rel
+	}
+	return filepath.Join(base, rel)
+}
+
 // ReadSpec reads an OCI runtime spec from the given bundle directory.
+// ReadSpec also normalizes all potential relative paths into absolute
+// path, e.g. spec.Root.Path, mount.Source.
 func ReadSpec(bundleDir string) (*specs.Spec, error) {
 	// The spec file must be in "config.json" inside the bundle directory.
-	specFile := filepath.Join(bundleDir, "config.json")
-	specBytes, err := ioutil.ReadFile(specFile)
+	specPath := filepath.Join(bundleDir, "config.json")
+	specFile, err := os.Open(specPath)
 	if err != nil {
-		return nil, fmt.Errorf("error reading spec from file %q: %v", specFile, err)
+		return nil, fmt.Errorf("error opening spec file %q: %v", specPath, err)
+	}
+	defer specFile.Close()
+	return ReadSpecFromFile(bundleDir, specFile)
+}
+
+// ReadSpecFromFile reads an OCI runtime spec from the given File, and
+// normalizes all relative paths into absolute by prepending the bundle dir.
+func ReadSpecFromFile(bundleDir string, specFile *os.File) (*specs.Spec, error) {
+	if _, err := specFile.Seek(0, os.SEEK_SET); err != nil {
+		return nil, fmt.Errorf("error seeking to beginning of file %q: %v", specFile.Name(), err)
+	}
+	specBytes, err := ioutil.ReadAll(specFile)
+	if err != nil {
+		return nil, fmt.Errorf("error reading spec from file %q: %v", specFile.Name(), err)
 	}
 	var spec specs.Spec
 	if err := json.Unmarshal(specBytes, &spec); err != nil {
-		return nil, fmt.Errorf("error unmarshaling spec from file %q: %v\n %s", specFile, err, string(specBytes))
+		return nil, fmt.Errorf("error unmarshaling spec from file %q: %v\n %s", specFile.Name(), err, string(specBytes))
 	}
 	if err := ValidateSpec(&spec); err != nil {
 		return nil, err
 	}
+	// Turn any relative paths in the spec to absolute by prepending the bundleDir.
+	spec.Root.Path = absPath(bundleDir, spec.Root.Path)
+	for i := range spec.Mounts {
+		m := &spec.Mounts[i]
+		if m.Source != "" {
+			m.Source = absPath(bundleDir, m.Source)
+		}
+	}
 	return &spec, nil
-}
-
-// GetExecutablePath returns the absolute path to the executable, relative to
-// the root. It searches the environment PATH for the first file that exists
-// with the given name.
-func GetExecutablePath(exec, root string, env []string) (string, error) {
-	exec = filepath.Clean(exec)
-
-	// Don't search PATH if exec is a path to a file (absolute or relative).
-	if strings.IndexByte(exec, '/') >= 0 {
-		return exec, nil
-	}
-
-	// Get the PATH from the environment.
-	const prefix = "PATH="
-	var path []string
-	for _, e := range env {
-		if strings.HasPrefix(e, prefix) {
-			path = strings.Split(strings.TrimPrefix(e, prefix), ":")
-			break
-		}
-	}
-
-	// Search the PATH for a file whose name matches the one we are looking
-	// for.
-	for _, p := range path {
-		abs := filepath.Join(root, p, exec)
-		// Do not follow symlink link because the target is in the container
-		// root filesystem.
-		if _, err := os.Lstat(abs); err == nil {
-			// We found it!  Return the path relative to the root.
-			return filepath.Join("/", p, exec), nil
-		}
-	}
-
-	// Could not find a suitable path, just return the original string.
-	log.Warningf("could not find executable %s in path %s", exec, path)
-	return exec, nil
 }
 
 // Capabilities takes in spec and returns a TaskCapabilities corresponding to
@@ -313,33 +316,89 @@ func SandboxID(spec *specs.Spec) (string, bool) {
 // the 'ready' function returns true. It continues to wait if 'ready' returns
 // false. It returns error on timeout, if the process stops or if 'ready' fails.
 func WaitForReady(pid int, timeout time.Duration, ready func() (bool, error)) error {
-	backoff := 1 * time.Millisecond
-	for start := time.Now(); time.Now().Sub(start) < timeout; {
+	b := backoff.NewExponentialBackOff()
+	b.InitialInterval = 1 * time.Millisecond
+	b.MaxInterval = 1 * time.Second
+	b.MaxElapsedTime = timeout
+
+	op := func() error {
 		if ok, err := ready(); err != nil {
-			return err
+			return backoff.Permanent(err)
 		} else if ok {
 			return nil
 		}
 
 		// Check if the process is still running.
-		var ws syscall.WaitStatus
-		var ru syscall.Rusage
-
 		// If the process is alive, child is 0 because of the NOHANG option.
 		// If the process has terminated, child equals the process id.
+		var ws syscall.WaitStatus
+		var ru syscall.Rusage
 		child, err := syscall.Wait4(pid, &ws, syscall.WNOHANG, &ru)
 		if err != nil {
-			return fmt.Errorf("error waiting for process: %v", err)
+			return backoff.Permanent(fmt.Errorf("error waiting for process: %v", err))
 		} else if child == pid {
-			return fmt.Errorf("process %d has terminated", pid)
+			return backoff.Permanent(fmt.Errorf("process %d has terminated", pid))
 		}
+		return fmt.Errorf("process %d not running yet", pid)
+	}
+	return backoff.Retry(op, b)
+}
 
-		// Process continues to run, backoff and retry.
-		time.Sleep(backoff)
-		backoff *= 2
-		if backoff > 1*time.Second {
-			backoff = 1 * time.Second
+// DebugLogFile opens a file in logDir based on the timestamp and subcommand
+// for writing.
+func DebugLogFile(logDir, subcommand string) (*os.File, error) {
+	// Format: <debug-log-dir>/runsc.log.<yyyymmdd-hhmmss.uuuuuu>.<command>
+	filename := fmt.Sprintf("runsc.log.%s.%s", time.Now().Format("20060102-150405.000000"), subcommand)
+	return os.OpenFile(filepath.Join(logDir, filename), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0664)
+}
+
+// Mount creates the mount point and calls Mount with the given flags.
+func Mount(src, dst, typ string, flags uint32) error {
+	// Create the mount point inside. The type must be the same as the
+	// source (file or directory).
+	var isDir bool
+	if typ == "proc" {
+		// Special case, as there is no source directory for proc
+		// mounts.
+		isDir = true
+	} else if fi, err := os.Stat(src); err != nil {
+		return fmt.Errorf("Stat(%q) failed: %v", src, err)
+	} else {
+		isDir = fi.IsDir()
+	}
+
+	if isDir {
+		// Create the destination directory.
+		if err := os.MkdirAll(dst, 0777); err != nil {
+			return fmt.Errorf("Mkdir(%q) failed: %v", dst, err)
+		}
+	} else {
+		// Create the parent destination directory.
+		parent := path.Dir(dst)
+		if err := os.MkdirAll(parent, 0777); err != nil {
+			return fmt.Errorf("Mkdir(%q) failed: %v", parent, err)
+		}
+		// Create the destination file if it does not exist.
+		f, err := os.OpenFile(dst, syscall.O_CREAT, 0777)
+		if err != nil {
+			return fmt.Errorf("Open(%q) failed: %v", dst, err)
+		}
+		f.Close()
+	}
+
+	// Do the mount.
+	if err := syscall.Mount(src, dst, typ, uintptr(flags), ""); err != nil {
+		return fmt.Errorf("Mount(%q, %q, %d) failed: %v", src, dst, flags, err)
+	}
+	return nil
+}
+
+// ContainsStr returns true if 'str' is inside 'strs'.
+func ContainsStr(strs []string, str string) bool {
+	for _, s := range strs {
+		if s == str {
+			return true
 		}
 	}
-	return fmt.Errorf("timed out waiting for process (%d)", pid)
+	return false
 }

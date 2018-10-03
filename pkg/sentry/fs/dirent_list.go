@@ -1,5 +1,20 @@
 package fs
 
+// ElementMapper provides an identity mapping by default.
+//
+// This can be replaced to provide a struct that maps elements to linker
+// objects, if they are not the same. An ElementMapper is not typically
+// required if: Linker is left as is, Element is left as is, or Linker and
+// Element are the same type.
+type direntElementMapper struct{}
+
+// linkerFor maps an Element to a Linker.
+//
+// This default implementation should be inlined.
+//
+//go:nosplit
+func (direntElementMapper) linkerFor(elem *Dirent) *Dirent { return elem }
+
 // List is an intrusive list. Entries can be added to or removed from the list
 // in O(1) time and with no additional memory allocations.
 //
@@ -9,6 +24,8 @@ package fs
 //      for e := l.Front(); e != nil; e = e.Next() {
 // 		// do something with e.
 //      }
+//
+// +stateify savable
 type direntList struct {
 	head *Dirent
 	tail *Dirent
@@ -37,11 +54,11 @@ func (l *direntList) Back() *Dirent {
 
 // PushFront inserts the element e at the front of list l.
 func (l *direntList) PushFront(e *Dirent) {
-	e.SetNext(l.head)
-	e.SetPrev(nil)
+	direntElementMapper{}.linkerFor(e).SetNext(l.head)
+	direntElementMapper{}.linkerFor(e).SetPrev(nil)
 
 	if l.head != nil {
-		l.head.SetPrev(e)
+		direntElementMapper{}.linkerFor(l.head).SetPrev(e)
 	} else {
 		l.tail = e
 	}
@@ -51,11 +68,11 @@ func (l *direntList) PushFront(e *Dirent) {
 
 // PushBack inserts the element e at the back of list l.
 func (l *direntList) PushBack(e *Dirent) {
-	e.SetNext(nil)
-	e.SetPrev(l.tail)
+	direntElementMapper{}.linkerFor(e).SetNext(nil)
+	direntElementMapper{}.linkerFor(e).SetPrev(l.tail)
 
 	if l.tail != nil {
-		l.tail.SetNext(e)
+		direntElementMapper{}.linkerFor(l.tail).SetNext(e)
 	} else {
 		l.head = e
 	}
@@ -69,8 +86,8 @@ func (l *direntList) PushBackList(m *direntList) {
 		l.head = m.head
 		l.tail = m.tail
 	} else if m.head != nil {
-		l.tail.SetNext(m.head)
-		m.head.SetPrev(l.tail)
+		direntElementMapper{}.linkerFor(l.tail).SetNext(m.head)
+		direntElementMapper{}.linkerFor(m.head).SetPrev(l.tail)
 
 		l.tail = m.tail
 	}
@@ -81,13 +98,13 @@ func (l *direntList) PushBackList(m *direntList) {
 
 // InsertAfter inserts e after b.
 func (l *direntList) InsertAfter(b, e *Dirent) {
-	a := b.Next()
-	e.SetNext(a)
-	e.SetPrev(b)
-	b.SetNext(e)
+	a := direntElementMapper{}.linkerFor(b).Next()
+	direntElementMapper{}.linkerFor(e).SetNext(a)
+	direntElementMapper{}.linkerFor(e).SetPrev(b)
+	direntElementMapper{}.linkerFor(b).SetNext(e)
 
 	if a != nil {
-		a.SetPrev(e)
+		direntElementMapper{}.linkerFor(a).SetPrev(e)
 	} else {
 		l.tail = e
 	}
@@ -95,13 +112,13 @@ func (l *direntList) InsertAfter(b, e *Dirent) {
 
 // InsertBefore inserts e before a.
 func (l *direntList) InsertBefore(a, e *Dirent) {
-	b := a.Prev()
-	e.SetNext(a)
-	e.SetPrev(b)
-	a.SetPrev(e)
+	b := direntElementMapper{}.linkerFor(a).Prev()
+	direntElementMapper{}.linkerFor(e).SetNext(a)
+	direntElementMapper{}.linkerFor(e).SetPrev(b)
+	direntElementMapper{}.linkerFor(a).SetPrev(e)
 
 	if b != nil {
-		b.SetNext(e)
+		direntElementMapper{}.linkerFor(b).SetNext(e)
 	} else {
 		l.head = e
 	}
@@ -109,17 +126,17 @@ func (l *direntList) InsertBefore(a, e *Dirent) {
 
 // Remove removes e from l.
 func (l *direntList) Remove(e *Dirent) {
-	prev := e.Prev()
-	next := e.Next()
+	prev := direntElementMapper{}.linkerFor(e).Prev()
+	next := direntElementMapper{}.linkerFor(e).Next()
 
 	if prev != nil {
-		prev.SetNext(next)
+		direntElementMapper{}.linkerFor(prev).SetNext(next)
 	} else {
 		l.head = next
 	}
 
 	if next != nil {
-		next.SetPrev(prev)
+		direntElementMapper{}.linkerFor(next).SetPrev(prev)
 	} else {
 		l.tail = prev
 	}
@@ -128,6 +145,8 @@ func (l *direntList) Remove(e *Dirent) {
 // Entry is a default implementation of Linker. Users can add anonymous fields
 // of this type to their structs to make them automatically implement the
 // methods needed by List.
+//
+// +stateify savable
 type direntEntry struct {
 	next *Dirent
 	prev *Dirent
@@ -144,11 +163,11 @@ func (e *direntEntry) Prev() *Dirent {
 }
 
 // SetNext assigns 'entry' as the entry that follows e in the list.
-func (e *direntEntry) SetNext(entry *Dirent) {
-	e.next = entry
+func (e *direntEntry) SetNext(elem *Dirent) {
+	e.next = elem
 }
 
 // SetPrev assigns 'entry' as the entry that precedes e in the list.
-func (e *direntEntry) SetPrev(entry *Dirent) {
-	e.prev = entry
+func (e *direntEntry) SetPrev(elem *Dirent) {
+	e.prev = elem
 }

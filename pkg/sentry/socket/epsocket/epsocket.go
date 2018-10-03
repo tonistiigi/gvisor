@@ -48,7 +48,7 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/syserror"
 	"gvisor.googlesource.com/gvisor/pkg/tcpip"
 	"gvisor.googlesource.com/gvisor/pkg/tcpip/buffer"
-	nstack "gvisor.googlesource.com/gvisor/pkg/tcpip/stack"
+	"gvisor.googlesource.com/gvisor/pkg/tcpip/stack"
 	"gvisor.googlesource.com/gvisor/pkg/tcpip/transport/unix"
 	"gvisor.googlesource.com/gvisor/pkg/waiter"
 )
@@ -95,6 +95,8 @@ type commonEndpoint interface {
 
 // SocketOperations encapsulates all the state needed to represent a network stack
 // endpoint in the kernel context.
+//
+// +stateify savable
 type SocketOperations struct {
 	socket.ReceiveTimeout
 	fsutil.PipeSeek      `state:"nosave"`
@@ -148,9 +150,12 @@ func GetAddress(sfamily int, addr []byte) (tcpip.FullAddress, *syserr.Error) {
 	switch family {
 	case linux.AF_UNIX:
 		path := addr[2:]
-		// Drop the terminating NUL (if one exists) and everything after it.
-		// Skip the first byte, which is NUL for abstract paths.
-		if len(path) > 1 {
+		if len(path) > linux.UnixPathMax {
+			return tcpip.FullAddress{}, syserr.ErrInvalidArgument
+		}
+		// Drop the terminating NUL (if one exists) and everything after
+		// it for filesystem (non-abstract) addresses.
+		if len(path) > 0 && path[0] != 0 {
 			if n := bytes.IndexByte(path[1:], 0); n >= 0 {
 				path = path[:n+1]
 			}
@@ -271,10 +276,21 @@ func (i *ioSequencePayload) Size() int {
 // Write implements fs.FileOperations.Write.
 func (s *SocketOperations) Write(ctx context.Context, _ *fs.File, src usermem.IOSequence, _ int64) (int64, error) {
 	f := &ioSequencePayload{ctx: ctx, src: src}
-	n, err := s.Endpoint.Write(f, tcpip.WriteOptions{})
+	n, resCh, err := s.Endpoint.Write(f, tcpip.WriteOptions{})
 	if err == tcpip.ErrWouldBlock {
 		return int64(n), syserror.ErrWouldBlock
 	}
+
+	if resCh != nil {
+		t := ctx.(*kernel.Task)
+		if err := t.Block(resCh); err != nil {
+			return int64(n), syserr.FromError(err).ToError()
+		}
+
+		n, _, err = s.Endpoint.Write(f, tcpip.WriteOptions{})
+		return int64(n), syserr.TranslateNetstackError(err).ToError()
+	}
+
 	return int64(n), syserr.TranslateNetstackError(err).ToError()
 }
 
@@ -450,7 +466,7 @@ func (s *SocketOperations) GetSockOpt(t *kernel.Task, level, name, outLen int) (
 // sockets backed by a commonEndpoint.
 func GetSockOpt(t *kernel.Task, s socket.Socket, ep commonEndpoint, family int, skType unix.SockType, level, name, outLen int) (interface{}, *syserr.Error) {
 	switch level {
-	case syscall.SOL_SOCKET:
+	case linux.SOL_SOCKET:
 		switch name {
 		case linux.SO_TYPE:
 			if outLen < sizeOfInt32 {
@@ -468,7 +484,7 @@ func GetSockOpt(t *kernel.Task, s socket.Socket, ep commonEndpoint, family int, 
 			if err == nil {
 				return int32(0), nil
 			}
-			return int32(syserr.ToLinux(syserr.TranslateNetstackError(err)).Number()), nil
+			return int32(syserr.TranslateNetstackError(err).ToLinux().Number()), nil
 
 		case linux.SO_PEERCRED:
 			if family != linux.AF_UNIX || outLen < syscall.SizeofUcred {
@@ -632,7 +648,7 @@ func (s *SocketOperations) SetSockOpt(t *kernel.Task, level int, name int, optVa
 // sockets backed by a commonEndpoint.
 func SetSockOpt(t *kernel.Task, s socket.Socket, ep commonEndpoint, level int, name int, optVal []byte) *syserr.Error {
 	switch level {
-	case syscall.SOL_SOCKET:
+	case linux.SOL_SOCKET:
 		switch name {
 		case linux.SO_SNDBUF:
 			if len(optVal) < sizeOfInt32 {
@@ -738,22 +754,20 @@ func ConvertAddress(family int, addr tcpip.FullAddress) (interface{}, uint32) {
 	case linux.AF_UNIX:
 		var out linux.SockAddrUnix
 		out.Family = linux.AF_UNIX
-		for i := 0; i < len([]byte(addr.Addr)); i++ {
+		l := len([]byte(addr.Addr))
+		for i := 0; i < l; i++ {
 			out.Path[i] = int8(addr.Addr[i])
 		}
-		// Linux just returns the header for empty addresses.
-		if len(addr.Addr) == 0 {
-			return out, 2
-		}
+
 		// Linux returns the used length of the address struct (including the
 		// null terminator) for filesystem paths. The Family field is 2 bytes.
 		// It is sometimes allowed to exclude the null terminator if the
-		// address length is the max. Abstract paths always return the full
-		// length.
-		if out.Path[0] == 0 || len([]byte(addr.Addr)) == len(out.Path) {
-			return out, uint32(binary.Size(out))
+		// address length is the max. Abstract and empty paths always return
+		// the full exact length.
+		if l == 0 || out.Path[0] == 0 || l == len(out.Path) {
+			return out, uint32(2 + l)
 		}
-		return out, uint32(3 + len(addr.Addr))
+		return out, uint32(3 + l)
 	case linux.AF_INET:
 		var out linux.SockAddrInet
 		copy(out.Addr[:], addr.Addr)
@@ -1013,7 +1027,13 @@ func (s *SocketOperations) SendMsg(t *kernel.Task, src usermem.IOSequence, to []
 		EndOfRecord: flags&linux.MSG_EOR != 0,
 	}
 
-	n, err := s.Endpoint.Write(tcpip.SlicePayload(v), opts)
+	n, resCh, err := s.Endpoint.Write(tcpip.SlicePayload(v), opts)
+	if resCh != nil {
+		if err := t.Block(resCh); err != nil {
+			return int(n), syserr.FromError(err)
+		}
+		n, _, err = s.Endpoint.Write(tcpip.SlicePayload(v), opts)
+	}
 	if err != tcpip.ErrWouldBlock || flags&linux.MSG_DONTWAIT != 0 {
 		return int(n), syserr.TranslateNetstackError(err)
 	}
@@ -1027,7 +1047,7 @@ func (s *SocketOperations) SendMsg(t *kernel.Task, src usermem.IOSequence, to []
 	v.TrimFront(int(n))
 	total := n
 	for {
-		n, err = s.Endpoint.Write(tcpip.SlicePayload(v), opts)
+		n, _, err = s.Endpoint.Write(tcpip.SlicePayload(v), opts)
 		v.TrimFront(int(n))
 		total += n
 		if err != tcpip.ErrWouldBlock {
@@ -1189,7 +1209,9 @@ func interfaceIoctl(ctx context.Context, io usermem.IO, arg int, ifr *linux.IFRe
 		if err != nil {
 			return err
 		}
-		usermem.ByteOrder.PutUint16(ifr.Data[:2], f)
+		// Drop the flags that don't fit in the size that we need to return. This
+		// matches Linux behavior.
+		usermem.ByteOrder.PutUint16(ifr.Data[:2], uint16(f))
 
 	case syscall.SIOCGIFADDR:
 		// Copy the IPv4 address out.
@@ -1302,7 +1324,7 @@ func ifconfIoctl(ctx context.Context, io usermem.IO, ifc *linux.IFConf) error {
 // interfaceStatusFlags returns status flags for an interface in the stack.
 // Flag values and meanings are described in greater detail in netdevice(7) in
 // the SIOCGIFFLAGS section.
-func interfaceStatusFlags(stack inet.Stack, name string) (uint16, *syserr.Error) {
+func interfaceStatusFlags(stack inet.Stack, name string) (uint32, *syserr.Error) {
 	// epsocket should only ever be passed an epsocket.Stack.
 	epstack, ok := stack.(*Stack)
 	if !ok {
@@ -1310,37 +1332,27 @@ func interfaceStatusFlags(stack inet.Stack, name string) (uint16, *syserr.Error)
 	}
 
 	// Find the NIC corresponding to this interface.
-	var (
-		nicid tcpip.NICID
-		info  nstack.NICInfo
-		found bool
-	)
-	ns := epstack.Stack
-	for nicid, info = range ns.NICInfo() {
+	for _, info := range epstack.Stack.NICInfo() {
 		if info.Name == name {
-			found = true
-			break
+			return nicStateFlagsToLinux(info.Flags), nil
 		}
 	}
-	if !found {
-		return 0, syserr.ErrNoDevice
-	}
+	return 0, syserr.ErrNoDevice
+}
 
-	// Set flags based on NIC state.
-	nicFlags, err := ns.NICFlags(nicid)
-	if err != nil {
-		return 0, syserr.TranslateNetstackError(err)
+func nicStateFlagsToLinux(f stack.NICStateFlags) uint32 {
+	var rv uint32
+	if f.Up {
+		rv |= linux.IFF_UP | linux.IFF_LOWER_UP
 	}
-
-	var retFlags uint16
-	if nicFlags.Up {
-		retFlags |= linux.IFF_UP
+	if f.Running {
+		rv |= linux.IFF_RUNNING
 	}
-	if nicFlags.Running {
-		retFlags |= linux.IFF_RUNNING
+	if f.Promiscuous {
+		rv |= linux.IFF_PROMISC
 	}
-	if nicFlags.Promiscuous {
-		retFlags |= linux.IFF_PROMISC
+	if f.Loopback {
+		rv |= linux.IFF_LOOPBACK
 	}
-	return retFlags, nil
+	return rv
 }

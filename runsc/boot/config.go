@@ -60,21 +60,23 @@ func (p PlatformType) String() string {
 type FileAccessType int
 
 const (
-	// FileAccessProxy sends IO requests to a Gofer process that validates the
+	// FileAccessShared sends IO requests to a Gofer process that validates the
 	// requests and forwards them to the host.
-	FileAccessProxy FileAccessType = iota
+	FileAccessShared FileAccessType = iota
 
-	// FileAccessDirect connects the sandbox directly to the host filesystem.
-	FileAccessDirect
+	// FileAccessExclusive is the same as FileAccessShared, but enables
+	// extra caching for improved performance. It should only be used if
+	// the sandbox has exclusive access to the filesystem.
+	FileAccessExclusive
 )
 
 // MakeFileAccessType converts type from string.
 func MakeFileAccessType(s string) (FileAccessType, error) {
 	switch s {
-	case "proxy":
-		return FileAccessProxy, nil
-	case "direct":
-		return FileAccessDirect, nil
+	case "shared":
+		return FileAccessShared, nil
+	case "exclusive":
+		return FileAccessExclusive, nil
 	default:
 		return 0, fmt.Errorf("invalid file access type %q", s)
 	}
@@ -82,10 +84,10 @@ func MakeFileAccessType(s string) (FileAccessType, error) {
 
 func (f FileAccessType) String() string {
 	switch f {
-	case FileAccessProxy:
-		return "proxy"
-	case FileAccessDirect:
-		return "direct"
+	case FileAccessShared:
+		return "shared"
+	case FileAccessExclusive:
+		return "exclusive"
 	default:
 		return fmt.Sprintf("unknown(%d)", f)
 	}
@@ -191,11 +193,21 @@ type Config struct {
 	// disabled. Pardon the double negation, but default to enabled is important.
 	DisableSeccomp bool
 
-	// MultiContainer enables multiple containers support inside one sandbox.
-	// TODO: Remove this when multiple container is fully supported.
-	MultiContainer bool
+	// SpecFile is the file containing the OCI spec.
+	SpecFile string
 
+	// WatchdogAction sets what action the watchdog takes when triggered.
 	WatchdogAction watchdog.Action
+
+	// PanicSignal register signal handling that panics. Usually set to
+	// SIGUSR2(12) to troubleshoot hangs. -1 disables it.
+	PanicSignal int
+
+	// TestOnlyAllowRunAsCurrentUserWithoutChroot should only be used in
+	// tests. It allows runsc to start the sandbox process as the current
+	// user, and without chrooting the sandbox process. This can be
+	// necessary in test environments that have limited capabilities.
+	TestOnlyAllowRunAsCurrentUserWithoutChroot bool
 }
 
 // ToFlags returns a slice of flags that correspond to the given Config.
@@ -208,7 +220,6 @@ func (c *Config) ToFlags() []string {
 		"--debug-log-dir=" + c.DebugLogDir,
 		"--file-access=" + c.FileAccess.String(),
 		"--overlay=" + strconv.FormatBool(c.Overlay),
-		"--multi-container=" + strconv.FormatBool(c.MultiContainer),
 		"--network=" + c.Network.String(),
 		"--log-packets=" + strconv.FormatBool(c.LogPackets),
 		"--platform=" + c.Platform.String(),
@@ -216,5 +227,6 @@ func (c *Config) ToFlags() []string {
 		"--strace-syscalls=" + strings.Join(c.StraceSyscalls, ","),
 		"--strace-log-size=" + strconv.Itoa(int(c.StraceLogSize)),
 		"--watchdog-action=" + c.WatchdogAction.String(),
+		"--panic-signal=" + strconv.Itoa(c.PanicSignal),
 	}
 }

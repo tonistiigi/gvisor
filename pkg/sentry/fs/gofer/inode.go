@@ -35,6 +35,8 @@ import (
 )
 
 // inodeOperations implements fs.InodeOperations.
+//
+// +stateify savable
 type inodeOperations struct {
 	fsutil.InodeNotVirtual           `state:"nosave"`
 	fsutil.InodeNoExtendedAttributes `state:"nosave"`
@@ -68,6 +70,8 @@ type inodeOperations struct {
 // circular load dependency between it and inodeOperations). Even with
 // lazy loading, this approach defines the dependencies between objects
 // and the expected load behavior more concretely.
+//
+// +stateify savable
 type inodeFileState struct {
 	// s is common file system state for Gofers.
 	s *session `state:"wait"`
@@ -391,7 +395,7 @@ func (i *inodeOperations) getFilePipe(ctx context.Context, d *fs.Dirent, flags f
 	if err != nil {
 		return nil, err
 	}
-	return NewFile(ctx, d, flags, i, h), nil
+	return NewFile(ctx, d, d.BaseName(), flags, i, h), nil
 }
 
 // errNotHostFile indicates that the file is not a host file.
@@ -430,7 +434,7 @@ func (i *inodeOperations) getFileDefault(ctx context.Context, d *fs.Dirent, flag
 		if err != nil {
 			return nil, err
 		}
-		return NewFile(ctx, d, flags, i, h), nil
+		return NewFile(ctx, d, d.BaseName(), flags, i, h), nil
 	}
 
 	h, ok := i.fileState.getCachedHandles(ctx, flags, d.Inode.MountSource)
@@ -443,7 +447,7 @@ func (i *inodeOperations) getFileDefault(ctx context.Context, d *fs.Dirent, flag
 	}
 	i.fileState.setHandlesForCachedIO(flags, h)
 
-	return NewFile(ctx, d, flags, i, h), nil
+	return NewFile(ctx, d, d.BaseName(), flags, i, h), nil
 }
 
 // SetPermissions implements fs.InodeOperations.SetPermissions.

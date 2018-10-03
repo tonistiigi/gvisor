@@ -29,6 +29,7 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/log"
 	"gvisor.googlesource.com/gvisor/pkg/urpc"
 	"gvisor.googlesource.com/gvisor/runsc/boot"
+	"gvisor.googlesource.com/gvisor/runsc/specutils"
 )
 
 const (
@@ -55,33 +56,6 @@ const (
 //  docker run -di --runtime=runsc -p 8080:80 -v $PWD:/usr/local/apache2/htdocs/ httpd:2.4
 func setupNetwork(conn *urpc.Client, pid int, spec *specs.Spec, conf *boot.Config) error {
 	log.Infof("Setting up network")
-
-	// HACK!
-	//
-	// When kubernetes starts a pod, it first creates a sandbox with an
-	// application that just pauses forever.  Later, when a container is
-	// added to the pod, kubernetes will create another sandbox with a
-	// config that corresponds to the containerized application, and add it
-	// to the same namespaces as the pause sandbox.
-	//
-	// Running a second sandbox currently breaks because the two sandboxes
-	// have the same network namespace and configuration, and try to create
-	// a tap device on the same host device which fails.
-	//
-	// Runsc will eventually need to detect that this container is meant to
-	// be run in the same sandbox as the pausing application, and somehow
-	// make that happen.
-	//
-	// For now the following HACK disables networking for the "pause"
-	// sandbox, allowing the second sandbox to start up successfully.
-	//
-	// TODO: Remove this once multiple containers per sandbox
-	// is properly supported.
-	if spec.Annotations[crioContainerTypeAnnotation] == "sandbox" ||
-		spec.Annotations[containerdContainerTypeAnnotation] == "sandbox" {
-		log.Warningf("HACK: Disabling network")
-		conf.Network = boot.NetworkNone
-	}
 
 	switch conf.Network {
 	case boot.NetworkNone:
@@ -132,7 +106,7 @@ func createDefaultLoopbackInterface(conn *urpc.Client) error {
 
 func joinNetNS(nsPath string) (func(), error) {
 	runtime.LockOSThread()
-	restoreNS, err := applyNS(specs.LinuxNamespace{
+	restoreNS, err := specutils.ApplyNS(specs.LinuxNamespace{
 		Type: specs.NetworkNamespace,
 		Path: nsPath,
 	})
@@ -221,12 +195,6 @@ func createInterfacesAndRoutesFromNS(conn *urpc.Client, nsPath string) error {
 			continue
 		}
 
-		// Get the link for the interface.
-		ifaceLink, err := netlink.LinkByName(iface.Name)
-		if err != nil {
-			return fmt.Errorf("error getting link for interface %q: %v", iface.Name, err)
-		}
-
 		// Create the socket.
 		const protocol = 0x0300 // htons(ETH_P_ALL)
 		fd, err := syscall.Socket(syscall.AF_PACKET, syscall.SOCK_RAW, protocol)
@@ -238,7 +206,7 @@ func createInterfacesAndRoutesFromNS(conn *urpc.Client, nsPath string) error {
 		// Bind to the appropriate device.
 		ll := syscall.SockaddrLinklayer{
 			Protocol: protocol,
-			Ifindex:  ifaceLink.Attrs().Index,
+			Ifindex:  iface.Index,
 			Hatype:   0, // No ARP type.
 			Pkttype:  syscall.PACKET_OTHERHOST,
 		}
@@ -264,6 +232,12 @@ func createInterfacesAndRoutesFromNS(conn *urpc.Client, nsPath string) error {
 			Name:   iface.Name,
 			MTU:    iface.MTU,
 			Routes: routes,
+		}
+
+		// Get the link for the interface.
+		ifaceLink, err := netlink.LinkByName(iface.Name)
+		if err != nil {
+			return fmt.Errorf("error getting link for interface %q: %v", iface.Name, err)
 		}
 
 		// Collect the addresses for the interface, enable forwarding,
@@ -350,6 +324,7 @@ func routesForIface(iface net.Interface) ([]boot.Route, *boot.Route, error) {
 		routes = append(routes, boot.Route{
 			Destination: r.Dst.IP.Mask(r.Dst.Mask),
 			Mask:        r.Dst.Mask,
+			Gateway:     r.Gw,
 		})
 	}
 	return routes, def, nil

@@ -21,17 +21,22 @@ import (
 	"sync/atomic"
 
 	"gvisor.googlesource.com/gvisor/pkg/refs"
+	"gvisor.googlesource.com/gvisor/pkg/sentry/context"
 )
 
 // DirentOperations provide file systems greater control over how long a Dirent stays pinned
 // in core. Implementations must not take Dirent.mu.
 type DirentOperations interface {
-	// Revalidate returns true if the Dirent is stale and its InodeOperations needs to be reloaded. Revalidate
-	// will never be called on a Dirent that is mounted.
-	Revalidate(dirent *Dirent) bool
+	// Revalidate is called during lookup each time we encounter a Dirent
+	// in the cache. Implementations may update stale properties of the
+	// child Inode. If Revalidate returns true, then the entire Inode will
+	// be reloaded.
+	//
+	// Revalidate will never be called on a Inode that is mounted.
+	Revalidate(ctx context.Context, name string, parent, child *Inode) bool
 
-	// Keep returns true if the Dirent should be kept in memory for as long as possible
-	// beyond any active references.
+	// Keep returns true if the Dirent should be kept in memory for as long
+	// as possible beyond any active references.
 	Keep(dirent *Dirent) bool
 }
 
@@ -99,6 +104,8 @@ func (i InodeMappings) String() string {
 // (e.g. cannot be mounted at different locations).
 //
 // TODO: Move mount-specific information out of MountSource.
+//
+// +stateify savable
 type MountSource struct {
 	refs.AtomicRefCount
 
@@ -155,10 +162,10 @@ const defaultDirentCacheSize uint64 = 1000
 func NewMountSource(mops MountSourceOperations, filesystem Filesystem, flags MountSourceFlags) *MountSource {
 	return &MountSource{
 		MountSourceOperations: mops,
-		Flags:      flags,
-		Filesystem: filesystem,
-		fscache:    NewDirentCache(defaultDirentCacheSize),
-		children:   make(map[*MountSource]struct{}),
+		Flags:                 flags,
+		Filesystem:            filesystem,
+		fscache:               NewDirentCache(defaultDirentCacheSize),
+		children:              make(map[*MountSource]struct{}),
 	}
 }
 
@@ -245,7 +252,8 @@ func (msrc *MountSource) FlushDirentRefs() {
 // aggressively. Filesystem may be nil if there is no backing filesystem.
 func NewCachingMountSource(filesystem Filesystem, flags MountSourceFlags) *MountSource {
 	return NewMountSource(&SimpleMountSourceOperations{
-		keep: true,
+		keep:       true,
+		revalidate: false,
 	}, filesystem, flags)
 }
 
@@ -253,18 +261,31 @@ func NewCachingMountSource(filesystem Filesystem, flags MountSourceFlags) *Mount
 // Filesystem may be nil if there is no backing filesystem.
 func NewNonCachingMountSource(filesystem Filesystem, flags MountSourceFlags) *MountSource {
 	return NewMountSource(&SimpleMountSourceOperations{
-		keep: false,
+		keep:       false,
+		revalidate: false,
+	}, filesystem, flags)
+}
+
+// NewRevalidatingMountSource returns a generic mount that will cache dirents,
+// but will revalidate them on each lookup.
+func NewRevalidatingMountSource(filesystem Filesystem, flags MountSourceFlags) *MountSource {
+	return NewMountSource(&SimpleMountSourceOperations{
+		keep:       true,
+		revalidate: true,
 	}, filesystem, flags)
 }
 
 // SimpleMountSourceOperations implements MountSourceOperations.
+//
+// +stateify savable
 type SimpleMountSourceOperations struct {
-	keep bool
+	keep       bool
+	revalidate bool
 }
 
 // Revalidate implements MountSourceOperations.Revalidate.
-func (*SimpleMountSourceOperations) Revalidate(*Dirent) bool {
-	return false
+func (smo *SimpleMountSourceOperations) Revalidate(context.Context, string, *Inode, *Inode) bool {
+	return smo.revalidate
 }
 
 // Keep implements MountSourceOperations.Keep.

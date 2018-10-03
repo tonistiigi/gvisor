@@ -6,19 +6,6 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/state"
 )
 
-func (x *ControlMessages) beforeSave() {}
-func (x *ControlMessages) save(m state.Map) {
-	x.beforeSave()
-	m.Save("Unix", &x.Unix)
-	m.Save("IP", &x.IP)
-}
-
-func (x *ControlMessages) afterLoad() {}
-func (x *ControlMessages) load(m state.Map) {
-	m.Load("Unix", &x.Unix)
-	m.Load("IP", &x.IP)
-}
-
 func (x *ReceiveTimeout) beforeSave() {}
 func (x *ReceiveTimeout) save(m state.Map) {
 	x.beforeSave()
@@ -31,6 +18,5 @@ func (x *ReceiveTimeout) load(m state.Map) {
 }
 
 func init() {
-	state.Register("socket.ControlMessages", (*ControlMessages)(nil), state.Fns{Save: (*ControlMessages).save, Load: (*ControlMessages).load})
 	state.Register("socket.ReceiveTimeout", (*ReceiveTimeout)(nil), state.Fns{Save: (*ReceiveTimeout).save, Load: (*ReceiveTimeout).load})
 }

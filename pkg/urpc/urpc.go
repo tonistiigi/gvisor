@@ -63,6 +63,10 @@ func (r RemoteError) Error() string {
 // file as a result of an RPC. These are not actually serialized, rather they
 // are sent via an accompanying SCM_RIGHTS message (plumbed through the unet
 // package).
+//
+// When embedding a FilePayload in an argument struct, the argument type _must_
+// be a pointer to the struct rather than the struct type itself. This is
+// because the urpc package defines pointer methods on FilePayload.
 type FilePayload struct {
 	Files []*os.File `json:"-"`
 }
@@ -552,6 +556,12 @@ func (c *Client) Call(method string, arg interface{}, result interface{}) error 
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
+	// If arg is a FilePayload, not a *FilePayload, files won't actually be
+	// sent, so error out.
+	if _, ok := arg.(FilePayload); ok {
+		return fmt.Errorf("argument is a FilePayload, but should be a *FilePayload")
+	}
+
 	// Are there files to send?
 	var fs []*os.File
 	if fp, ok := arg.(filePayloader); ok {
@@ -570,7 +580,7 @@ func (c *Client) Call(method string, arg interface{}, result interface{}) error 
 	callR := callResult{Result: result}
 	newFs, err := unmarshal(c.Socket, &callR)
 	if err != nil {
-		return err
+		return fmt.Errorf("urpc method %q failed: %v", method, err)
 	}
 
 	// Set the file payload.

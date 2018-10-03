@@ -36,7 +36,7 @@ var (
 	// ErrInvalidOp indicates the operation is not valid.
 	ErrInvalidOp = errors.New("invalid operation")
 
-	// ErrDenied indicates the operation was denid.
+	// ErrDenied indicates the operation was denied.
 	ErrDenied = errors.New("operation denied")
 
 	// ErrNotFound indicates that a node was not found on a walk.
@@ -60,6 +60,8 @@ var (
 
 // Entry represents common internal state for file and directory nodes.
 // This may be used by other packages to easily create ramfs files.
+//
+// +stateify savable
 type Entry struct {
 	waiter.AlwaysReady    `state:"nosave"`
 	fsutil.NoMappable     `state:"nosave"`
@@ -277,8 +279,8 @@ func (*Entry) CreateDirectory(context.Context, *fs.Inode, string, fs.FilePermiss
 }
 
 // Bind is not supported by default.
-func (*Entry) Bind(context.Context, *fs.Inode, string, unix.BoundEndpoint, fs.FilePermissions) error {
-	return ErrInvalidOp
+func (*Entry) Bind(context.Context, *fs.Inode, string, unix.BoundEndpoint, fs.FilePermissions) (*fs.Dirent, error) {
+	return nil, ErrInvalidOp
 }
 
 // CreateFifo implements fs.InodeOperations.CreateFifo. CreateFifo is not supported by

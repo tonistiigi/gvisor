@@ -266,11 +266,11 @@ var AMD64 = &kernel.SyscallTable{
 		219: RestartSyscall,
 		//     220: Semtimedop, TODO
 		221: Fadvise64,
-		//     222: TimerCreate, TODO
-		//     223: TimerSettime, TODO
-		//     224: TimerGettime, TODO
-		//     225: TimerGetoverrun, TODO
-		//     226: TimerDelete, TODO
+		222: TimerCreate,
+		223: TimerSettime,
+		224: TimerGettime,
+		225: TimerGetoverrun,
+		226: TimerDelete,
 		227: ClockSettime,
 		228: ClockGettime,
 		229: ClockGetres,
@@ -359,6 +359,7 @@ var AMD64 = &kernel.SyscallTable{
 		312: syscalls.CapError(linux.CAP_SYS_PTRACE), // Kcmp, requires cap_sys_ptrace
 		313: syscalls.CapError(linux.CAP_SYS_MODULE), // FinitModule, requires cap_sys_module
 		// "Backports."
+		317: Seccomp,
 		318: GetRandom,
 	},
 

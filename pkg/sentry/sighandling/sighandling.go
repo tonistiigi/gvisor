@@ -30,9 +30,11 @@ import (
 // numSignals is the number of normal (non-realtime) signals on Linux.
 const numSignals = 32
 
-// forwardSignals listens for incoming signals and delivers them to k. It starts
-// when the start channel is closed and stops when the stop channel is closed.
-func forwardSignals(k *kernel.Kernel, sigchans []chan os.Signal, start, stop chan struct{}) {
+// forwardSignals listens for incoming signals and delivers them to k.
+//
+// It starts when the start channel is closed, stops when the stop channel
+// is closed, and closes done once it will no longer deliver signals to k.
+func forwardSignals(k *kernel.Kernel, sigchans []chan os.Signal, start, stop, done chan struct{}) {
 	// Build a select case.
 	sc := []reflect.SelectCase{{Dir: reflect.SelectRecv, Chan: reflect.ValueOf(start)}}
 	for _, sigchan := range sigchans {
@@ -47,13 +49,19 @@ func forwardSignals(k *kernel.Kernel, sigchans []chan os.Signal, start, stop cha
 		// Was it the start / stop channel?
 		if index == 0 {
 			if !ok {
-				if started {
-					// stop channel
-					break
-				} else {
-					// start channel
+				if !started {
+					// start channel; start forwarding and
+					// swap this case for the stop channel
+					// to select stop requests.
 					started = true
 					sc[0] = reflect.SelectCase{Dir: reflect.SelectRecv, Chan: reflect.ValueOf(stop)}
+				} else {
+					// stop channel; stop forwarding and
+					// clear this case so it is never
+					// selected again.
+					started = false
+					close(done)
+					sc[0].Chan = reflect.Value{}
 				}
 			}
 			continue
@@ -69,7 +77,8 @@ func forwardSignals(k *kernel.Kernel, sigchans []chan os.Signal, start, stop cha
 		signal := linux.Signal(index)
 
 		if !started {
-			// Kernel is not ready to receive signals.
+			// Kernel cannot receive signals, either because it is
+			// not ready yet or is shutting down.
 			//
 			// Kill ourselves if this signal would have killed the
 			// process before PrepareForwarding was called. i.e., all
@@ -78,9 +87,8 @@ func forwardSignals(k *kernel.Kernel, sigchans []chan os.Signal, start, stop cha
 			//
 			// Otherwise ignore the signal.
 			//
-			// TODO: Convert Go's runtime.raise from
-			// tkill to tgkill so PrepareForwarding doesn't need to
-			// be called until after filter installation.
+			// TODO: Drop in Go 1.12, which uses tgkill
+			// in runtime.raise.
 			switch signal {
 			case linux.SIGHUP, linux.SIGINT, linux.SIGTERM:
 				dieFromSignal(signal)
@@ -92,20 +100,19 @@ func forwardSignals(k *kernel.Kernel, sigchans []chan os.Signal, start, stop cha
 
 		k.SendExternalSignal(&arch.SignalInfo{Signo: int32(signal)}, "sentry")
 	}
-
-	// Close all individual channels.
-	for _, sigchan := range sigchans {
-		signal.Stop(sigchan)
-		close(sigchan)
-	}
 }
 
 // PrepareForwarding ensures that synchronous signals are forwarded to k and
 // returns a callback that starts signal delivery, which itself returns a
 // callback that stops signal forwarding.
-func PrepareForwarding(k *kernel.Kernel, enablePanicSignal bool) func() func() {
+//
+// Note that this function permanently takes over signal handling. After the
+// stop callback, signals revert to the default Go runtime behavior, which
+// cannot be overridden with external calls to signal.Notify.
+func PrepareForwarding(k *kernel.Kernel, skipSignal syscall.Signal) func() func() {
 	start := make(chan struct{})
 	stop := make(chan struct{})
+	done := make(chan struct{})
 
 	// Register individual channels. One channel per standard signal is
 	// required as os.Notify() is non-blocking and may drop signals. To avoid
@@ -119,20 +126,20 @@ func PrepareForwarding(k *kernel.Kernel, enablePanicSignal bool) func() func() {
 		sigchan := make(chan os.Signal, 1)
 		sigchans = append(sigchans, sigchan)
 
-		// SignalPanic is handled by Run.
-		if enablePanicSignal && linux.Signal(sig) == kernel.SignalPanic {
+		if syscall.Signal(sig) == skipSignal {
 			continue
 		}
 
 		signal.Notify(sigchan, syscall.Signal(sig))
 	}
 	// Start up our listener.
-	go forwardSignals(k, sigchans, start, stop) // S/R-SAFE: synchronized by Kernel.extMu
+	go forwardSignals(k, sigchans, start, stop, done) // S/R-SAFE: synchronized by Kernel.extMu.
 
 	return func() func() {
 		close(start)
 		return func() {
 			close(stop)
+			<-done
 		}
 	}
 }

@@ -1,5 +1,20 @@
 package kernel
 
+// ElementMapper provides an identity mapping by default.
+//
+// This can be replaced to provide a struct that maps elements to linker
+// objects, if they are not the same. An ElementMapper is not typically
+// required if: Linker is left as is, Element is left as is, or Linker and
+// Element are the same type.
+type sessionElementMapper struct{}
+
+// linkerFor maps an Element to a Linker.
+//
+// This default implementation should be inlined.
+//
+//go:nosplit
+func (sessionElementMapper) linkerFor(elem *Session) *Session { return elem }
+
 // List is an intrusive list. Entries can be added to or removed from the list
 // in O(1) time and with no additional memory allocations.
 //
@@ -9,6 +24,8 @@ package kernel
 //      for e := l.Front(); e != nil; e = e.Next() {
 // 		// do something with e.
 //      }
+//
+// +stateify savable
 type sessionList struct {
 	head *Session
 	tail *Session
@@ -37,11 +54,11 @@ func (l *sessionList) Back() *Session {
 
 // PushFront inserts the element e at the front of list l.
 func (l *sessionList) PushFront(e *Session) {
-	e.SetNext(l.head)
-	e.SetPrev(nil)
+	sessionElementMapper{}.linkerFor(e).SetNext(l.head)
+	sessionElementMapper{}.linkerFor(e).SetPrev(nil)
 
 	if l.head != nil {
-		l.head.SetPrev(e)
+		sessionElementMapper{}.linkerFor(l.head).SetPrev(e)
 	} else {
 		l.tail = e
 	}
@@ -51,11 +68,11 @@ func (l *sessionList) PushFront(e *Session) {
 
 // PushBack inserts the element e at the back of list l.
 func (l *sessionList) PushBack(e *Session) {
-	e.SetNext(nil)
-	e.SetPrev(l.tail)
+	sessionElementMapper{}.linkerFor(e).SetNext(nil)
+	sessionElementMapper{}.linkerFor(e).SetPrev(l.tail)
 
 	if l.tail != nil {
-		l.tail.SetNext(e)
+		sessionElementMapper{}.linkerFor(l.tail).SetNext(e)
 	} else {
 		l.head = e
 	}
@@ -69,8 +86,8 @@ func (l *sessionList) PushBackList(m *sessionList) {
 		l.head = m.head
 		l.tail = m.tail
 	} else if m.head != nil {
-		l.tail.SetNext(m.head)
-		m.head.SetPrev(l.tail)
+		sessionElementMapper{}.linkerFor(l.tail).SetNext(m.head)
+		sessionElementMapper{}.linkerFor(m.head).SetPrev(l.tail)
 
 		l.tail = m.tail
 	}
@@ -81,13 +98,13 @@ func (l *sessionList) PushBackList(m *sessionList) {
 
 // InsertAfter inserts e after b.
 func (l *sessionList) InsertAfter(b, e *Session) {
-	a := b.Next()
-	e.SetNext(a)
-	e.SetPrev(b)
-	b.SetNext(e)
+	a := sessionElementMapper{}.linkerFor(b).Next()
+	sessionElementMapper{}.linkerFor(e).SetNext(a)
+	sessionElementMapper{}.linkerFor(e).SetPrev(b)
+	sessionElementMapper{}.linkerFor(b).SetNext(e)
 
 	if a != nil {
-		a.SetPrev(e)
+		sessionElementMapper{}.linkerFor(a).SetPrev(e)
 	} else {
 		l.tail = e
 	}
@@ -95,13 +112,13 @@ func (l *sessionList) InsertAfter(b, e *Session) {
 
 // InsertBefore inserts e before a.
 func (l *sessionList) InsertBefore(a, e *Session) {
-	b := a.Prev()
-	e.SetNext(a)
-	e.SetPrev(b)
-	a.SetPrev(e)
+	b := sessionElementMapper{}.linkerFor(a).Prev()
+	sessionElementMapper{}.linkerFor(e).SetNext(a)
+	sessionElementMapper{}.linkerFor(e).SetPrev(b)
+	sessionElementMapper{}.linkerFor(a).SetPrev(e)
 
 	if b != nil {
-		b.SetNext(e)
+		sessionElementMapper{}.linkerFor(b).SetNext(e)
 	} else {
 		l.head = e
 	}
@@ -109,17 +126,17 @@ func (l *sessionList) InsertBefore(a, e *Session) {
 
 // Remove removes e from l.
 func (l *sessionList) Remove(e *Session) {
-	prev := e.Prev()
-	next := e.Next()
+	prev := sessionElementMapper{}.linkerFor(e).Prev()
+	next := sessionElementMapper{}.linkerFor(e).Next()
 
 	if prev != nil {
-		prev.SetNext(next)
+		sessionElementMapper{}.linkerFor(prev).SetNext(next)
 	} else {
 		l.head = next
 	}
 
 	if next != nil {
-		next.SetPrev(prev)
+		sessionElementMapper{}.linkerFor(next).SetPrev(prev)
 	} else {
 		l.tail = prev
 	}
@@ -128,6 +145,8 @@ func (l *sessionList) Remove(e *Session) {
 // Entry is a default implementation of Linker. Users can add anonymous fields
 // of this type to their structs to make them automatically implement the
 // methods needed by List.
+//
+// +stateify savable
 type sessionEntry struct {
 	next *Session
 	prev *Session
@@ -144,11 +163,11 @@ func (e *sessionEntry) Prev() *Session {
 }
 
 // SetNext assigns 'entry' as the entry that follows e in the list.
-func (e *sessionEntry) SetNext(entry *Session) {
-	e.next = entry
+func (e *sessionEntry) SetNext(elem *Session) {
+	e.next = elem
 }
 
 // SetPrev assigns 'entry' as the entry that precedes e in the list.
-func (e *sessionEntry) SetPrev(entry *Session) {
-	e.prev = entry
+func (e *sessionEntry) SetPrev(elem *Session) {
+	e.prev = elem
 }

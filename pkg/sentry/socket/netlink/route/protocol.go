@@ -16,6 +16,8 @@
 package route
 
 import (
+	"bytes"
+
 	"gvisor.googlesource.com/gvisor/pkg/abi/linux"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/context"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/inet"
@@ -43,6 +45,8 @@ func typeKind(typ uint16) commandKind {
 }
 
 // Protocol implements netlink.Protocol.
+//
+// +stateify savable
 type Protocol struct{}
 
 var _ netlink.Protocol = (*Protocol)(nil)
@@ -95,9 +99,18 @@ func (p *Protocol) dumpLinks(ctx context.Context, hdr linux.NetlinkMessageHeader
 		})
 
 		m.PutAttrString(linux.IFLA_IFNAME, i.Name)
+		m.PutAttr(linux.IFLA_MTU, i.MTU)
 
-		// TODO: There are many more attributes, such as
-		// MAC address.
+		mac := make([]byte, 6)
+		brd := mac
+		if len(i.Addr) > 0 {
+			mac = i.Addr
+			brd = bytes.Repeat([]byte{0xff}, len(i.Addr))
+		}
+		m.PutAttr(linux.IFLA_ADDRESS, mac)
+		m.PutAttr(linux.IFLA_BROADCAST, brd)
+
+		// TODO: There are many more attributes.
 	}
 
 	return nil

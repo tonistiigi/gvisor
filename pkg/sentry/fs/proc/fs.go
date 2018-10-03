@@ -22,6 +22,8 @@ import (
 )
 
 // filesystem is a procfs.
+//
+// +stateify savable
 type filesystem struct{}
 
 func init() {
@@ -39,6 +41,11 @@ func (*filesystem) Name() string {
 
 // AllowUserMount allows users to mount(2) this file system.
 func (*filesystem) AllowUserMount() bool {
+	return true
+}
+
+// AllowUserList allows this filesystem to be listed in /proc/filesystems.
+func (*filesystem) AllowUserList() bool {
 	return true
 }
 

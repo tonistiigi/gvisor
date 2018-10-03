@@ -26,6 +26,14 @@ const (
 	disabledChar = 0
 )
 
+// Winsize is struct winsize, defined in uapi/asm-generic/termios.h.
+type Winsize struct {
+	Row    uint16
+	Col    uint16
+	Xpixel uint16
+	Ypixel uint16
+}
+
 // Termios is struct termios, defined in uapi/asm-generic/termbits.h.
 type Termios struct {
 	InputFlags        uint32
@@ -38,6 +46,8 @@ type Termios struct {
 
 // KernelTermios is struct ktermios/struct termios2, defined in
 // uapi/asm-generic/termbits.h.
+//
+// +stateify savable
 type KernelTermios struct {
 	InputFlags        uint32
 	OutputFlags       uint32
@@ -284,18 +294,18 @@ var DefaultControlCharacters = [NumControlCharacters]uint8{
 	'\x7f',                 // VERASE = DEL
 	ControlCharacter('U'),  // VKILL = ^U
 	ControlCharacter('D'),  // VEOF = ^D
-	0, // VTIME
-	1, // VMIN
-	0, // VSWTC
-	ControlCharacter('Q'), // VSTART = ^Q
-	ControlCharacter('S'), // VSTOP = ^S
-	ControlCharacter('Z'), // VSUSP = ^Z
-	0, // VEOL
-	ControlCharacter('R'), // VREPRINT = ^R
-	ControlCharacter('O'), // VDISCARD = ^O
-	ControlCharacter('W'), // VWERASE = ^W
-	ControlCharacter('V'), // VLNEXT = ^V
-	0, // VEOL2
+	0,                      // VTIME
+	1,                      // VMIN
+	0,                      // VSWTC
+	ControlCharacter('Q'),  // VSTART = ^Q
+	ControlCharacter('S'),  // VSTOP = ^S
+	ControlCharacter('Z'),  // VSUSP = ^Z
+	0,                      // VEOL
+	ControlCharacter('R'),  // VREPRINT = ^R
+	ControlCharacter('O'),  // VDISCARD = ^O
+	ControlCharacter('W'),  // VWERASE = ^W
+	ControlCharacter('V'),  // VLNEXT = ^V
+	0,                      // VEOL2
 }
 
 // MasterTermios is the terminal configuration of the master end of a Unix98
@@ -317,4 +327,14 @@ var DefaultSlaveTermios = KernelTermios{
 	ControlCharacters: DefaultControlCharacters,
 	InputSpeed:        38400,
 	OutputSpeed:       38400,
+}
+
+// WindowSize corresponds to struct winsize defined in
+// include/uapi/asm-generic/termios.h.
+//
+// +stateify savable
+type WindowSize struct {
+	Rows uint16
+	Cols uint16
+	_    [4]byte // Padding for 2 unused shorts.
 }

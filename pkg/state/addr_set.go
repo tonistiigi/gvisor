@@ -29,6 +29,8 @@ const (
 // A Set is a mapping of segments with non-overlapping Range keys. The zero
 // value for a Set is an empty set. Set values are not safely movable nor
 // copyable. Set is thread-compatible.
+//
+// +stateify savable
 type addrSet struct {
 	root addrnode `state:".(*addrSegmentDataSlices)"`
 }
@@ -527,6 +529,7 @@ func (s *addrSet) ApplyContiguous(r addrRange, fn func(seg addrIterator)) addrGa
 	}
 }
 
+// +stateify savable
 type addrnode struct {
 	// An internal binary tree node looks like:
 	//
@@ -1218,6 +1221,8 @@ func (n *addrnode) writeDebugString(buf *bytes.Buffer, prefix string) {
 // SegmentDataSlices represents segments from a set as slices of start, end, and
 // values. SegmentDataSlices is primarily used as an intermediate representation
 // for save/restore and the layout here is optimized for that.
+//
+// +stateify savable
 type addrSegmentDataSlices struct {
 	Start  []uintptr
 	End    []uintptr

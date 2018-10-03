@@ -27,6 +27,8 @@ import (
 
 // masterInodeOperations are the fs.InodeOperations for the master end of the
 // Terminal (ptmx file).
+//
+// +stateify savable
 type masterInodeOperations struct {
 	inodeOperations
 
@@ -96,6 +98,8 @@ func (mi *masterInodeOperations) GetFile(ctx context.Context, d *fs.Dirent, flag
 }
 
 // masterFileOperations are the fs.FileOperations for the master end of a terminal.
+//
+// +stateify savable
 type masterFileOperations struct {
 	fsutil.PipeSeek      `state:"nosave"`
 	fsutil.NotDirReaddir `state:"nosave"`
@@ -120,14 +124,12 @@ func (mf *masterFileOperations) Release() {
 
 // EventRegister implements waiter.Waitable.EventRegister.
 func (mf *masterFileOperations) EventRegister(e *waiter.Entry, mask waiter.EventMask) {
-	mf.t.ld.inQueue.EventRegister(e, mask)
-	mf.t.ld.outQueue.EventRegister(e, mask)
+	mf.t.ld.masterWaiter.EventRegister(e, mask)
 }
 
 // EventUnregister implements waiter.Waitable.EventUnregister.
 func (mf *masterFileOperations) EventUnregister(e *waiter.Entry) {
-	mf.t.ld.inQueue.EventUnregister(e)
-	mf.t.ld.outQueue.EventUnregister(e)
+	mf.t.ld.masterWaiter.EventUnregister(e)
 }
 
 // Readiness implements waiter.Waitable.Readiness.
@@ -170,6 +172,10 @@ func (mf *masterFileOperations) Ioctl(ctx context.Context, io usermem.IO, args a
 	case linux.TIOCSPTLCK:
 		// TODO: Implement pty locking. For now just pretend we do.
 		return 0, nil
+	case linux.TIOCGWINSZ:
+		return 0, mf.t.ld.windowSize(ctx, io, args)
+	case linux.TIOCSWINSZ:
+		return 0, mf.t.ld.setWindowSize(ctx, io, args)
 	default:
 		return 0, syserror.ENOTTY
 	}

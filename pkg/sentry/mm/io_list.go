@@ -1,5 +1,20 @@
 package mm
 
+// ElementMapper provides an identity mapping by default.
+//
+// This can be replaced to provide a struct that maps elements to linker
+// objects, if they are not the same. An ElementMapper is not typically
+// required if: Linker is left as is, Element is left as is, or Linker and
+// Element are the same type.
+type ioElementMapper struct{}
+
+// linkerFor maps an Element to a Linker.
+//
+// This default implementation should be inlined.
+//
+//go:nosplit
+func (ioElementMapper) linkerFor(elem *ioResult) *ioResult { return elem }
+
 // List is an intrusive list. Entries can be added to or removed from the list
 // in O(1) time and with no additional memory allocations.
 //
@@ -9,6 +24,8 @@ package mm
 //      for e := l.Front(); e != nil; e = e.Next() {
 // 		// do something with e.
 //      }
+//
+// +stateify savable
 type ioList struct {
 	head *ioResult
 	tail *ioResult
@@ -37,11 +54,11 @@ func (l *ioList) Back() *ioResult {
 
 // PushFront inserts the element e at the front of list l.
 func (l *ioList) PushFront(e *ioResult) {
-	e.SetNext(l.head)
-	e.SetPrev(nil)
+	ioElementMapper{}.linkerFor(e).SetNext(l.head)
+	ioElementMapper{}.linkerFor(e).SetPrev(nil)
 
 	if l.head != nil {
-		l.head.SetPrev(e)
+		ioElementMapper{}.linkerFor(l.head).SetPrev(e)
 	} else {
 		l.tail = e
 	}
@@ -51,11 +68,11 @@ func (l *ioList) PushFront(e *ioResult) {
 
 // PushBack inserts the element e at the back of list l.
 func (l *ioList) PushBack(e *ioResult) {
-	e.SetNext(nil)
-	e.SetPrev(l.tail)
+	ioElementMapper{}.linkerFor(e).SetNext(nil)
+	ioElementMapper{}.linkerFor(e).SetPrev(l.tail)
 
 	if l.tail != nil {
-		l.tail.SetNext(e)
+		ioElementMapper{}.linkerFor(l.tail).SetNext(e)
 	} else {
 		l.head = e
 	}
@@ -69,8 +86,8 @@ func (l *ioList) PushBackList(m *ioList) {
 		l.head = m.head
 		l.tail = m.tail
 	} else if m.head != nil {
-		l.tail.SetNext(m.head)
-		m.head.SetPrev(l.tail)
+		ioElementMapper{}.linkerFor(l.tail).SetNext(m.head)
+		ioElementMapper{}.linkerFor(m.head).SetPrev(l.tail)
 
 		l.tail = m.tail
 	}
@@ -81,13 +98,13 @@ func (l *ioList) PushBackList(m *ioList) {
 
 // InsertAfter inserts e after b.
 func (l *ioList) InsertAfter(b, e *ioResult) {
-	a := b.Next()
-	e.SetNext(a)
-	e.SetPrev(b)
-	b.SetNext(e)
+	a := ioElementMapper{}.linkerFor(b).Next()
+	ioElementMapper{}.linkerFor(e).SetNext(a)
+	ioElementMapper{}.linkerFor(e).SetPrev(b)
+	ioElementMapper{}.linkerFor(b).SetNext(e)
 
 	if a != nil {
-		a.SetPrev(e)
+		ioElementMapper{}.linkerFor(a).SetPrev(e)
 	} else {
 		l.tail = e
 	}
@@ -95,13 +112,13 @@ func (l *ioList) InsertAfter(b, e *ioResult) {
 
 // InsertBefore inserts e before a.
 func (l *ioList) InsertBefore(a, e *ioResult) {
-	b := a.Prev()
-	e.SetNext(a)
-	e.SetPrev(b)
-	a.SetPrev(e)
+	b := ioElementMapper{}.linkerFor(a).Prev()
+	ioElementMapper{}.linkerFor(e).SetNext(a)
+	ioElementMapper{}.linkerFor(e).SetPrev(b)
+	ioElementMapper{}.linkerFor(a).SetPrev(e)
 
 	if b != nil {
-		b.SetNext(e)
+		ioElementMapper{}.linkerFor(b).SetNext(e)
 	} else {
 		l.head = e
 	}
@@ -109,17 +126,17 @@ func (l *ioList) InsertBefore(a, e *ioResult) {
 
 // Remove removes e from l.
 func (l *ioList) Remove(e *ioResult) {
-	prev := e.Prev()
-	next := e.Next()
+	prev := ioElementMapper{}.linkerFor(e).Prev()
+	next := ioElementMapper{}.linkerFor(e).Next()
 
 	if prev != nil {
-		prev.SetNext(next)
+		ioElementMapper{}.linkerFor(prev).SetNext(next)
 	} else {
 		l.head = next
 	}
 
 	if next != nil {
-		next.SetPrev(prev)
+		ioElementMapper{}.linkerFor(next).SetPrev(prev)
 	} else {
 		l.tail = prev
 	}
@@ -128,6 +145,8 @@ func (l *ioList) Remove(e *ioResult) {
 // Entry is a default implementation of Linker. Users can add anonymous fields
 // of this type to their structs to make them automatically implement the
 // methods needed by List.
+//
+// +stateify savable
 type ioEntry struct {
 	next *ioResult
 	prev *ioResult
@@ -144,11 +163,11 @@ func (e *ioEntry) Prev() *ioResult {
 }
 
 // SetNext assigns 'entry' as the entry that follows e in the list.
-func (e *ioEntry) SetNext(entry *ioResult) {
-	e.next = entry
+func (e *ioEntry) SetNext(elem *ioResult) {
+	e.next = elem
 }
 
 // SetPrev assigns 'entry' as the entry that precedes e in the list.
-func (e *ioEntry) SetPrev(entry *ioResult) {
-	e.prev = entry
+func (e *ioEntry) SetPrev(elem *ioResult) {
+	e.prev = elem
 }

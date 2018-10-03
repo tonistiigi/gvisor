@@ -16,7 +16,6 @@ package boot
 
 import (
 	"fmt"
-	"syscall"
 
 	"gvisor.googlesource.com/gvisor/pkg/sentry/context"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/fs"
@@ -26,27 +25,27 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/sentry/limits"
 )
 
-// createFDMap creates an fd map that contains stdin, stdout, and stderr. If
-// console is true, then ioctl calls will be passed through to the host fd.
-//
-// TODO: We currently arn't passing any FDs in to the sandbox, so
-// there's not much else for this function to do.  It will get more complicated
-// when gofers enter the picture.  Also the LISTEN_FDS environment variable
-// allows passing arbitrary FDs to the sandbox, which we do not yet support.
-func createFDMap(ctx context.Context, k *kernel.Kernel, l *limits.LimitSet, console bool) (*kernel.FDMap, error) {
+// createFDMap creates an FD map that contains stdin, stdout, and stderr. If
+// console is true, then ioctl calls will be passed through to the host FD.
+// Upon success, createFDMap dups then closes stdioFDs.
+func createFDMap(ctx context.Context, k *kernel.Kernel, l *limits.LimitSet, console bool, stdioFDs []int) (*kernel.FDMap, error) {
+	if len(stdioFDs) != 3 {
+		return nil, fmt.Errorf("stdioFDs should contain exactly 3 FDs (stdin, stdout, and stderr), but %d FDs received", len(stdioFDs))
+	}
+
 	fdm := k.NewFDMap()
 	defer fdm.DecRef()
 
-	// Maps sandbox fd to host fd.
+	// Maps sandbox FD to host FD.
 	fdMap := map[int]int{
-		0: syscall.Stdin,
-		1: syscall.Stdout,
-		2: syscall.Stderr,
+		0: stdioFDs[0],
+		1: stdioFDs[1],
+		2: stdioFDs[2],
 	}
 	mounter := fs.FileOwnerFromContext(ctx)
 
 	for sfd, hfd := range fdMap {
-		file, err := host.ImportFile(ctx, hfd, mounter, console /* allow ioctls */)
+		file, err := host.ImportFile(ctx, hfd, mounter, console /* isTTY */)
 		if err != nil {
 			return nil, fmt.Errorf("failed to import fd %d: %v", hfd, err)
 		}

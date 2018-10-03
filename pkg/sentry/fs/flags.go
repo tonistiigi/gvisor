@@ -14,7 +14,13 @@
 
 package fs
 
+import (
+	"gvisor.googlesource.com/gvisor/pkg/abi/linux"
+)
+
 // FileFlags encodes file flags.
+//
+// +stateify savable
 type FileFlags struct {
 	// Direct indicates that I/O should be done directly.
 	Direct bool
@@ -45,6 +51,12 @@ type FileFlags struct {
 
 	// Async indicates that this file sends signals on IO events.
 	Async bool
+
+	// LargeFile indicates that this file should be opened even if it has
+	// size greater than linux's off_t. When running in 64-bit mode,
+	// Linux sets this flag for all files. Since gVisor is only compatible
+	// with 64-bit Linux, it also sets this flag for all files.
+	LargeFile bool
 }
 
 // SettableFileFlags is a subset of FileFlags above that can be changed
@@ -71,4 +83,39 @@ func (f FileFlags) Settable() SettableFileFlags {
 		Append:      f.Append,
 		Async:       f.Async,
 	}
+}
+
+// ToLinux converts a FileFlags object to a Linux representation.
+func (f FileFlags) ToLinux() (mask uint) {
+	if f.Direct {
+		mask |= linux.O_DIRECT
+	}
+	if f.NonBlocking {
+		mask |= linux.O_NONBLOCK
+	}
+	if f.Sync {
+		mask |= linux.O_SYNC
+	}
+	if f.Append {
+		mask |= linux.O_APPEND
+	}
+	if f.Directory {
+		mask |= linux.O_DIRECTORY
+	}
+	if f.Async {
+		mask |= linux.O_ASYNC
+	}
+	if f.LargeFile {
+		mask |= linux.O_LARGEFILE
+	}
+
+	switch {
+	case f.Read && f.Write:
+		mask |= linux.O_RDWR
+	case f.Write:
+		mask |= linux.O_WRONLY
+	case f.Read:
+		mask |= linux.O_RDONLY
+	}
+	return
 }

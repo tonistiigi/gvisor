@@ -24,6 +24,7 @@ import (
 	"syscall"
 	"time"
 
+	"gvisor.googlesource.com/gvisor/pkg/abi"
 	"gvisor.googlesource.com/gvisor/pkg/abi/linux"
 	"gvisor.googlesource.com/gvisor/pkg/bits"
 	"gvisor.googlesource.com/gvisor/pkg/eventchannel"
@@ -45,6 +46,22 @@ var LogMaximumSize uint = DefaultLogMaximumSize
 // etc.) sent over the event channel. Default is 0 because most clients cannot
 // do anything useful with binary text dump of byte array arguments.
 var EventMaximumSize uint
+
+// ItimerTypes are the possible itimer types.
+var ItimerTypes = abi.ValueSet{
+	{
+		Value: linux.ITIMER_REAL,
+		Name:  "ITIMER_REAL",
+	},
+	{
+		Value: linux.ITIMER_VIRTUAL,
+		Name:  "ITIMER_VIRTUAL",
+	},
+	{
+		Value: linux.ITIMER_PROF,
+		Name:  "ITIMER_PROF",
+	},
+}
 
 func iovecs(t *kernel.Task, addr usermem.Addr, iovcnt int, printContent bool, maxBytes uint64) string {
 	if iovcnt < 0 || iovcnt > linux.UIO_MAXIOV {
@@ -224,6 +241,16 @@ func itimerval(t *kernel.Task, addr usermem.Addr) string {
 	return fmt.Sprintf("%#x {interval=%s, value=%s}", addr, interval, value)
 }
 
+func itimerspec(t *kernel.Task, addr usermem.Addr) string {
+	if addr == 0 {
+		return "null"
+	}
+
+	interval := timespec(t, addr)
+	value := timespec(t, addr+usermem.Addr(binary.Size(linux.Timespec{})))
+	return fmt.Sprintf("%#x {interval=%s, value=%s}", addr, interval, value)
+}
+
 func stringVector(t *kernel.Task, addr usermem.Addr) string {
 	vec, err := t.CopyInVector(addr, slinux.ExecMaxElemSize, slinux.ExecMaxTotalSize)
 	if err != nil {
@@ -296,6 +323,8 @@ func (i *SyscallInfo) pre(t *kernel.Task, args arch.SyscallArguments, maximumBlo
 			output = append(output, utimensTimespec(t, args[arg].Pointer()))
 		case ItimerVal:
 			output = append(output, itimerval(t, args[arg].Pointer()))
+		case ItimerSpec:
+			output = append(output, itimerspec(t, args[arg].Pointer()))
 		case Timeval:
 			output = append(output, timeval(t, args[arg].Pointer()))
 		case Utimbuf:
@@ -310,6 +339,8 @@ func (i *SyscallInfo) pre(t *kernel.Task, args arch.SyscallArguments, maximumBlo
 			output = append(output, futex(uint64(args[arg].Uint())))
 		case PtraceRequest:
 			output = append(output, PtraceRequestSet.Parse(args[arg].Uint64()))
+		case ItimerType:
+			output = append(output, ItimerTypes.Parse(uint64(args[arg].Int())))
 		case Oct:
 			output = append(output, "0o"+strconv.FormatUint(args[arg].Uint64(), 8))
 		case Hex:
@@ -346,6 +377,8 @@ func (i *SyscallInfo) post(t *kernel.Task, args arch.SyscallArguments, rval uint
 			output[arg] = msghdr(t, args[arg].Pointer(), false /* content */, uint64(maximumBlobSize))
 		case RecvMsgHdr:
 			output[arg] = msghdr(t, args[arg].Pointer(), true /* content */, uint64(maximumBlobSize))
+		case PostPath:
+			output[arg] = path(t, args[arg].Pointer())
 		case PipeFDs:
 			output[arg] = fdpair(t, args[arg].Pointer())
 		case Uname:
@@ -360,6 +393,8 @@ func (i *SyscallInfo) post(t *kernel.Task, args arch.SyscallArguments, rval uint
 			output[arg] = timespec(t, args[arg].Pointer())
 		case PostItimerVal:
 			output[arg] = itimerval(t, args[arg].Pointer())
+		case PostItimerSpec:
+			output[arg] = itimerspec(t, args[arg].Pointer())
 		case Timeval:
 			output[arg] = timeval(t, args[arg].Pointer())
 		case Rusage:

@@ -83,6 +83,8 @@ var (
 )
 
 // filesystem is a 9p client.
+//
+// +stateify savable
 type filesystem struct{}
 
 func init() {
@@ -101,6 +103,11 @@ func (*filesystem) Name() string {
 // AllowUserMount prohibits users from using mount(2) with this file system.
 func (*filesystem) AllowUserMount() bool {
 	return false
+}
+
+// AllowUserList allows this filesystem to be listed in /proc/filesystems.
+func (*filesystem) AllowUserList() bool {
+	return true
 }
 
 // Flags returns that there is nothing special about this file system.

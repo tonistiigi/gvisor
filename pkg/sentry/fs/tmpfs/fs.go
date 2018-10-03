@@ -47,6 +47,8 @@ const (
 var modeRegexp = regexp.MustCompile("0[0-7][0-7][0-7]")
 
 // Filesystem is a tmpfs.
+//
+// +stateify savable
 type Filesystem struct{}
 
 func init() {
@@ -64,6 +66,11 @@ func (*Filesystem) Name() string {
 
 // AllowUserMount allows users to mount(2) this file system.
 func (*Filesystem) AllowUserMount() bool {
+	return true
+}
+
+// AllowUserList allows this filesystem to be listed in /proc/filesystems.
+func (*Filesystem) AllowUserList() bool {
 	return true
 }
 

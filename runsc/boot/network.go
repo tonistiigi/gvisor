@@ -86,7 +86,7 @@ func (r *Route) toTcpipRoute(id tcpip.NICID) tcpip.Route {
 	return tcpip.Route{
 		Destination: ipToAddress(r.Destination),
 		Gateway:     ipToAddress(r.Gateway),
-		Mask:        ipToAddress(net.IP(r.Mask)),
+		Mask:        ipToAddressMask(net.IP(r.Mask)),
 		NIC:         id,
 	}
 }
@@ -133,15 +133,16 @@ func (n *Network) CreateLinksAndRoutes(args *CreateLinksAndRoutesArgs, _ *struct
 			return fmt.Errorf("failed to dup FD %v: %v", oldFD, err)
 		}
 
+		mac := tcpip.LinkAddress(generateRndMac())
 		linkEP := fdbased.New(&fdbased.Options{
-			FD:              newFD,
-			MTU:             uint32(link.MTU),
-			ChecksumOffload: false,
-			EthernetHeader:  true,
-			Address:         tcpip.LinkAddress(generateRndMac()),
+			FD:             newFD,
+			MTU:            uint32(link.MTU),
+			EthernetHeader: true,
+			HandleLocal:    true,
+			Address:        mac,
 		})
 
-		log.Infof("Enabling interface %q with id %d on addresses %+v", link.Name, nicID, link.Addresses)
+		log.Infof("Enabling interface %q with id %d on addresses %+v (%v)", link.Name, nicID, link.Addresses, mac)
 		if err := n.createNICWithAddrs(nicID, link.Name, linkEP, link.Addresses); err != nil {
 			return err
 		}
@@ -200,6 +201,12 @@ func ipToAddressAndProto(ip net.IP) (tcpip.NetworkProtocolNumber, tcpip.Address)
 func ipToAddress(ip net.IP) tcpip.Address {
 	_, addr := ipToAddressAndProto(ip)
 	return addr
+}
+
+// ipToAddressMask converts IP to tcpip.AddressMask, ignoring the protocol.
+func ipToAddressMask(ip net.IP) tcpip.AddressMask {
+	_, addr := ipToAddressAndProto(ip)
+	return tcpip.AddressMask(addr)
 }
 
 // generateRndMac returns a random local MAC address.

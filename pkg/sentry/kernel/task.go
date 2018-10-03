@@ -52,6 +52,8 @@ import (
 // All fields that are "exclusive to the task goroutine" can only be accessed
 // by the task goroutine while it is running. The task goroutine does not
 // require synchronization to read or write these fields.
+//
+// +stateify savable
 type Task struct {
 	taskNode
 
@@ -96,6 +98,22 @@ type Task struct {
 	// (hereafter "the signal mutex"); see comment on
 	// ThreadGroup.signalHandlers.
 	pendingSignals pendingSignals
+
+	// signalMask is the set of signals whose delivery is currently blocked.
+	//
+	// signalMask is accessed using atomic memory operations, and is protected
+	// by the signal mutex (such that reading signalMask is safe if either the
+	// signal mutex is locked or if atomic memory operations are used, while
+	// writing signalMask requires both). signalMask is owned by the task
+	// goroutine.
+	signalMask linux.SignalSet
+
+	// If the task goroutine is currently executing Task.sigtimedwait,
+	// realSignalMask is the previous value of signalMask, which has temporarily
+	// been replaced by Task.sigtimedwait. Otherwise, realSignalMask is 0.
+	//
+	// realSignalMask is exclusive to the task goroutine.
+	realSignalMask linux.SignalSet
 
 	// If haveSavedSignalMask is true, savedSignalMask is the signal mask that
 	// should be applied after the task has either delivered one signal to a
@@ -180,25 +198,37 @@ type Task struct {
 	// syscallRestartBlock is exclusive to the task goroutine.
 	syscallRestartBlock SyscallRestartBlock
 
-	// mu protects some of the following fields.
-	mu sync.Mutex `state:"nosave"`
-
-	// tc and tr form the majority of the task's data.
-	//
-	// tc and tr are protected by mu. tc and tr are owned by the task
-	// goroutine. tr.signalMask is protected by the signal mutex and must be
-	// written using atomic memory operations (such that reading tr.signalMask
-	// is safe if the signal mutex is locked or if atomic memory operations are
-	// used), but is also owned by the task goroutine.
-	tc TaskContext
-	tr TaskResources
-
 	// p provides the mechanism by which the task runs code in userspace. The p
 	// interface object is immutable.
 	p platform.Context `state:"nosave"`
 
 	// k is the Kernel that this task belongs to. The k pointer is immutable.
 	k *Kernel
+
+	// containerID has no equivalent in Linux; it's used by runsc to track all
+	// tasks that belong to a given containers since cgroups aren't implemented.
+	// It's inherited by the children, is immutable, and may be empty.
+	//
+	// NOTE: cgroups can be used to track this when implemented.
+	containerID string
+
+	// mu protects some of the following fields.
+	mu sync.Mutex `state:"nosave"`
+
+	// tc holds task data provided by the ELF loader.
+	//
+	// tc is protected by mu, and is owned by the task goroutine.
+	tc TaskContext
+
+	// fsc is the task's filesystem context.
+	//
+	// fsc is protected by mu, and is owned by the task goroutine.
+	fsc *FSContext
+
+	// fds is the task's file descriptor table.
+	//
+	// fds is protected by mu, and is owned by the task goroutine.
+	fds *FDMap
 
 	// If vforkParent is not nil, it is the task that created this task with
 	// vfork() or clone(CLONE_VFORK), and should have its vforkStop ended when
@@ -334,18 +364,25 @@ type Task struct {
 
 	// creds is the task's credentials.
 	//
-	// creds is protected by mu.
+	// creds is protected by mu, however the value itself is immutable and can
+	// only be changed by a copy. After reading the pointer, access will
+	// proceed outside the scope of mu. creds is owned by the task goroutine.
 	creds *auth.Credentials
 
 	// utsns is the task's UTS namespace.
 	//
-	// utsns is protected by mu.
+	// utsns is protected by mu. utsns is owned by the task goroutine.
 	utsns *UTSNamespace
 
 	// ipcns is the task's IPC namespace.
 	//
-	// ipcns is protected by mu.
+	// ipcns is protected by mu. ipcns is owned by the task goroutine.
 	ipcns *IPCNamespace
+
+	// abstractSockets tracks abstract sockets that are in use.
+	//
+	// abstractSockets is protected by mu.
+	abstractSockets *AbstractSocketNamespace
 
 	// parentDeathSignal is sent to this task's thread group when its parent exits.
 	//
@@ -353,11 +390,11 @@ type Task struct {
 	parentDeathSignal linux.Signal
 
 	// syscallFilters is all seccomp-bpf syscall filters applicable to the
-	// task, in the order in which they were installed.
+	// task, in the order in which they were installed. The type of the atomic
+	// is []bpf.Program. Writing needs to be protected by mu.
 	//
-	// syscallFilters is protected by mu. syscallFilters is owned by the task
-	// goroutine.
-	syscallFilters []bpf.Program
+	// syscallFilters is owned by the task goroutine.
+	syscallFilters atomic.Value `state:".([]bpf.Program)"`
 
 	// If cleartid is non-zero, treat it as a pointer to a ThreadID in the
 	// task's virtual address space; when the task exits, set the pointed-to
@@ -467,6 +504,17 @@ func (t *Task) loadLogPrefix(prefix string) {
 	t.logPrefix.Store(prefix)
 }
 
+func (t *Task) saveSyscallFilters() []bpf.Program {
+	if f := t.syscallFilters.Load(); f != nil {
+		return f.([]bpf.Program)
+	}
+	return nil
+}
+
+func (t *Task) loadSyscallFilters(filters []bpf.Program) {
+	t.syscallFilters.Store(filters)
+}
+
 // afterLoad is invoked by stateify.
 func (t *Task) afterLoad() {
 	t.interruptChan = make(chan struct{}, 1)
@@ -483,13 +531,6 @@ func (t *Task) afterLoad() {
 // copyScratchBufferLen is the length of the copyScratchBuffer field of the Task
 // struct.
 const copyScratchBufferLen = 52
-
-// TaskMaybe is the interface for extracting Tasks out of things which may be
-// or contain Task objects.
-type TaskMaybe interface {
-	// ExtractTask returns the Task.
-	ExtractTask() *Task
-}
 
 // CopyScratchBuffer returns a scratch buffer to be used in CopyIn/CopyOut
 // functions. It must only be used within those functions and can only be used
@@ -510,40 +551,15 @@ func (t *Task) FutexWaiter() *futex.Waiter {
 	return t.futexWaiter
 }
 
-// ExtractTask implements TaskMaybe.ExtractTask.
-func (t *Task) ExtractTask() *Task {
-	return t
-}
-
-// TaskContext returns t's TaskContext.
-//
-// Precondition: The caller must be running on the task goroutine, or t.mu must
-// be locked.
-func (t *Task) TaskContext() *TaskContext {
-	return &t.tc
-}
-
-// TaskResources returns t's TaskResources.
-//
-// Precondition: The caller must be running on the task goroutine, or t.mu must
-// be locked.
-func (t *Task) TaskResources() *TaskResources {
-	return &t.tr
-}
-
-// WithMuLocked executes f with t.mu locked.
-func (t *Task) WithMuLocked(f func(*Task)) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	f(t)
-}
-
 // Kernel returns the Kernel containing t.
 func (t *Task) Kernel() *Kernel {
 	return t.k
 }
 
 // Value implements context.Context.Value.
+//
+// Preconditions: The caller must be running on the task goroutine (as implied
+// by the requirements of context.Context).
 func (t *Task) Value(key interface{}) interface{} {
 	switch key {
 	case CtxCanTrace:
@@ -563,7 +579,7 @@ func (t *Task) Value(key interface{}) interface{} {
 	case context.CtxThreadGroupID:
 		return int32(t.ThreadGroup().ID())
 	case fs.CtxRoot:
-		return t.FSContext().RootDirectory()
+		return t.fsc.RootDirectory()
 	case inet.CtxStack:
 		return t.NetworkContext()
 	case ktime.CtxRealtimeClock:
@@ -609,4 +625,68 @@ func (t *Task) SyscallRestartBlock() SyscallRestartBlock {
 	// accidentally reuse it.
 	t.syscallRestartBlock = nil
 	return r
+}
+
+// IsChrooted returns true if the root directory of t's FSContext is not the
+// root directory of t's MountNamespace.
+//
+// Preconditions: The caller must be running on the task goroutine, or t.mu
+// must be locked.
+func (t *Task) IsChrooted() bool {
+	realRoot := t.k.mounts.Root()
+	defer realRoot.DecRef()
+	root := t.fsc.RootDirectory()
+	if root != nil {
+		defer root.DecRef()
+	}
+	return root != realRoot
+}
+
+// TaskContext returns t's TaskContext.
+//
+// Precondition: The caller must be running on the task goroutine, or t.mu must
+// be locked.
+func (t *Task) TaskContext() *TaskContext {
+	return &t.tc
+}
+
+// FSContext returns t's FSContext. FSContext does not take an additional
+// reference on the returned FSContext.
+//
+// Precondition: The caller must be running on the task goroutine, or t.mu must
+// be locked.
+func (t *Task) FSContext() *FSContext {
+	return t.fsc
+}
+
+// FDMap returns t's FDMap. FDMap does not take an additional reference on the
+// returned FDMap.
+//
+// Precondition: The caller must be running on the task goroutine, or t.mu must
+// be locked.
+func (t *Task) FDMap() *FDMap {
+	return t.fds
+}
+
+// WithMuLocked executes f with t.mu locked.
+func (t *Task) WithMuLocked(f func(*Task)) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	f(t)
+}
+
+// MountNamespace returns t's MountNamespace. MountNamespace does not take an
+// additional reference on the returned MountNamespace.
+func (t *Task) MountNamespace() *fs.MountNamespace {
+	return t.k.mounts
+}
+
+// AbstractSockets returns t's AbstractSocketNamespace.
+func (t *Task) AbstractSockets() *AbstractSocketNamespace {
+	return t.abstractSockets
+}
+
+// ContainerID returns t's container ID.
+func (t *Task) ContainerID() string {
+	return t.containerID
 }

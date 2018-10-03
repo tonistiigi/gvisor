@@ -1,6 +1,8 @@
 package auth
 
 // A Range represents a contiguous range of T.
+//
+// +stateify savable
 type idMapRange struct {
 	// Start is the inclusive start of the range.
 	Start uint32

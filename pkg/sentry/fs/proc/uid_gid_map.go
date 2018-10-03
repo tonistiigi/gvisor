@@ -29,6 +29,8 @@ import (
 
 // An idMapSeqSource is a seqfile.SeqSource that returns UID or GID mappings
 // from a task's user namespace.
+//
+// +stateify savable
 type idMapSeqSource struct {
 	t    *kernel.Task
 	gids bool
@@ -66,10 +68,13 @@ func (imss *idMapSeqSource) ReadSeqFileData(ctx context.Context, handle seqfile.
 }
 
 // TODO: Fix issue requiring idMapSeqHandle wrapping an int.
+//
+// +stateify savable
 type idMapSeqHandle struct {
 	value int
 }
 
+// +stateify savable
 type idMapSeqFile struct {
 	seqfile.SeqFile
 }

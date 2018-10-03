@@ -22,6 +22,7 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/sentry/usermem"
 )
 
+// +stateify savable
 type file struct {
 	fs.InodeOperations
 
@@ -50,7 +51,8 @@ func (f *file) UnstableAttr(ctx context.Context, inode *fs.Inode) (fs.UnstableAt
 		return fs.UnstableAttr{}, err
 	}
 	if f.t != nil {
-		uattr.Owner = fs.FileOwnerFromContext(f.t)
+		creds := f.t.Credentials()
+		uattr.Owner = fs.FileOwner{creds.EffectiveKUID, creds.EffectiveKGID}
 	}
 	return uattr, nil
 }

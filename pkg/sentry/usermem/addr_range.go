@@ -1,6 +1,8 @@
 package usermem
 
 // A Range represents a contiguous range of T.
+//
+// +stateify savable
 type AddrRange struct {
 	// Start is the inclusive start of the range.
 	Start Addr

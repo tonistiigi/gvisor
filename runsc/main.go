@@ -17,13 +17,11 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"syscall"
-	"time"
 
 	"context"
 	"flag"
@@ -32,6 +30,7 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/log"
 	"gvisor.googlesource.com/gvisor/runsc/boot"
 	"gvisor.googlesource.com/gvisor/runsc/cmd"
+	"gvisor.googlesource.com/gvisor/runsc/specutils"
 )
 
 var (
@@ -48,6 +47,8 @@ var (
 	// Debugging flags.
 	debugLogDir = flag.String("debug-log-dir", "", "additional location for logs. It creates individual log files per command")
 	logPackets  = flag.Bool("log-packets", false, "enable network packet logging")
+	logFD       = flag.Int("log-fd", -1, "file descriptor to log to.  If set, the 'log' flag is ignored.")
+	debugLogFD  = flag.Int("debug-log-fd", -1, "file descriptor to write debug logs to.  If set, the 'debug-log-dir' flag is ignored.")
 
 	// Debugging flags: strace related
 	strace         = flag.Bool("strace", false, "enable strace")
@@ -57,12 +58,13 @@ var (
 	// Flags that control sandbox runtime behavior.
 	platform       = flag.String("platform", "ptrace", "specifies which platform to use: ptrace (default), kvm")
 	network        = flag.String("network", "sandbox", "specifies which network to use: sandbox (default), host, none. Using network inside the sandbox is more secure because it's isolated from the host network.")
-	fileAccess     = flag.String("file-access", "proxy", "specifies which filesystem to use: proxy (default), direct. Using a proxy is more secure because it disallows the sandbox from opennig files directly in the host.")
+	fileAccess     = flag.String("file-access", "exclusive", "specifies which filesystem to use for the root mount: exclusive (default), shared. Volume mounts are always shared.")
 	overlay        = flag.Bool("overlay", false, "wrap filesystem mounts with writable overlay. All modifications are stored in memory inside the sandbox.")
-	multiContainer = flag.Bool("multi-container", false, "enable *experimental* multi-container support.")
 	watchdogAction = flag.String("watchdog-action", "log", "sets what action the watchdog takes when triggered: log (default), panic.")
+	panicSignal    = flag.Int("panic-signal", -1, "register signal handling that panics. Usually set to SIGUSR2(12) to troubleshoot hangs. -1 disables it.")
 )
 
+// gitRevision is set during linking.
 var gitRevision = ""
 
 func main() {
@@ -109,6 +111,10 @@ func main() {
 		cmd.Fatalf("%v", err)
 	}
 
+	if fsAccess == boot.FileAccessShared && *overlay {
+		cmd.Fatalf("overlay flag is incompatible with shared file access")
+	}
+
 	netType, err := boot.MakeNetworkType(*network)
 	if err != nil {
 		cmd.Fatalf("%v", err)
@@ -133,8 +139,8 @@ func main() {
 		Platform:       platformType,
 		Strace:         *strace,
 		StraceLogSize:  *straceLogSize,
-		MultiContainer: *multiContainer,
 		WatchdogAction: wa,
+		PanicSignal:    *panicSignal,
 	}
 	if len(*straceSyscalls) != 0 {
 		conf.StraceSyscalls = strings.Split(*straceSyscalls, ",")
@@ -146,7 +152,9 @@ func main() {
 	}
 
 	var logFile io.Writer = os.Stderr
-	if *logFilename != "" {
+	if *logFD > -1 {
+		logFile = os.NewFile(uintptr(*logFD), "log file")
+	} else if *logFilename != "" {
 		// We must set O_APPEND and not O_TRUNC because Docker passes
 		// the same log file for all commands (and also parses these
 		// log files), so we can't destroy them on each command.
@@ -167,18 +175,17 @@ func main() {
 		cmd.Fatalf("invalid log format %q, must be 'json' or 'text'", *logFormat)
 	}
 
-	if *debugLogDir != "" {
+	if *debugLogFD > -1 {
+		f := os.NewFile(uintptr(*debugLogFD), "debug log file")
+		e = log.MultiEmitter{e, log.GoogleEmitter{&log.Writer{Next: f}}}
+	} else if *debugLogDir != "" {
 		if err := os.MkdirAll(*debugLogDir, 0775); err != nil {
 			cmd.Fatalf("error creating dir %q: %v", *debugLogDir, err)
 		}
-
-		// Format: <debug-log-dir>/runsc.log.<yyymmdd-hhmmss.uuuuuu>.<command>
-		scmd := flag.CommandLine.Arg(0)
-		filename := fmt.Sprintf("runsc.log.%s.%s", time.Now().Format("20060102-150405.000000"), scmd)
-		path := filepath.Join(*debugLogDir, filename)
-		f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0664)
+		subcommand := flag.CommandLine.Arg(0)
+		f, err := specutils.DebugLogFile(*debugLogDir, subcommand)
 		if err != nil {
-			cmd.Fatalf("error opening log file %q: %v", filename, err)
+			cmd.Fatalf("error opening debug log file in %q: %v", *debugLogDir, err)
 		}
 		e = log.MultiEmitter{e, log.GoogleEmitter{&log.Writer{Next: f}}}
 	}

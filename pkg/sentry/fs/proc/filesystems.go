@@ -24,6 +24,8 @@ import (
 )
 
 // filesystemsData backs /proc/filesystems.
+//
+// +stateify savable
 type filesystemsData struct{}
 
 // NeedsUpdate returns true on the first generation. The set of registered file
@@ -43,6 +45,9 @@ func (*filesystemsData) ReadSeqFileData(ctx context.Context, h seqfile.SeqHandle
 	// Generate the file contents.
 	var buf bytes.Buffer
 	for _, sys := range fs.GetFilesystems() {
+		if !sys.AllowUserList() {
+			continue
+		}
 		nodev := "nodev"
 		if sys.Flags()&fs.FilesystemRequiresDev != 0 {
 			nodev = ""

@@ -16,6 +16,10 @@
 
 package pagetables
 
+import (
+	"sync"
+)
+
 // limitPCID is the number of valid PCIDs.
 const limitPCID = 4096
 
@@ -24,6 +28,9 @@ const limitPCID = 4096
 // This is not protected by locks and is thus suitable for use only with a
 // single CPU at a time.
 type PCIDs struct {
+	// mu protects below.
+	mu sync.Mutex
+
 	// cache are the assigned page tables.
 	cache map[*PageTables]uint16
 
@@ -56,7 +63,9 @@ func NewPCIDs(start, size uint16) *PCIDs {
 // This may overwrite any previous assignment provided. If this in the case,
 // true is returned to indicate that the PCID should be flushed.
 func (p *PCIDs) Assign(pt *PageTables) (uint16, bool) {
+	p.mu.Lock()
 	if pcid, ok := p.cache[pt]; ok {
+		p.mu.Unlock()
 		return pcid, false // No flush.
 	}
 
@@ -64,9 +73,11 @@ func (p *PCIDs) Assign(pt *PageTables) (uint16, bool) {
 	if len(p.avail) > 0 {
 		pcid := p.avail[len(p.avail)-1]
 		p.avail = p.avail[:len(p.avail)-1]
+		p.cache[pt] = pcid
 
 		// We need to flush because while this is in the available
 		// pool, it may have been used previously.
+		p.mu.Unlock()
 		return pcid, true
 	}
 
@@ -78,17 +89,21 @@ func (p *PCIDs) Assign(pt *PageTables) (uint16, bool) {
 		// A flush is definitely required in this case, these page
 		// tables may still be active. (They will just be assigned some
 		// other PCID if and when they hit the given CPU again.)
+		p.mu.Unlock()
 		return pcid, true
 	}
 
 	// No PCID.
+	p.mu.Unlock()
 	return 0, false
 }
 
 // Drop drops references to a set of page tables.
 func (p *PCIDs) Drop(pt *PageTables) {
+	p.mu.Lock()
 	if pcid, ok := p.cache[pt]; ok {
 		delete(p.cache, pt)
 		p.avail = append(p.avail, pcid)
 	}
+	p.mu.Unlock()
 }

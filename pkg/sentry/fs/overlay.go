@@ -16,6 +16,7 @@ package fs
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"gvisor.googlesource.com/gvisor/pkg/log"
@@ -76,21 +77,31 @@ func XattrOverlayWhiteout(name string) string {
 	return XattrOverlayWhiteoutPrefix + name
 }
 
+// isXattrOverlay returns whether the given extended attribute configures the
+// overlay.
+func isXattrOverlay(name string) bool {
+	return strings.HasPrefix(name, XattrOverlayPrefix)
+}
+
 // NewOverlayRoot produces the root of an overlay.
 //
 // Preconditions:
 //
 // - upper and lower must be non-nil.
+// - upper must not be an overlay.
 // - lower should not expose character devices, pipes, or sockets, because
 //   copying up these types of files is not supported.
-// - upper and lower must not require that file objects be revalidated.
-// - upper and lower must not have dynamic file/directory content.
+// - lower must not require that file objects be revalidated.
+// - lower must not have dynamic file/directory content.
 func NewOverlayRoot(ctx context.Context, upper *Inode, lower *Inode, flags MountSourceFlags) (*Inode, error) {
 	if !IsDir(upper.StableAttr) {
 		return nil, fmt.Errorf("upper Inode is not a directory")
 	}
 	if !IsDir(lower.StableAttr) {
 		return nil, fmt.Errorf("lower Inode is not a directory")
+	}
+	if upper.overlay != nil {
+		return nil, fmt.Errorf("cannot nest overlay in upper file of another overlay")
 	}
 
 	msrc := newOverlayMountSource(upper.MountSource, lower.MountSource, flags)
@@ -138,6 +149,8 @@ func newOverlayInode(ctx context.Context, o *overlayEntry, msrc *MountSource) *I
 }
 
 // overlayEntry is the overlay metadata of an Inode. It implements Mappable.
+//
+// +stateify savable
 type overlayEntry struct {
 	// lowerExists is true if an Inode exists for this file in the lower
 	// filesystem. If lowerExists is true, then the overlay must create

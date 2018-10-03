@@ -42,6 +42,8 @@ import (
 
 // SocketOperations is a Unix socket. It is similar to an epsocket, except it is backed
 // by a unix.Endpoint instead of a tcpip.Endpoint.
+//
+// +stateify savable
 type SocketOperations struct {
 	refs.AtomicRefCount
 	socket.ReceiveTimeout
@@ -274,9 +276,11 @@ func (s *SocketOperations) Bind(t *kernel.Task, sockaddr []byte) *syserr.Error {
 			}
 
 			// Create the socket.
-			if err := d.Bind(t, t.FSContext().RootDirectory(), name, bep, fs.FilePermissions{User: fs.PermMask{Read: true}}); err != nil {
+			childDir, err := d.Bind(t, t.FSContext().RootDirectory(), name, bep, fs.FilePermissions{User: fs.PermMask{Read: true}})
+			if err != nil {
 				return tcpip.ErrPortInUse
 			}
+			childDir.DecRef()
 		}
 
 		return nil

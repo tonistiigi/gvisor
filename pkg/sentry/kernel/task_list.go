@@ -1,5 +1,20 @@
 package kernel
 
+// ElementMapper provides an identity mapping by default.
+//
+// This can be replaced to provide a struct that maps elements to linker
+// objects, if they are not the same. An ElementMapper is not typically
+// required if: Linker is left as is, Element is left as is, or Linker and
+// Element are the same type.
+type taskElementMapper struct{}
+
+// linkerFor maps an Element to a Linker.
+//
+// This default implementation should be inlined.
+//
+//go:nosplit
+func (taskElementMapper) linkerFor(elem *Task) *Task { return elem }
+
 // List is an intrusive list. Entries can be added to or removed from the list
 // in O(1) time and with no additional memory allocations.
 //
@@ -9,6 +24,8 @@ package kernel
 //      for e := l.Front(); e != nil; e = e.Next() {
 // 		// do something with e.
 //      }
+//
+// +stateify savable
 type taskList struct {
 	head *Task
 	tail *Task
@@ -37,11 +54,11 @@ func (l *taskList) Back() *Task {
 
 // PushFront inserts the element e at the front of list l.
 func (l *taskList) PushFront(e *Task) {
-	e.SetNext(l.head)
-	e.SetPrev(nil)
+	taskElementMapper{}.linkerFor(e).SetNext(l.head)
+	taskElementMapper{}.linkerFor(e).SetPrev(nil)
 
 	if l.head != nil {
-		l.head.SetPrev(e)
+		taskElementMapper{}.linkerFor(l.head).SetPrev(e)
 	} else {
 		l.tail = e
 	}
@@ -51,11 +68,11 @@ func (l *taskList) PushFront(e *Task) {
 
 // PushBack inserts the element e at the back of list l.
 func (l *taskList) PushBack(e *Task) {
-	e.SetNext(nil)
-	e.SetPrev(l.tail)
+	taskElementMapper{}.linkerFor(e).SetNext(nil)
+	taskElementMapper{}.linkerFor(e).SetPrev(l.tail)
 
 	if l.tail != nil {
-		l.tail.SetNext(e)
+		taskElementMapper{}.linkerFor(l.tail).SetNext(e)
 	} else {
 		l.head = e
 	}
@@ -69,8 +86,8 @@ func (l *taskList) PushBackList(m *taskList) {
 		l.head = m.head
 		l.tail = m.tail
 	} else if m.head != nil {
-		l.tail.SetNext(m.head)
-		m.head.SetPrev(l.tail)
+		taskElementMapper{}.linkerFor(l.tail).SetNext(m.head)
+		taskElementMapper{}.linkerFor(m.head).SetPrev(l.tail)
 
 		l.tail = m.tail
 	}
@@ -81,13 +98,13 @@ func (l *taskList) PushBackList(m *taskList) {
 
 // InsertAfter inserts e after b.
 func (l *taskList) InsertAfter(b, e *Task) {
-	a := b.Next()
-	e.SetNext(a)
-	e.SetPrev(b)
-	b.SetNext(e)
+	a := taskElementMapper{}.linkerFor(b).Next()
+	taskElementMapper{}.linkerFor(e).SetNext(a)
+	taskElementMapper{}.linkerFor(e).SetPrev(b)
+	taskElementMapper{}.linkerFor(b).SetNext(e)
 
 	if a != nil {
-		a.SetPrev(e)
+		taskElementMapper{}.linkerFor(a).SetPrev(e)
 	} else {
 		l.tail = e
 	}
@@ -95,13 +112,13 @@ func (l *taskList) InsertAfter(b, e *Task) {
 
 // InsertBefore inserts e before a.
 func (l *taskList) InsertBefore(a, e *Task) {
-	b := a.Prev()
-	e.SetNext(a)
-	e.SetPrev(b)
-	a.SetPrev(e)
+	b := taskElementMapper{}.linkerFor(a).Prev()
+	taskElementMapper{}.linkerFor(e).SetNext(a)
+	taskElementMapper{}.linkerFor(e).SetPrev(b)
+	taskElementMapper{}.linkerFor(a).SetPrev(e)
 
 	if b != nil {
-		b.SetNext(e)
+		taskElementMapper{}.linkerFor(b).SetNext(e)
 	} else {
 		l.head = e
 	}
@@ -109,17 +126,17 @@ func (l *taskList) InsertBefore(a, e *Task) {
 
 // Remove removes e from l.
 func (l *taskList) Remove(e *Task) {
-	prev := e.Prev()
-	next := e.Next()
+	prev := taskElementMapper{}.linkerFor(e).Prev()
+	next := taskElementMapper{}.linkerFor(e).Next()
 
 	if prev != nil {
-		prev.SetNext(next)
+		taskElementMapper{}.linkerFor(prev).SetNext(next)
 	} else {
 		l.head = next
 	}
 
 	if next != nil {
-		next.SetPrev(prev)
+		taskElementMapper{}.linkerFor(next).SetPrev(prev)
 	} else {
 		l.tail = prev
 	}
@@ -128,6 +145,8 @@ func (l *taskList) Remove(e *Task) {
 // Entry is a default implementation of Linker. Users can add anonymous fields
 // of this type to their structs to make them automatically implement the
 // methods needed by List.
+//
+// +stateify savable
 type taskEntry struct {
 	next *Task
 	prev *Task
@@ -144,11 +163,11 @@ func (e *taskEntry) Prev() *Task {
 }
 
 // SetNext assigns 'entry' as the entry that follows e in the list.
-func (e *taskEntry) SetNext(entry *Task) {
-	e.next = entry
+func (e *taskEntry) SetNext(elem *Task) {
+	e.next = elem
 }
 
 // SetPrev assigns 'entry' as the entry that precedes e in the list.
-func (e *taskEntry) SetPrev(entry *Task) {
-	e.prev = entry
+func (e *taskEntry) SetPrev(elem *Task) {
+	e.prev = elem
 }

@@ -149,10 +149,10 @@ An `fs.File` references the following filesystem objects:
 fs.File -> fs.Dirent -> fs.Inode -> fs.MountedFilesystem
 ```
 
-The `fs.Inode` is restored using its `fs.MountedFilesystem`. The [Mount
-points](#mount-points) section above describes how this happens in detail. The
-`fs.Dirent` restores its pointer to an `fs.Inode`, pointers to parent and
-children `fs.Dirents`, and the basename of the file.
+The `fs.Inode` is restored using its `fs.MountedFilesystem`. The
+[Mount points](#mount-points) section above describes how this happens in
+detail. The `fs.Dirent` restores its pointer to an `fs.Inode`, pointers to
+parent and children `fs.Dirents`, and the basename of the file.
 
 Otherwise an `fs.File` restores flags, an offset, and a unique identifier (only
 used internally).
@@ -192,6 +192,18 @@ via an `fs.overlayEntry`. The `fs.overlayEntry` implements the `fs.Mappable`
 interface. It multiplexes between upper and lower directory memory mappings and
 stores a copy of memory references so they can be transferred to the upper
 directory `fs.Mappable` when the file is copied up.
+
+The lower filesystem in an overlay may contain another (nested) overlay, but the
+upper filesystem may not contain another overlay. In other words, nested
+overlays form a tree structure that only allows branching in the lower
+filesystem.
+
+Caching decisions in the overlay are delegated to the upper filesystem, meaning
+that the Keep and Revalidate methods on the overlay return the same values as
+the upper filesystem. A small wrinkle is that the lower filesystem is not
+allowed to return `true` from Revalidate, as the overlay can not reload inodes
+from the lower filesystem. A lower filesystem that does return `true` from
+Revalidate will trigger a panic.
 
 The `fs.Inode` also holds a reference to a `fs.MountedFilesystem` that
 normalizes across the mounted filesystem state of the upper and lower

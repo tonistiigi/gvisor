@@ -6,9 +6,11 @@ procfs generally.
 inconsistency, please file a bug.
 
 [TOC]
+
 ## Kernel data
 
 The following files are implemented:
+
 
 | File /proc/                 | Content                                               |
 | :------------------------   | :---------------------------------------------------- |
@@ -20,6 +22,7 @@ The following files are implemented:
 | [sys](#sys)                 | Change parameters within the kernel                   |
 | [uptime](#uptime)           | Wall clock since boot, combined idle time of all cpus |
 | [version](#version)         | Kernel version                                        |
+
 
 ### cpuinfo
 
@@ -91,6 +94,7 @@ Num currently running processes       | Always zero
 Total num processes                   | Always zero
 
 TODO: Populate the columns with accurate statistics.
+
 ### meminfo
 
 ```bash
@@ -122,7 +126,7 @@ Shmem:                 0 kB
 Notable divergences:
 
 Field name        | Notes
-:---------------- | :--------------------------------------------------------
+:---------------- | :-----------------------------------------------------
 Buffers           | Always zero, no block devices
 SwapCache         | Always zero, no swap
 Inactive(anon)    | Always zero, see SwapCache
@@ -182,6 +186,7 @@ softirq 0 0 0 0 0 0 0 0 0 0 0
 ```
 
 All fields except for `btime` are always zero.
+
 TODO: Populate with accurate fields.
 
 ### sys

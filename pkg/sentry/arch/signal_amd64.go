@@ -28,6 +28,8 @@ import (
 
 // SignalAct represents the action that should be taken when a signal is
 // delivered, and is equivalent to struct sigaction on 64-bit x86.
+//
+// +stateify savable
 type SignalAct struct {
 	Handler  uint64
 	Flags    uint64
@@ -47,6 +49,8 @@ func (s *SignalAct) DeserializeTo(other *SignalAct) {
 
 // SignalStack represents information about a user stack, and is equivalent to
 // stack_t on 64-bit x86.
+//
+// +stateify savable
 type SignalStack struct {
 	Addr  uint64
 	Flags uint32
@@ -66,6 +70,8 @@ func (s *SignalStack) DeserializeTo(other *SignalStack) {
 
 // SignalInfo represents information about a signal being delivered, and is
 // equivalent to struct siginfo on 64-bit x86.
+//
+// +stateify savable
 type SignalInfo struct {
 	Signo int32 // Signal number
 	Errno int32 // Errno value
@@ -167,6 +173,36 @@ func (s *SignalInfo) Uid() int32 {
 
 // SetUid mutates the si_uid field.
 func (s *SignalInfo) SetUid(val int32) {
+	usermem.ByteOrder.PutUint32(s.Fields[4:8], uint32(val))
+}
+
+// Sigval returns the sigval field, which is aliased to both si_int and si_ptr.
+func (s *SignalInfo) Sigval() uint64 {
+	return usermem.ByteOrder.Uint64(s.Fields[8:16])
+}
+
+// SetSigval mutates the sigval field.
+func (s *SignalInfo) SetSigval(val uint64) {
+	usermem.ByteOrder.PutUint64(s.Fields[8:16], val)
+}
+
+// TimerID returns the si_timerid field.
+func (s *SignalInfo) TimerID() linux.TimerID {
+	return linux.TimerID(usermem.ByteOrder.Uint32(s.Fields[0:4]))
+}
+
+// SetTimerID sets the si_timerid field.
+func (s *SignalInfo) SetTimerID(val linux.TimerID) {
+	usermem.ByteOrder.PutUint32(s.Fields[0:4], uint32(val))
+}
+
+// Overrun returns the si_overrun field.
+func (s *SignalInfo) Overrun() int32 {
+	return int32(usermem.ByteOrder.Uint32(s.Fields[4:8]))
+}
+
+// SetOverrun sets the si_overrun field.
+func (s *SignalInfo) SetOverrun(val int32) {
 	usermem.ByteOrder.PutUint32(s.Fields[4:8], uint32(val))
 }
 

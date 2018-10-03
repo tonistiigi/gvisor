@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
-	"syscall"
 	"text/tabwriter"
 	"time"
 
@@ -55,6 +54,11 @@ type ExecArgs struct {
 	// Envv is a list of environment variables.
 	Envv []string `json:"envv"`
 
+	// Root defines the root directory for the new process. A reference on
+	// Root must be held for the lifetime of the ExecArgs. If Root is nil,
+	// it will default to the VFS root.
+	Root *fs.Dirent
+
 	// WorkingDirectory defines the working directory for the new process.
 	WorkingDirectory string `json:"wd"`
 
@@ -73,16 +77,52 @@ type ExecArgs struct {
 	// Capabilities is the list of capabilities to give to the process.
 	Capabilities *auth.TaskCapabilities
 
+	// StdioIsPty indicates that FDs 0, 1, and 2 are connected to a host
+	// pty FD.
+	StdioIsPty bool
+
 	// FilePayload determines the files to give to the new process.
 	urpc.FilePayload
+
+	// ContainerID is the container for the process being executed.
+	ContainerID string
 }
 
 // Exec runs a new task.
 func (proc *Proc) Exec(args *ExecArgs, waitStatus *uint32) error {
+	newTG, _, _, err := proc.execAsync(args)
+	if err != nil {
+		return err
+	}
+
+	// Wait for completion.
+	newTG.WaitExited()
+	*waitStatus = newTG.ExitStatus().Status()
+	return nil
+}
+
+// ExecAsync runs a new task, but doesn't wait for it to finish. It is defined
+// as a function rather than a method to avoid exposing execAsync as an RPC.
+func ExecAsync(proc *Proc, args *ExecArgs) (*kernel.ThreadGroup, kernel.ThreadID, *host.TTYFileOperations, error) {
+	return proc.execAsync(args)
+}
+
+// execAsync runs a new task, but doesn't wait for it to finish. It returns the
+// newly created thread group and its PID. If the stdio FDs are TTYs, then a
+// TTYFileOperations that wraps the TTY is also returned.
+func (proc *Proc) execAsync(args *ExecArgs) (*kernel.ThreadGroup, kernel.ThreadID, *host.TTYFileOperations, error) {
 	// Import file descriptors.
 	l := limits.NewLimitSet()
 	fdm := proc.Kernel.NewFDMap()
 	defer fdm.DecRef()
+
+	// No matter what happens, we should close all files in the FilePayload
+	// before returning. Any files that are imported will be duped.
+	defer func() {
+		for _, f := range args.FilePayload.Files {
+			f.Close()
+		}
+	}()
 
 	creds := auth.NewUserCredentials(
 		args.KUID,
@@ -92,51 +132,89 @@ func (proc *Proc) Exec(args *ExecArgs, waitStatus *uint32) error {
 		proc.Kernel.RootUserNamespace())
 
 	initArgs := kernel.CreateProcessArgs{
-		Filename:             args.Filename,
-		Argv:                 args.Argv,
-		Envv:                 args.Envv,
-		WorkingDirectory:     args.WorkingDirectory,
-		Credentials:          creds,
-		FDMap:                fdm,
-		Umask:                0022,
-		Limits:               l,
-		MaxSymlinkTraversals: linux.MaxSymlinkTraversals,
-		UTSNamespace:         proc.Kernel.RootUTSNamespace(),
-		IPCNamespace:         proc.Kernel.RootIPCNamespace(),
+		Filename:                args.Filename,
+		Argv:                    args.Argv,
+		Envv:                    args.Envv,
+		WorkingDirectory:        args.WorkingDirectory,
+		Root:                    args.Root,
+		Credentials:             creds,
+		FDMap:                   fdm,
+		Umask:                   0022,
+		Limits:                  l,
+		MaxSymlinkTraversals:    linux.MaxSymlinkTraversals,
+		UTSNamespace:            proc.Kernel.RootUTSNamespace(),
+		IPCNamespace:            proc.Kernel.RootIPCNamespace(),
+		AbstractSocketNamespace: proc.Kernel.RootAbstractSocketNamespace(),
+		ContainerID:             args.ContainerID,
+	}
+	if initArgs.Root != nil {
+		// initArgs must hold a reference on Root. This ref is dropped
+		// in CreateProcess.
+		initArgs.Root.IncRef()
 	}
 	ctx := initArgs.NewContext(proc.Kernel)
+
+	if initArgs.Filename == "" {
+		// Get the full path to the filename from the PATH env variable.
+		paths := fs.GetPath(initArgs.Envv)
+		f, err := proc.Kernel.RootMountNamespace().ResolveExecutablePath(ctx, initArgs.WorkingDirectory, initArgs.Argv[0], paths)
+		if err != nil {
+			return nil, 0, nil, fmt.Errorf("error finding executable %q in PATH %v: %v", initArgs.Argv[0], paths, err)
+		}
+		initArgs.Filename = f
+	}
+
 	mounter := fs.FileOwnerFromContext(ctx)
 
-	for appFD, f := range args.FilePayload.Files {
-		// Copy the underlying FD.
-		newFD, err := syscall.Dup(int(f.Fd()))
-		if err != nil {
-			return err
-		}
-		f.Close()
+	var ttyFile *fs.File
+	for appFD, hostFile := range args.FilePayload.Files {
+		var appFile *fs.File
 
-		// Install the given file as an FD.
-		file, err := host.NewFile(ctx, newFD, mounter)
-		if err != nil {
-			syscall.Close(newFD)
-			return err
+		if args.StdioIsPty && appFD < 3 {
+			// Import the file as a host TTY file.
+			if ttyFile == nil {
+				var err error
+				appFile, err = host.ImportFile(ctx, int(hostFile.Fd()), mounter, true /* isTTY */)
+				if err != nil {
+					return nil, 0, nil, err
+				}
+				defer appFile.DecRef()
+
+				// Remember this in the TTY file, as we will
+				// use it for the other stdio FDs.
+				ttyFile = appFile
+			} else {
+				// Re-use the existing TTY file, as all three
+				// stdio FDs must point to the same fs.File in
+				// order to share TTY state, specifically the
+				// foreground process group id.
+				appFile = ttyFile
+			}
+		} else {
+			// Import the file as a regular host file.
+			var err error
+			appFile, err = host.ImportFile(ctx, int(hostFile.Fd()), mounter, false /* isTTY */)
+			if err != nil {
+				return nil, 0, nil, err
+			}
+			defer appFile.DecRef()
 		}
-		defer file.DecRef()
-		if err := fdm.NewFDAt(kdefs.FD(appFD), file, kernel.FDFlags{}, l); err != nil {
-			return err
+
+		// Add the file to the FD map.
+		if err := fdm.NewFDAt(kdefs.FD(appFD), appFile, kernel.FDFlags{}, l); err != nil {
+			return nil, 0, nil, err
 		}
 	}
 
-	// Start the new task.
-	newTG, err := proc.Kernel.CreateProcess(initArgs)
+	tg, tid, err := proc.Kernel.CreateProcess(initArgs)
 	if err != nil {
-		return err
+		return nil, 0, nil, err
 	}
 
-	// Wait for completion.
-	newTG.WaitExited()
-	*waitStatus = newTG.ExitStatus().Status()
-	return nil
+	if ttyFile == nil {
+		return tg, tid, nil, nil
+	}
+	return tg, tid, ttyFile.FileOperations.(*host.TTYFileOperations), nil
 }
 
 // PsArgs is the set of arguments to ps.
@@ -148,7 +226,7 @@ type PsArgs struct {
 // Ps provides a process listing for the running kernel.
 func (proc *Proc) Ps(args *PsArgs, out *string) error {
 	var p []*Process
-	if e := Processes(proc.Kernel, &p); e != nil {
+	if e := Processes(proc.Kernel, "", &p); e != nil {
 		return e
 	}
 	if !args.JSON {
@@ -224,8 +302,9 @@ func PrintPIDsJSON(pl []*Process) (string, error) {
 	return string(b), nil
 }
 
-// Processes retrieves information about processes running in the sandbox.
-func Processes(k *kernel.Kernel, out *[]*Process) error {
+// Processes retrieves information about processes running in the sandbox with
+// the given container id. All processes are returned if 'containerID' is empty.
+func Processes(k *kernel.Kernel, containerID string, out *[]*Process) error {
 	ts := k.TaskSet()
 	now := k.RealtimeClock().Now()
 	for _, tg := range ts.Root.ThreadGroups() {
@@ -234,12 +313,18 @@ func Processes(k *kernel.Kernel, out *[]*Process) error {
 		if pid == 0 {
 			continue
 		}
+		if containerID != "" && containerID != tg.Leader().ContainerID() {
+			continue
+		}
 
+		ppid := kernel.ThreadID(0)
+		if p := tg.Leader().Parent(); p != nil {
+			ppid = ts.Root.IDOfThreadGroup(p.ThreadGroup())
+		}
 		*out = append(*out, &Process{
-			UID: tg.Leader().Credentials().EffectiveKUID,
-			PID: pid,
-			// If Parent is null (i.e. tg is the init process), PPID will be 0.
-			PPID:  ts.Root.IDOfTask(tg.Leader().Parent()),
+			UID:   tg.Leader().Credentials().EffectiveKUID,
+			PID:   pid,
+			PPID:  ppid,
 			STime: formatStartTime(now, tg.Leader().StartTime()),
 			C:     percentCPU(tg.CPUStats(), tg.Leader().StartTime(), now),
 			Time:  tg.CPUStats().SysTime.String(),

@@ -14,10 +14,15 @@
 
 package fs
 
-import "gvisor.googlesource.com/gvisor/pkg/sentry/context"
+import (
+	"gvisor.googlesource.com/gvisor/pkg/sentry/context"
+)
 
 // overlayMountSourceOperations implements MountSourceOperations for an overlay
-// mount point.
+// mount point. The upper filesystem determines the caching behavior of the
+// overlay.
+//
+// +stateify savable
 type overlayMountSourceOperations struct {
 	upper *MountSource
 	lower *MountSource
@@ -32,19 +37,39 @@ func newOverlayMountSource(upper, lower *MountSource, flags MountSourceFlags) *M
 	}, &overlayFilesystem{}, flags)
 }
 
-// Revalidate panics if the upper or lower MountSource require that dirent be
-// revalidated. Otherwise always returns false.
-func (o *overlayMountSourceOperations) Revalidate(dirent *Dirent) bool {
-	if o.upper.Revalidate(dirent) || o.lower.Revalidate(dirent) {
-		panic("an overlay cannot revalidate file objects")
+// Revalidate implements MountSourceOperations.Revalidate for an overlay by
+// delegating to the upper filesystem's Revalidate method. We cannot reload
+// files from the lower filesystem, so we panic if the lower filesystem's
+// Revalidate method returns true.
+func (o *overlayMountSourceOperations) Revalidate(ctx context.Context, name string, parent, child *Inode) bool {
+	if child.overlay == nil {
+		panic("overlay cannot revalidate inode that is not an overlay")
 	}
-	return false
+
+	// Revalidate is never called on a mount point, so parent and child
+	// must be from the same mount, and thus must both be overlay inodes.
+	if parent.overlay == nil {
+		panic("trying to revalidate an overlay inode but the parent is not an overlay")
+	}
+
+	// We can't revalidate from the lower filesystem.
+	if child.overlay.lower != nil && o.lower.Revalidate(ctx, name, parent.overlay.lower, child.overlay.lower) {
+		panic("an overlay cannot revalidate file objects from the lower fs")
+	}
+
+	// Do we have anything to revalidate?
+	if child.overlay.upper == nil {
+		return false
+	}
+
+	// Does the upper require revalidation?
+	return o.upper.Revalidate(ctx, name, parent.overlay.upper, child.overlay.upper)
 }
 
-// Keep returns true if either upper or lower MountSource require that the
-// dirent be kept in memory.
+// Keep implements MountSourceOperations by delegating to the upper
+// filesystem's Keep method.
 func (o *overlayMountSourceOperations) Keep(dirent *Dirent) bool {
-	return o.upper.Keep(dirent) || o.lower.Keep(dirent)
+	return o.upper.Keep(dirent)
 }
 
 // ResetInodeMappings propagates the call to both upper and lower MountSource.
@@ -72,6 +97,8 @@ func (o *overlayMountSourceOperations) Destroy() {
 }
 
 // type overlayFilesystem is the filesystem for overlay mounts.
+//
+// +stateify savable
 type overlayFilesystem struct{}
 
 // Name implements Filesystem.Name.
@@ -87,6 +114,11 @@ func (ofs *overlayFilesystem) Flags() FilesystemFlags {
 // AllowUserMount implements Filesystem.AllowUserMount.
 func (ofs *overlayFilesystem) AllowUserMount() bool {
 	return false
+}
+
+// AllowUserList implements Filesystem.AllowUserList.
+func (*overlayFilesystem) AllowUserList() bool {
+	return true
 }
 
 // Mount implements Filesystem.Mount.

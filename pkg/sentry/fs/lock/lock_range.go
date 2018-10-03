@@ -1,6 +1,8 @@
 package lock
 
 // A Range represents a contiguous range of T.
+//
+// +stateify savable
 type LockRange struct {
 	// Start is the inclusive start of the range.
 	Start uint64

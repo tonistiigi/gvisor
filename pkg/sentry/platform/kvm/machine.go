@@ -22,6 +22,7 @@ import (
 	"syscall"
 
 	"gvisor.googlesource.com/gvisor/pkg/atomicbitops"
+	"gvisor.googlesource.com/gvisor/pkg/log"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/platform/procid"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/platform/ring0"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/platform/ring0/pagetables"
@@ -55,6 +56,12 @@ type machine struct {
 	//
 	// These are populated dynamically.
 	vCPUs map[uint64]*vCPU
+
+	// vCPUsByID are the machine vCPUs, can be indexed by the vCPU's ID.
+	vCPUsByID map[int]*vCPU
+
+	// maxVCPUs is the maximum number of vCPUs supported by the machine.
+	maxVCPUs int
 }
 
 const (
@@ -135,15 +142,11 @@ func (m *machine) newVCPU() *vCPU {
 	c.CPU.Init(&m.kernel)
 	c.CPU.KernelSyscall = bluepillSyscall
 	c.CPU.KernelException = bluepillException
+	m.vCPUsByID[c.id] = c
 
 	// Ensure the signal mask is correct.
 	if err := c.setSignalMask(); err != nil {
 		panic(fmt.Sprintf("error setting signal mask: %v", err))
-	}
-
-	// Initialize architecture state.
-	if err := c.initArchState(); err != nil {
-		panic(fmt.Sprintf("error initialization vCPU state: %v", err))
 	}
 
 	// Map the run data.
@@ -153,6 +156,11 @@ func (m *machine) newVCPU() *vCPU {
 	}
 	c.runData = runData
 
+	// Initialize architecture state.
+	if err := c.initArchState(); err != nil {
+		panic(fmt.Sprintf("error initialization vCPU state: %v", err))
+	}
+
 	return c // Done.
 }
 
@@ -160,19 +168,22 @@ func (m *machine) newVCPU() *vCPU {
 func newMachine(vm int) (*machine, error) {
 	// Create the machine.
 	m := &machine{
-		fd:    vm,
-		vCPUs: make(map[uint64]*vCPU),
+		fd:        vm,
+		vCPUs:     make(map[uint64]*vCPU),
+		vCPUsByID: make(map[int]*vCPU),
 	}
 	m.available.L = &m.mu
 	m.kernel.Init(ring0.KernelOpts{
 		PageTables: pagetables.New(newAllocator()),
 	})
 
-	// Initialize architecture state.
-	if err := m.initArchState(); err != nil {
-		m.Destroy()
-		return nil, err
+	maxVCPUs, _, errno := syscall.RawSyscall(syscall.SYS_IOCTL, uintptr(m.fd), _KVM_CHECK_EXTENSION, _KVM_CAP_MAX_VCPUS)
+	if errno != 0 {
+		m.maxVCPUs = _KVM_NR_VCPUS
+	} else {
+		m.maxVCPUs = int(maxVCPUs)
 	}
+	log.Debugf("The maximum number of vCPUs is %d.", m.maxVCPUs)
 
 	// Apply the physical mappings. Note that these mappings may point to
 	// guest physical addresses that are not actually available. These
@@ -220,6 +231,12 @@ func newMachine(vm int) (*machine, error) {
 			virtual += length
 		}
 	})
+
+	// Initialize architecture state.
+	if err := m.initArchState(); err != nil {
+		m.Destroy()
+		return nil, err
+	}
 
 	// Ensure the machine is cleaned up properly.
 	runtime.SetFinalizer(m, (*machine).Destroy)
@@ -315,7 +332,7 @@ func (m *machine) Get() *vCPU {
 		}
 
 		// Create a new vCPU (maybe).
-		if len(m.vCPUs) < _KVM_NR_VCPUS {
+		if len(m.vCPUs) < m.maxVCPUs {
 			c := m.newVCPU()
 			c.lock()
 			m.vCPUs[tid] = c
@@ -363,6 +380,13 @@ func (m *machine) Put(c *vCPU) {
 	c.unlock()
 	runtime.UnlockOSThread()
 	m.available.Signal()
+}
+
+// newDirtySet returns a new dirty set.
+func (m *machine) newDirtySet() *dirtySet {
+	return &dirtySet{
+		vCPUs: make([]uint64, (m.maxVCPUs+63)/64, (m.maxVCPUs+63)/64),
+	}
 }
 
 // lock marks the vCPU as in user mode.

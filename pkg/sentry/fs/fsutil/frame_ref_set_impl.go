@@ -29,6 +29,8 @@ const (
 // A Set is a mapping of segments with non-overlapping Range keys. The zero
 // value for a Set is an empty set. Set values are not safely movable nor
 // copyable. Set is thread-compatible.
+//
+// +stateify savable
 type frameRefSet struct {
 	root frameRefnode `state:".(*frameRefSegmentDataSlices)"`
 }
@@ -527,6 +529,7 @@ func (s *frameRefSet) ApplyContiguous(r __generics_imported0.FileRange, fn func(
 	}
 }
 
+// +stateify savable
 type frameRefnode struct {
 	// An internal binary tree node looks like:
 	//
@@ -1218,6 +1221,8 @@ func (n *frameRefnode) writeDebugString(buf *bytes.Buffer, prefix string) {
 // SegmentDataSlices represents segments from a set as slices of start, end, and
 // values. SegmentDataSlices is primarily used as an intermediate representation
 // for save/restore and the layout here is optimized for that.
+//
+// +stateify savable
 type frameRefSegmentDataSlices struct {
 	Start  []uint64
 	End    []uint64

@@ -27,6 +27,8 @@ import (
 
 // slaveInodeOperations are the fs.InodeOperations for the slave end of the
 // Terminal (pts file).
+//
+// +stateify savable
 type slaveInodeOperations struct {
 	inodeOperations
 
@@ -86,6 +88,8 @@ func (si *slaveInodeOperations) GetFile(ctx context.Context, d *fs.Dirent, flags
 }
 
 // slaveFileOperations are the fs.FileOperations for the slave end of a terminal.
+//
+// +stateify savable
 type slaveFileOperations struct {
 	fsutil.PipeSeek      `state:"nosave"`
 	fsutil.NotDirReaddir `state:"nosave"`
@@ -105,14 +109,12 @@ func (sf *slaveFileOperations) Release() {
 
 // EventRegister implements waiter.Waitable.EventRegister.
 func (sf *slaveFileOperations) EventRegister(e *waiter.Entry, mask waiter.EventMask) {
-	sf.si.t.ld.outQueue.EventRegister(e, mask)
-	sf.si.t.ld.inQueue.EventRegister(e, mask)
+	sf.si.t.ld.slaveWaiter.EventRegister(e, mask)
 }
 
 // EventUnregister implements waiter.Waitable.EventUnregister.
 func (sf *slaveFileOperations) EventUnregister(e *waiter.Entry) {
-	sf.si.t.ld.outQueue.EventUnregister(e)
-	sf.si.t.ld.inQueue.EventUnregister(e)
+	sf.si.t.ld.slaveWaiter.EventUnregister(e)
 }
 
 // Readiness implements waiter.Waitable.Readiness.
@@ -148,6 +150,10 @@ func (sf *slaveFileOperations) Ioctl(ctx context.Context, io usermem.IO, args ar
 			AddressSpaceActive: true,
 		})
 		return 0, err
+	case linux.TIOCGWINSZ:
+		return 0, sf.si.t.ld.windowSize(ctx, io, args)
+	case linux.TIOCSWINSZ:
+		return 0, sf.si.t.ld.setWindowSize(ctx, io, args)
 	default:
 		return 0, syserror.ENOTTY
 	}

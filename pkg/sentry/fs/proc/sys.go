@@ -17,7 +17,9 @@ package proc
 import (
 	"fmt"
 	"io"
+	"strconv"
 
+	"gvisor.googlesource.com/gvisor/pkg/abi/linux"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/context"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/fs"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/fs/proc/seqfile"
@@ -28,6 +30,8 @@ import (
 )
 
 // hostname is a file containing the system hostname.
+//
+// +stateify savable
 type hostname struct {
 	ramfs.Entry
 }
@@ -52,6 +56,8 @@ func (p *proc) newHostname(ctx context.Context, msrc *fs.MountSource) *fs.Inode 
 }
 
 // mmapMinAddrData backs /proc/sys/vm/mmap_min_addr.
+//
+// +stateify savable
 type mmapMinAddrData struct {
 	k *kernel.Kernel
 }
@@ -74,6 +80,7 @@ func (d *mmapMinAddrData) ReadSeqFileData(ctx context.Context, h seqfile.SeqHand
 	}, 0
 }
 
+// +stateify savable
 type overcommitMemory struct{}
 
 func (*overcommitMemory) NeedsUpdate(generation int64) bool {
@@ -97,6 +104,10 @@ func (p *proc) newKernelDir(ctx context.Context, msrc *fs.MountSource) *fs.Inode
 	d := &ramfs.Dir{}
 	d.InitDir(ctx, nil, fs.RootOwner, fs.FilePermsFromMode(0555))
 	d.AddChild(ctx, "hostname", p.newHostname(ctx, msrc))
+
+	d.AddChild(ctx, "shmmax", p.newStubProcFSFile(ctx, msrc, []byte(strconv.FormatUint(linux.SHMMAX, 10))))
+	d.AddChild(ctx, "shmall", p.newStubProcFSFile(ctx, msrc, []byte(strconv.FormatUint(linux.SHMALL, 10))))
+	d.AddChild(ctx, "shmmni", p.newStubProcFSFile(ctx, msrc, []byte(strconv.FormatUint(linux.SHMMNI, 10))))
 	return newFile(d, msrc, fs.SpecialDirectory, nil)
 }
 

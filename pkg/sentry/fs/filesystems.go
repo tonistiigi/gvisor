@@ -48,11 +48,17 @@ type Filesystem interface {
 	// Mount generates a mountable Inode backed by device and configured
 	// using file system independent flags and file system dependent
 	// data options.
+	//
+	// Mount may return arbitrary errors. They do not need syserr translations.
 	Mount(ctx context.Context, device string, flags MountSourceFlags, data string) (*Inode, error)
 
 	// AllowUserMount determines whether mount(2) is allowed to mount a
 	// file system of this type.
 	AllowUserMount() bool
+
+	// AllowUserList determines whether this filesystem is listed in
+	// /proc/filesystems
+	AllowUserList() bool
 }
 
 // filesystems is the global set of registered file systems. It does not need
@@ -119,6 +125,8 @@ func GetFilesystems() []Filesystem {
 }
 
 // MountSourceFlags represents all mount option flags as a struct.
+//
+// +stateify savable
 type MountSourceFlags struct {
 	// ReadOnly corresponds to mount(2)'s "MS_RDONLY" and indicates that
 	// the filesystem should be mounted read-only.

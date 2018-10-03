@@ -28,6 +28,8 @@ var ptsDevice = device.NewAnonDevice()
 //
 // This devpts is always in the new "multi-instance" mode. i.e., it contains a
 // ptmx device tied to this mount.
+//
+// +stateify savable
 type filesystem struct{}
 
 func init() {
@@ -44,6 +46,11 @@ func (*filesystem) AllowUserMount() bool {
 	// TODO: Users may mount this once the terminals are in a
 	// usable state.
 	return false
+}
+
+// AllowUserList allows this filesystem to be listed in /proc/filesystems.
+func (*filesystem) AllowUserList() bool {
+	return true
 }
 
 // Flags returns that there is nothing special about this file system.
@@ -64,6 +71,8 @@ func (f *filesystem) Mount(ctx context.Context, device string, flags fs.MountSou
 }
 
 // superOperations implements fs.MountSourceOperations, preventing caching.
+//
+// +stateify savable
 type superOperations struct{}
 
 // Revalidate implements fs.DirentOperations.Revalidate.
@@ -73,7 +82,7 @@ type superOperations struct{}
 // Slave entries are dropped from dir when their master is closed, so an
 // existing slave Dirent in the tree is not sufficient to guarantee that it
 // still exists on the filesystem.
-func (superOperations) Revalidate(*fs.Dirent) bool {
+func (superOperations) Revalidate(context.Context, string, *fs.Inode, *fs.Inode) bool {
 	return true
 }
 

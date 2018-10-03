@@ -1,6 +1,8 @@
 package platform
 
 // A Range represents a contiguous range of T.
+//
+// +stateify savable
 type FileRange struct {
 	// Start is the inclusive start of the range.
 	Start uint64

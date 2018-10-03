@@ -29,6 +29,8 @@ const (
 // A Set is a mapping of segments with non-overlapping Range keys. The zero
 // value for a Set is an empty set. Set values are not safely movable nor
 // copyable. Set is thread-compatible.
+//
+// +stateify savable
 type FileRangeSet struct {
 	root FileRangenode `state:".(*FileRangeSegmentDataSlices)"`
 }
@@ -527,6 +529,7 @@ func (s *FileRangeSet) ApplyContiguous(r __generics_imported0.MappableRange, fn 
 	}
 }
 
+// +stateify savable
 type FileRangenode struct {
 	// An internal binary tree node looks like:
 	//
@@ -1218,6 +1221,8 @@ func (n *FileRangenode) writeDebugString(buf *bytes.Buffer, prefix string) {
 // SegmentDataSlices represents segments from a set as slices of start, end, and
 // values. SegmentDataSlices is primarily used as an intermediate representation
 // for save/restore and the layout here is optimized for that.
+//
+// +stateify savable
 type FileRangeSegmentDataSlices struct {
 	Start  []uint64
 	End    []uint64

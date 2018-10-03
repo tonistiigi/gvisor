@@ -69,6 +69,8 @@ type ioCallback struct {
 }
 
 // ioEvent describes an I/O result.
+//
+// +stateify savable
 type ioEvent struct {
 	Data    uint64
 	Obj     uint64
@@ -300,7 +302,7 @@ func submitCallback(t *kernel.Task, id uint64, cb *ioCallback, cbAddr usermem.Ad
 	// Was there an eventFD? Extract it.
 	var eventFile *fs.File
 	if cb.Flags&_IOCB_FLAG_RESFD != 0 {
-		eventFile := t.FDMap().GetFile(kdefs.FD(cb.ResFD))
+		eventFile = t.FDMap().GetFile(kdefs.FD(cb.ResFD))
 		if eventFile == nil {
 			// Bad FD.
 			return syserror.EBADF
