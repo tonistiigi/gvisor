@@ -226,7 +226,6 @@ func (x *direntEntry) load(m state.Map) {
 	m.Load("prev", &x.prev)
 }
 
-func (x *File) beforeSave() {}
 func (x *File) save(m state.Map) {
 	x.beforeSave()
 	m.Save("AtomicRefCount", &x.AtomicRefCount)

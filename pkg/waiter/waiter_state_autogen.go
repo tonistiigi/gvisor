@@ -6,6 +6,23 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/state"
 )
 
+func (x *Entry) beforeSave() {}
+func (x *Entry) save(m state.Map) {
+	x.beforeSave()
+	m.Save("Context", &x.Context)
+	m.Save("Callback", &x.Callback)
+	m.Save("mask", &x.mask)
+	m.Save("Entry", &x.Entry)
+}
+
+func (x *Entry) afterLoad() {}
+func (x *Entry) load(m state.Map) {
+	m.Load("Context", &x.Context)
+	m.Load("Callback", &x.Callback)
+	m.Load("mask", &x.mask)
+	m.Load("Entry", &x.Entry)
+}
+
 func (x *Queue) beforeSave() {}
 func (x *Queue) save(m state.Map) {
 	x.beforeSave()
@@ -17,5 +34,6 @@ func (x *Queue) load(m state.Map) {
 }
 
 func init() {
+	state.Register("waiter.Entry", (*Entry)(nil), state.Fns{Save: (*Entry).save, Load: (*Entry).load})
 	state.Register("waiter.Queue", (*Queue)(nil), state.Fns{Save: (*Queue).save, Load: (*Queue).load})
 }
