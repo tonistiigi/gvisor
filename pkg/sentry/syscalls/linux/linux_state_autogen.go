@@ -28,6 +28,7 @@ func (x *futexWaitRestartBlock) save(m state.Map) {
 	x.beforeSave()
 	m.Save("duration", &x.duration)
 	m.Save("addr", &x.addr)
+	m.Save("private", &x.private)
 	m.Save("val", &x.val)
 	m.Save("mask", &x.mask)
 }
@@ -36,6 +37,7 @@ func (x *futexWaitRestartBlock) afterLoad() {}
 func (x *futexWaitRestartBlock) load(m state.Map) {
 	m.Load("duration", &x.duration)
 	m.Load("addr", &x.addr)
+	m.Load("private", &x.private)
 	m.Load("val", &x.val)
 	m.Load("mask", &x.mask)
 }
