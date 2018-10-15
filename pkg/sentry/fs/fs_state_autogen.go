@@ -171,6 +171,7 @@ func (x *Dirent) save(m state.Map) {
 	m.Save("Inode", &x.Inode)
 	m.Save("name", &x.name)
 	m.Save("parent", &x.parent)
+	m.Save("deleted", &x.deleted)
 	m.Save("frozen", &x.frozen)
 	m.Save("mounted", &x.mounted)
 }
@@ -181,6 +182,7 @@ func (x *Dirent) load(m state.Map) {
 	m.Load("Inode", &x.Inode)
 	m.Load("name", &x.name)
 	m.Load("parent", &x.parent)
+	m.Load("deleted", &x.deleted)
 	m.Load("frozen", &x.frozen)
 	m.Load("mounted", &x.mounted)
 	m.LoadValue("children", new(map[string]*Dirent), func(y interface{}) { x.loadChildren(y.(map[string]*Dirent)) })
