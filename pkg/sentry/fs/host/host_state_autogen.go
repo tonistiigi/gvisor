@@ -93,14 +93,25 @@ func (x *inodeFileState) load(m state.Map) {
 	m.AfterLoad(x.afterLoad)
 }
 
-func (x *endpoint) save(m state.Map) {
+func (x *ConnectedEndpoint) save(m state.Map) {
 	x.beforeSave()
-	if !state.IsZeroValue(x.queue) { m.Failf("queue is %v, expected zero", x.queue) }
+	m.Save("queue", &x.queue)
+	m.Save("path", &x.path)
+	m.Save("ref", &x.ref)
+	m.Save("readClosed", &x.readClosed)
+	m.Save("writeClosed", &x.writeClosed)
 	m.Save("srfd", &x.srfd)
+	m.Save("stype", &x.stype)
 }
 
-func (x *endpoint) load(m state.Map) {
+func (x *ConnectedEndpoint) load(m state.Map) {
+	m.Load("queue", &x.queue)
+	m.Load("path", &x.path)
+	m.Load("ref", &x.ref)
+	m.Load("readClosed", &x.readClosed)
+	m.Load("writeClosed", &x.writeClosed)
 	m.LoadWait("srfd", &x.srfd)
+	m.Load("stype", &x.stype)
 	m.AfterLoad(x.afterLoad)
 }
 
@@ -126,6 +137,6 @@ func init() {
 	state.Register("host.superOperations", (*superOperations)(nil), state.Fns{Save: (*superOperations).save, Load: (*superOperations).load})
 	state.Register("host.inodeOperations", (*inodeOperations)(nil), state.Fns{Save: (*inodeOperations).save, Load: (*inodeOperations).load})
 	state.Register("host.inodeFileState", (*inodeFileState)(nil), state.Fns{Save: (*inodeFileState).save, Load: (*inodeFileState).load})
-	state.Register("host.endpoint", (*endpoint)(nil), state.Fns{Save: (*endpoint).save, Load: (*endpoint).load})
+	state.Register("host.ConnectedEndpoint", (*ConnectedEndpoint)(nil), state.Fns{Save: (*ConnectedEndpoint).save, Load: (*ConnectedEndpoint).load})
 	state.Register("host.TTYFileOperations", (*TTYFileOperations)(nil), state.Fns{Save: (*TTYFileOperations).save, Load: (*TTYFileOperations).load})
 }
