@@ -37,6 +37,27 @@ func (x *connectionlessEndpoint) load(m state.Map) {
 	m.Load("baseEndpoint", &x.baseEndpoint)
 }
 
+func (x *queue) beforeSave() {}
+func (x *queue) save(m state.Map) {
+	x.beforeSave()
+	m.Save("ReaderQueue", &x.ReaderQueue)
+	m.Save("WriterQueue", &x.WriterQueue)
+	m.Save("closed", &x.closed)
+	m.Save("used", &x.used)
+	m.Save("limit", &x.limit)
+	m.Save("dataList", &x.dataList)
+}
+
+func (x *queue) afterLoad() {}
+func (x *queue) load(m state.Map) {
+	m.Load("ReaderQueue", &x.ReaderQueue)
+	m.Load("WriterQueue", &x.WriterQueue)
+	m.Load("closed", &x.closed)
+	m.Load("used", &x.used)
+	m.Load("limit", &x.limit)
+	m.Load("dataList", &x.dataList)
+}
+
 func (x *ControlMessages) beforeSave() {}
 func (x *ControlMessages) save(m state.Map) {
 	x.beforeSave()
@@ -130,6 +151,7 @@ func (x *baseEndpoint) load(m state.Map) {
 func init() {
 	state.Register("transport.connectionedEndpoint", (*connectionedEndpoint)(nil), state.Fns{Save: (*connectionedEndpoint).save, Load: (*connectionedEndpoint).load})
 	state.Register("transport.connectionlessEndpoint", (*connectionlessEndpoint)(nil), state.Fns{Save: (*connectionlessEndpoint).save, Load: (*connectionlessEndpoint).load})
+	state.Register("transport.queue", (*queue)(nil), state.Fns{Save: (*queue).save, Load: (*queue).load})
 	state.Register("transport.ControlMessages", (*ControlMessages)(nil), state.Fns{Save: (*ControlMessages).save, Load: (*ControlMessages).load})
 	state.Register("transport.message", (*message)(nil), state.Fns{Save: (*message).save, Load: (*message).load})
 	state.Register("transport.queueReceiver", (*queueReceiver)(nil), state.Fns{Save: (*queueReceiver).save, Load: (*queueReceiver).load})
