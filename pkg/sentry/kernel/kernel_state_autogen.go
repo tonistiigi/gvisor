@@ -733,6 +733,32 @@ func (x *TaskGoroutineSchedInfo) load(m state.Map) {
 	m.Load("SysTicks", &x.SysTicks)
 }
 
+func (x *taskClock) beforeSave() {}
+func (x *taskClock) save(m state.Map) {
+	x.beforeSave()
+	m.Save("t", &x.t)
+	m.Save("includeSys", &x.includeSys)
+}
+
+func (x *taskClock) afterLoad() {}
+func (x *taskClock) load(m state.Map) {
+	m.Load("t", &x.t)
+	m.Load("includeSys", &x.includeSys)
+}
+
+func (x *tgClock) beforeSave() {}
+func (x *tgClock) save(m state.Map) {
+	x.beforeSave()
+	m.Save("tg", &x.tg)
+	m.Save("includeSys", &x.includeSys)
+}
+
+func (x *tgClock) afterLoad() {}
+func (x *tgClock) load(m state.Map) {
+	m.Load("tg", &x.tg)
+	m.Load("includeSys", &x.includeSys)
+}
+
 func (x *groupStop) beforeSave() {}
 func (x *groupStop) save(m state.Map) {
 	x.beforeSave()
@@ -804,7 +830,6 @@ func (x *ThreadGroup) save(m state.Map) {
 	m.Save("threadGroupNode", &x.threadGroupNode)
 	m.Save("signalHandlers", &x.signalHandlers)
 	m.Save("pendingSignals", &x.pendingSignals)
-	m.Save("lastTimerSignalTask", &x.lastTimerSignalTask)
 	m.Save("groupStopPhase", &x.groupStopPhase)
 	m.Save("groupStopSignal", &x.groupStopSignal)
 	m.Save("groupStopCount", &x.groupStopCount)
@@ -815,7 +840,11 @@ func (x *ThreadGroup) save(m state.Map) {
 	m.Save("exiting", &x.exiting)
 	m.Save("exitStatus", &x.exitStatus)
 	m.Save("terminationSignal", &x.terminationSignal)
-	m.Save("tm", &x.tm)
+	m.Save("itimerRealTimer", &x.itimerRealTimer)
+	m.Save("itimerVirtSetting", &x.itimerVirtSetting)
+	m.Save("itimerProfSetting", &x.itimerProfSetting)
+	m.Save("rlimitCPUSoftSetting", &x.rlimitCPUSoftSetting)
+	m.Save("cpuTimersEnabled", &x.cpuTimersEnabled)
 	m.Save("timers", &x.timers)
 	m.Save("nextTimerID", &x.nextTimerID)
 	m.Save("exitedCPUStats", &x.exitedCPUStats)
@@ -833,7 +862,6 @@ func (x *ThreadGroup) load(m state.Map) {
 	m.Load("threadGroupNode", &x.threadGroupNode)
 	m.Load("signalHandlers", &x.signalHandlers)
 	m.Load("pendingSignals", &x.pendingSignals)
-	m.Load("lastTimerSignalTask", &x.lastTimerSignalTask)
 	m.Load("groupStopPhase", &x.groupStopPhase)
 	m.Load("groupStopSignal", &x.groupStopSignal)
 	m.Load("groupStopCount", &x.groupStopCount)
@@ -844,7 +872,11 @@ func (x *ThreadGroup) load(m state.Map) {
 	m.Load("exiting", &x.exiting)
 	m.Load("exitStatus", &x.exitStatus)
 	m.Load("terminationSignal", &x.terminationSignal)
-	m.Load("tm", &x.tm)
+	m.Load("itimerRealTimer", &x.itimerRealTimer)
+	m.Load("itimerVirtSetting", &x.itimerVirtSetting)
+	m.Load("itimerProfSetting", &x.itimerProfSetting)
+	m.Load("rlimitCPUSoftSetting", &x.rlimitCPUSoftSetting)
+	m.Load("cpuTimersEnabled", &x.cpuTimersEnabled)
 	m.Load("timers", &x.timers)
 	m.Load("nextTimerID", &x.nextTimerID)
 	m.Load("exitedCPUStats", &x.exitedCPUStats)
@@ -856,6 +888,17 @@ func (x *ThreadGroup) load(m state.Map) {
 	m.Load("processGroup", &x.processGroup)
 	m.Load("execed", &x.execed)
 	m.LoadValue("rscr", new(*RSEQCriticalRegion), func(y interface{}) { x.loadRscr(y.(*RSEQCriticalRegion)) })
+}
+
+func (x *itimerRealListener) beforeSave() {}
+func (x *itimerRealListener) save(m state.Map) {
+	x.beforeSave()
+	m.Save("tg", &x.tg)
+}
+
+func (x *itimerRealListener) afterLoad() {}
+func (x *itimerRealListener) load(m state.Map) {
+	m.Load("tg", &x.tg)
 }
 
 func (x *TaskSet) beforeSave() {}
@@ -973,59 +1016,6 @@ func (x *timekeeperClock) load(m state.Map) {
 	m.Load("c", &x.c)
 }
 
-func (x *tgClock) beforeSave() {}
-func (x *tgClock) save(m state.Map) {
-	x.beforeSave()
-	m.Save("tg", &x.tg)
-	m.Save("includeSys", &x.includeSys)
-}
-
-func (x *tgClock) afterLoad() {}
-func (x *tgClock) load(m state.Map) {
-	m.Load("tg", &x.tg)
-	m.Load("includeSys", &x.includeSys)
-}
-
-func (x *signalNotifier) beforeSave() {}
-func (x *signalNotifier) save(m state.Map) {
-	x.beforeSave()
-	m.Save("tg", &x.tg)
-	m.Save("signal", &x.signal)
-	m.Save("realTimer", &x.realTimer)
-	m.Save("includeSys", &x.includeSys)
-}
-
-func (x *signalNotifier) afterLoad() {}
-func (x *signalNotifier) load(m state.Map) {
-	m.Load("tg", &x.tg)
-	m.Load("signal", &x.signal)
-	m.Load("realTimer", &x.realTimer)
-	m.Load("includeSys", &x.includeSys)
-}
-
-func (x *TimerManager) beforeSave() {}
-func (x *TimerManager) save(m state.Map) {
-	x.beforeSave()
-	m.Save("virtClock", &x.virtClock)
-	m.Save("profClock", &x.profClock)
-	m.Save("RealTimer", &x.RealTimer)
-	m.Save("VirtualTimer", &x.VirtualTimer)
-	m.Save("ProfTimer", &x.ProfTimer)
-	m.Save("SoftLimitTimer", &x.SoftLimitTimer)
-	m.Save("HardLimitTimer", &x.HardLimitTimer)
-}
-
-func (x *TimerManager) afterLoad() {}
-func (x *TimerManager) load(m state.Map) {
-	m.Load("virtClock", &x.virtClock)
-	m.Load("profClock", &x.profClock)
-	m.Load("RealTimer", &x.RealTimer)
-	m.Load("VirtualTimer", &x.VirtualTimer)
-	m.Load("ProfTimer", &x.ProfTimer)
-	m.Load("SoftLimitTimer", &x.SoftLimitTimer)
-	m.Load("HardLimitTimer", &x.HardLimitTimer)
-}
-
 func (x *UTSNamespace) beforeSave() {}
 func (x *UTSNamespace) save(m state.Map) {
 	x.beforeSave()
@@ -1099,6 +1089,8 @@ func init() {
 	state.Register("kernel.taskEntry", (*taskEntry)(nil), state.Fns{Save: (*taskEntry).save, Load: (*taskEntry).load})
 	state.Register("kernel.runApp", (*runApp)(nil), state.Fns{Save: (*runApp).save, Load: (*runApp).load})
 	state.Register("kernel.TaskGoroutineSchedInfo", (*TaskGoroutineSchedInfo)(nil), state.Fns{Save: (*TaskGoroutineSchedInfo).save, Load: (*TaskGoroutineSchedInfo).load})
+	state.Register("kernel.taskClock", (*taskClock)(nil), state.Fns{Save: (*taskClock).save, Load: (*taskClock).load})
+	state.Register("kernel.tgClock", (*tgClock)(nil), state.Fns{Save: (*tgClock).save, Load: (*tgClock).load})
 	state.Register("kernel.groupStop", (*groupStop)(nil), state.Fns{Save: (*groupStop).save, Load: (*groupStop).load})
 	state.Register("kernel.runInterrupt", (*runInterrupt)(nil), state.Fns{Save: (*runInterrupt).save, Load: (*runInterrupt).load})
 	state.Register("kernel.runInterruptAfterSignalDeliveryStop", (*runInterruptAfterSignalDeliveryStop)(nil), state.Fns{Save: (*runInterruptAfterSignalDeliveryStop).save, Load: (*runInterruptAfterSignalDeliveryStop).load})
@@ -1107,15 +1099,13 @@ func init() {
 	state.Register("kernel.runSyscallReinvoke", (*runSyscallReinvoke)(nil), state.Fns{Save: (*runSyscallReinvoke).save, Load: (*runSyscallReinvoke).load})
 	state.Register("kernel.runSyscallExit", (*runSyscallExit)(nil), state.Fns{Save: (*runSyscallExit).save, Load: (*runSyscallExit).load})
 	state.Register("kernel.ThreadGroup", (*ThreadGroup)(nil), state.Fns{Save: (*ThreadGroup).save, Load: (*ThreadGroup).load})
+	state.Register("kernel.itimerRealListener", (*itimerRealListener)(nil), state.Fns{Save: (*itimerRealListener).save, Load: (*itimerRealListener).load})
 	state.Register("kernel.TaskSet", (*TaskSet)(nil), state.Fns{Save: (*TaskSet).save, Load: (*TaskSet).load})
 	state.Register("kernel.PIDNamespace", (*PIDNamespace)(nil), state.Fns{Save: (*PIDNamespace).save, Load: (*PIDNamespace).load})
 	state.Register("kernel.threadGroupNode", (*threadGroupNode)(nil), state.Fns{Save: (*threadGroupNode).save, Load: (*threadGroupNode).load})
 	state.Register("kernel.taskNode", (*taskNode)(nil), state.Fns{Save: (*taskNode).save, Load: (*taskNode).load})
 	state.Register("kernel.Timekeeper", (*Timekeeper)(nil), state.Fns{Save: (*Timekeeper).save, Load: (*Timekeeper).load})
 	state.Register("kernel.timekeeperClock", (*timekeeperClock)(nil), state.Fns{Save: (*timekeeperClock).save, Load: (*timekeeperClock).load})
-	state.Register("kernel.tgClock", (*tgClock)(nil), state.Fns{Save: (*tgClock).save, Load: (*tgClock).load})
-	state.Register("kernel.signalNotifier", (*signalNotifier)(nil), state.Fns{Save: (*signalNotifier).save, Load: (*signalNotifier).load})
-	state.Register("kernel.TimerManager", (*TimerManager)(nil), state.Fns{Save: (*TimerManager).save, Load: (*TimerManager).load})
 	state.Register("kernel.UTSNamespace", (*UTSNamespace)(nil), state.Fns{Save: (*UTSNamespace).save, Load: (*UTSNamespace).load})
 	state.Register("kernel.VDSOParamPage", (*VDSOParamPage)(nil), state.Fns{Save: (*VDSOParamPage).save, Load: (*VDSOParamPage).load})
 }
