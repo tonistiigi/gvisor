@@ -58,6 +58,32 @@ func (x *queue) load(m state.Map) {
 	m.Load("dataList", &x.dataList)
 }
 
+func (x *messageList) beforeSave() {}
+func (x *messageList) save(m state.Map) {
+	x.beforeSave()
+	m.Save("head", &x.head)
+	m.Save("tail", &x.tail)
+}
+
+func (x *messageList) afterLoad() {}
+func (x *messageList) load(m state.Map) {
+	m.Load("head", &x.head)
+	m.Load("tail", &x.tail)
+}
+
+func (x *messageEntry) beforeSave() {}
+func (x *messageEntry) save(m state.Map) {
+	x.beforeSave()
+	m.Save("next", &x.next)
+	m.Save("prev", &x.prev)
+}
+
+func (x *messageEntry) afterLoad() {}
+func (x *messageEntry) load(m state.Map) {
+	m.Load("next", &x.next)
+	m.Load("prev", &x.prev)
+}
+
 func (x *ControlMessages) beforeSave() {}
 func (x *ControlMessages) save(m state.Map) {
 	x.beforeSave()
@@ -74,7 +100,7 @@ func (x *ControlMessages) load(m state.Map) {
 func (x *message) beforeSave() {}
 func (x *message) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
+	m.Save("messageEntry", &x.messageEntry)
 	m.Save("Data", &x.Data)
 	m.Save("Control", &x.Control)
 	m.Save("Address", &x.Address)
@@ -82,7 +108,7 @@ func (x *message) save(m state.Map) {
 
 func (x *message) afterLoad() {}
 func (x *message) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
+	m.Load("messageEntry", &x.messageEntry)
 	m.Load("Data", &x.Data)
 	m.Load("Control", &x.Control)
 	m.Load("Address", &x.Address)
@@ -152,6 +178,8 @@ func init() {
 	state.Register("transport.connectionedEndpoint", (*connectionedEndpoint)(nil), state.Fns{Save: (*connectionedEndpoint).save, Load: (*connectionedEndpoint).load})
 	state.Register("transport.connectionlessEndpoint", (*connectionlessEndpoint)(nil), state.Fns{Save: (*connectionlessEndpoint).save, Load: (*connectionlessEndpoint).load})
 	state.Register("transport.queue", (*queue)(nil), state.Fns{Save: (*queue).save, Load: (*queue).load})
+	state.Register("transport.messageList", (*messageList)(nil), state.Fns{Save: (*messageList).save, Load: (*messageList).load})
+	state.Register("transport.messageEntry", (*messageEntry)(nil), state.Fns{Save: (*messageEntry).save, Load: (*messageEntry).load})
 	state.Register("transport.ControlMessages", (*ControlMessages)(nil), state.Fns{Save: (*ControlMessages).save, Load: (*ControlMessages).load})
 	state.Register("transport.message", (*message)(nil), state.Fns{Save: (*message).save, Load: (*message).load})
 	state.Register("transport.queueReceiver", (*queueReceiver)(nil), state.Fns{Save: (*queueReceiver).save, Load: (*queueReceiver).load})
