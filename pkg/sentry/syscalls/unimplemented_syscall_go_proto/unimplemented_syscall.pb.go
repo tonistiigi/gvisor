@@ -20,8 +20,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type UnimplementedSyscall struct {
-	Tid                  int32                         `protobuf:"varint,1,opt,name=tid" json:"tid,omitempty"`
-	Registers            *registers_go_proto.Registers `protobuf:"bytes,2,opt,name=registers" json:"registers,omitempty"`
+	Tid                  int32                         `protobuf:"varint,1,opt,name=tid,proto3" json:"tid,omitempty"`
+	Registers            *registers_go_proto.Registers `protobuf:"bytes,2,opt,name=registers,proto3" json:"registers,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                      `json:"-"`
 	XXX_unrecognized     []byte                        `json:"-"`
 	XXX_sizecache        int32                         `json:"-"`

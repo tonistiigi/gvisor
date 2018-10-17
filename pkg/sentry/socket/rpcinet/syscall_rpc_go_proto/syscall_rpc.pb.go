@@ -19,11 +19,11 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type SendmsgRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
 	Data                 []byte   `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	Address              []byte   `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`
-	More                 bool     `protobuf:"varint,4,opt,name=more" json:"more,omitempty"`
-	EndOfRecord          bool     `protobuf:"varint,5,opt,name=end_of_record,json=endOfRecord" json:"end_of_record,omitempty"`
+	More                 bool     `protobuf:"varint,4,opt,name=more,proto3" json:"more,omitempty"`
+	EndOfRecord          bool     `protobuf:"varint,5,opt,name=end_of_record,json=endOfRecord,proto3" json:"end_of_record,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -127,14 +127,16 @@ type isSendmsgResponse_Result interface {
 }
 
 type SendmsgResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type SendmsgResponse_Length struct {
-	Length uint32 `protobuf:"varint,2,opt,name=length,oneof"`
+	Length uint32 `protobuf:"varint,2,opt,name=length,proto3,oneof"`
 }
 
 func (*SendmsgResponse_ErrorNumber) isSendmsgResponse_Result() {}
-func (*SendmsgResponse_Length) isSendmsgResponse_Result()      {}
+
+func (*SendmsgResponse_Length) isSendmsgResponse_Result() {}
 
 func (m *SendmsgResponse) GetResult() isSendmsgResponse_Result {
 	if m != nil {
@@ -222,8 +224,8 @@ func _SendmsgResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type IOCtlRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	Cmd                  uint32   `protobuf:"varint,2,opt,name=cmd" json:"cmd,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	Cmd                  uint32   `protobuf:"varint,2,opt,name=cmd,proto3" json:"cmd,omitempty"`
 	Arg                  []byte   `protobuf:"bytes,3,opt,name=arg,proto3" json:"arg,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -314,14 +316,16 @@ type isIOCtlResponse_Result interface {
 }
 
 type IOCtlResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type IOCtlResponse_Value struct {
 	Value []byte `protobuf:"bytes,2,opt,name=value,proto3,oneof"`
 }
 
 func (*IOCtlResponse_ErrorNumber) isIOCtlResponse_Result() {}
-func (*IOCtlResponse_Value) isIOCtlResponse_Result()       {}
+
+func (*IOCtlResponse_Value) isIOCtlResponse_Result() {}
 
 func (m *IOCtlResponse) GetResult() isIOCtlResponse_Result {
 	if m != nil {
@@ -410,12 +414,12 @@ func _IOCtlResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type RecvmsgRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	Length               uint32   `protobuf:"varint,2,opt,name=length" json:"length,omitempty"`
-	Sender               bool     `protobuf:"varint,3,opt,name=sender" json:"sender,omitempty"`
-	Peek                 bool     `protobuf:"varint,4,opt,name=peek" json:"peek,omitempty"`
-	Trunc                bool     `protobuf:"varint,5,opt,name=trunc" json:"trunc,omitempty"`
-	CmsgLength           uint32   `protobuf:"varint,6,opt,name=cmsg_length,json=cmsgLength" json:"cmsg_length,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	Length               uint32   `protobuf:"varint,2,opt,name=length,proto3" json:"length,omitempty"`
+	Sender               bool     `protobuf:"varint,3,opt,name=sender,proto3" json:"sender,omitempty"`
+	Peek                 bool     `protobuf:"varint,4,opt,name=peek,proto3" json:"peek,omitempty"`
+	Trunc                bool     `protobuf:"varint,5,opt,name=trunc,proto3" json:"trunc,omitempty"`
+	CmsgLength           uint32   `protobuf:"varint,6,opt,name=cmsg_length,json=cmsgLength,proto3" json:"cmsg_length,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -489,8 +493,8 @@ func (m *RecvmsgRequest) GetCmsgLength() uint32 {
 
 type OpenRequest struct {
 	Path                 []byte   `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
-	Flags                uint32   `protobuf:"varint,2,opt,name=flags" json:"flags,omitempty"`
-	Mode                 uint32   `protobuf:"varint,3,opt,name=mode" json:"mode,omitempty"`
+	Flags                uint32   `protobuf:"varint,2,opt,name=flags,proto3" json:"flags,omitempty"`
+	Mode                 uint32   `protobuf:"varint,3,opt,name=mode,proto3" json:"mode,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -580,14 +584,16 @@ type isOpenResponse_Result interface {
 }
 
 type OpenResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type OpenResponse_Fd struct {
-	Fd uint32 `protobuf:"varint,2,opt,name=fd,oneof"`
+	Fd uint32 `protobuf:"varint,2,opt,name=fd,proto3,oneof"`
 }
 
 func (*OpenResponse_ErrorNumber) isOpenResponse_Result() {}
-func (*OpenResponse_Fd) isOpenResponse_Result()          {}
+
+func (*OpenResponse_Fd) isOpenResponse_Result() {}
 
 func (m *OpenResponse) GetResult() isOpenResponse_Result {
 	if m != nil {
@@ -675,8 +681,8 @@ func _OpenResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type ReadRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	Length               uint32   `protobuf:"varint,2,opt,name=length" json:"length,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	Length               uint32   `protobuf:"varint,2,opt,name=length,proto3" json:"length,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -759,14 +765,16 @@ type isReadResponse_Result interface {
 }
 
 type ReadResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type ReadResponse_Data struct {
 	Data []byte `protobuf:"bytes,2,opt,name=data,proto3,oneof"`
 }
 
 func (*ReadResponse_ErrorNumber) isReadResponse_Result() {}
-func (*ReadResponse_Data) isReadResponse_Result()        {}
+
+func (*ReadResponse_Data) isReadResponse_Result() {}
 
 func (m *ReadResponse) GetResult() isReadResponse_Result {
 	if m != nil {
@@ -855,7 +863,7 @@ func _ReadResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type ReadFileRequest struct {
-	Path                 string   `protobuf:"bytes,1,opt,name=path" json:"path,omitempty"`
+	Path                 string   `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -931,14 +939,16 @@ type isReadFileResponse_Result interface {
 }
 
 type ReadFileResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type ReadFileResponse_Data struct {
 	Data []byte `protobuf:"bytes,2,opt,name=data,proto3,oneof"`
 }
 
 func (*ReadFileResponse_ErrorNumber) isReadFileResponse_Result() {}
-func (*ReadFileResponse_Data) isReadFileResponse_Result()        {}
+
+func (*ReadFileResponse_Data) isReadFileResponse_Result() {}
 
 func (m *ReadFileResponse) GetResult() isReadFileResponse_Result {
 	if m != nil {
@@ -1027,7 +1037,7 @@ func _ReadFileResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type WriteRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
 	Data                 []byte   `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -1111,14 +1121,16 @@ type isWriteResponse_Result interface {
 }
 
 type WriteResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type WriteResponse_Length struct {
-	Length uint32 `protobuf:"varint,2,opt,name=length,oneof"`
+	Length uint32 `protobuf:"varint,2,opt,name=length,proto3,oneof"`
 }
 
 func (*WriteResponse_ErrorNumber) isWriteResponse_Result() {}
-func (*WriteResponse_Length) isWriteResponse_Result()      {}
+
+func (*WriteResponse_Length) isWriteResponse_Result() {}
 
 func (m *WriteResponse) GetResult() isWriteResponse_Result {
 	if m != nil {
@@ -1206,7 +1218,7 @@ func _WriteResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type WriteFileRequest struct {
-	Path                 string   `protobuf:"bytes,1,opt,name=path" json:"path,omitempty"`
+	Path                 string   `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
 	Content              []byte   `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -1252,8 +1264,8 @@ func (m *WriteFileRequest) GetContent() []byte {
 }
 
 type WriteFileResponse struct {
-	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber" json:"error_number,omitempty"`
-	Written              uint32   `protobuf:"varint,2,opt,name=written" json:"written,omitempty"`
+	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3" json:"error_number,omitempty"`
+	Written              uint32   `protobuf:"varint,2,opt,name=written,proto3" json:"written,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1299,7 +1311,7 @@ func (m *WriteFileResponse) GetWritten() uint32 {
 
 type AddressResponse struct {
 	Address              []byte   `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	Length               uint32   `protobuf:"varint,2,opt,name=length" json:"length,omitempty"`
+	Length               uint32   `protobuf:"varint,2,opt,name=length,proto3" json:"length,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1382,14 +1394,16 @@ type isRecvmsgResponse_Result interface {
 }
 
 type RecvmsgResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type RecvmsgResponse_Payload struct {
-	Payload *RecvmsgResponse_ResultPayload `protobuf:"bytes,2,opt,name=payload,oneof"`
+	Payload *RecvmsgResponse_ResultPayload `protobuf:"bytes,2,opt,name=payload,proto3,oneof"`
 }
 
 func (*RecvmsgResponse_ErrorNumber) isRecvmsgResponse_Result() {}
-func (*RecvmsgResponse_Payload) isRecvmsgResponse_Result()     {}
+
+func (*RecvmsgResponse_Payload) isRecvmsgResponse_Result() {}
 
 func (m *RecvmsgResponse) GetResult() isRecvmsgResponse_Result {
 	if m != nil {
@@ -1483,8 +1497,8 @@ func _RecvmsgResponse_OneofSizer(msg proto.Message) (n int) {
 
 type RecvmsgResponse_ResultPayload struct {
 	Data                 []byte           `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	Address              *AddressResponse `protobuf:"bytes,2,opt,name=address" json:"address,omitempty"`
-	Length               uint32           `protobuf:"varint,3,opt,name=length" json:"length,omitempty"`
+	Address              *AddressResponse `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	Length               uint32           `protobuf:"varint,3,opt,name=length,proto3" json:"length,omitempty"`
 	CmsgData             []byte           `protobuf:"bytes,4,opt,name=cmsg_data,json=cmsgData,proto3" json:"cmsg_data,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
@@ -1544,7 +1558,7 @@ func (m *RecvmsgResponse_ResultPayload) GetCmsgData() []byte {
 }
 
 type BindRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
 	Address              []byte   `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -1590,7 +1604,7 @@ func (m *BindRequest) GetAddress() []byte {
 }
 
 type BindResponse struct {
-	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber" json:"error_number,omitempty"`
+	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3" json:"error_number,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1628,9 +1642,9 @@ func (m *BindResponse) GetErrorNumber() uint32 {
 }
 
 type AcceptRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	Peer                 bool     `protobuf:"varint,2,opt,name=peer" json:"peer,omitempty"`
-	Flags                int64    `protobuf:"varint,3,opt,name=flags" json:"flags,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	Peer                 bool     `protobuf:"varint,2,opt,name=peer,proto3" json:"peer,omitempty"`
+	Flags                int64    `protobuf:"varint,3,opt,name=flags,proto3" json:"flags,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1720,14 +1734,16 @@ type isAcceptResponse_Result interface {
 }
 
 type AcceptResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type AcceptResponse_Payload struct {
-	Payload *AcceptResponse_ResultPayload `protobuf:"bytes,2,opt,name=payload,oneof"`
+	Payload *AcceptResponse_ResultPayload `protobuf:"bytes,2,opt,name=payload,proto3,oneof"`
 }
 
 func (*AcceptResponse_ErrorNumber) isAcceptResponse_Result() {}
-func (*AcceptResponse_Payload) isAcceptResponse_Result()     {}
+
+func (*AcceptResponse_Payload) isAcceptResponse_Result() {}
 
 func (m *AcceptResponse) GetResult() isAcceptResponse_Result {
 	if m != nil {
@@ -1820,8 +1836,8 @@ func _AcceptResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type AcceptResponse_ResultPayload struct {
-	Fd                   uint32           `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	Address              *AddressResponse `protobuf:"bytes,2,opt,name=address" json:"address,omitempty"`
+	Fd                   uint32           `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	Address              *AddressResponse `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
 	XXX_sizecache        int32            `json:"-"`
@@ -1866,7 +1882,7 @@ func (m *AcceptResponse_ResultPayload) GetAddress() *AddressResponse {
 }
 
 type ConnectRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
 	Address              []byte   `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -1912,7 +1928,7 @@ func (m *ConnectRequest) GetAddress() []byte {
 }
 
 type ConnectResponse struct {
-	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber" json:"error_number,omitempty"`
+	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3" json:"error_number,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1950,8 +1966,8 @@ func (m *ConnectResponse) GetErrorNumber() uint32 {
 }
 
 type ListenRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	Backlog              int64    `protobuf:"varint,2,opt,name=backlog" json:"backlog,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	Backlog              int64    `protobuf:"varint,2,opt,name=backlog,proto3" json:"backlog,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1996,7 +2012,7 @@ func (m *ListenRequest) GetBacklog() int64 {
 }
 
 type ListenResponse struct {
-	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber" json:"error_number,omitempty"`
+	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3" json:"error_number,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2034,8 +2050,8 @@ func (m *ListenResponse) GetErrorNumber() uint32 {
 }
 
 type ShutdownRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	How                  int64    `protobuf:"varint,2,opt,name=how" json:"how,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	How                  int64    `protobuf:"varint,2,opt,name=how,proto3" json:"how,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2080,7 +2096,7 @@ func (m *ShutdownRequest) GetHow() int64 {
 }
 
 type ShutdownResponse struct {
-	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber" json:"error_number,omitempty"`
+	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3" json:"error_number,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2118,7 +2134,7 @@ func (m *ShutdownResponse) GetErrorNumber() uint32 {
 }
 
 type CloseRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2156,7 +2172,7 @@ func (m *CloseRequest) GetFd() uint32 {
 }
 
 type CloseResponse struct {
-	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber" json:"error_number,omitempty"`
+	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3" json:"error_number,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2194,10 +2210,10 @@ func (m *CloseResponse) GetErrorNumber() uint32 {
 }
 
 type GetSockOptRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	Level                int64    `protobuf:"varint,2,opt,name=level" json:"level,omitempty"`
-	Name                 int64    `protobuf:"varint,3,opt,name=name" json:"name,omitempty"`
-	Length               uint32   `protobuf:"varint,4,opt,name=length" json:"length,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	Level                int64    `protobuf:"varint,2,opt,name=level,proto3" json:"level,omitempty"`
+	Name                 int64    `protobuf:"varint,3,opt,name=name,proto3" json:"name,omitempty"`
+	Length               uint32   `protobuf:"varint,4,opt,name=length,proto3" json:"length,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2294,14 +2310,16 @@ type isGetSockOptResponse_Result interface {
 }
 
 type GetSockOptResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type GetSockOptResponse_Opt struct {
 	Opt []byte `protobuf:"bytes,2,opt,name=opt,proto3,oneof"`
 }
 
 func (*GetSockOptResponse_ErrorNumber) isGetSockOptResponse_Result() {}
-func (*GetSockOptResponse_Opt) isGetSockOptResponse_Result()         {}
+
+func (*GetSockOptResponse_Opt) isGetSockOptResponse_Result() {}
 
 func (m *GetSockOptResponse) GetResult() isGetSockOptResponse_Result {
 	if m != nil {
@@ -2390,9 +2408,9 @@ func _GetSockOptResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type SetSockOptRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	Level                int64    `protobuf:"varint,2,opt,name=level" json:"level,omitempty"`
-	Name                 int64    `protobuf:"varint,3,opt,name=name" json:"name,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	Level                int64    `protobuf:"varint,2,opt,name=level,proto3" json:"level,omitempty"`
+	Name                 int64    `protobuf:"varint,3,opt,name=name,proto3" json:"name,omitempty"`
 	Opt                  []byte   `protobuf:"bytes,4,opt,name=opt,proto3" json:"opt,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -2452,7 +2470,7 @@ func (m *SetSockOptRequest) GetOpt() []byte {
 }
 
 type SetSockOptResponse struct {
-	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber" json:"error_number,omitempty"`
+	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3" json:"error_number,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2490,7 +2508,7 @@ func (m *SetSockOptResponse) GetErrorNumber() uint32 {
 }
 
 type GetSockNameRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2566,14 +2584,16 @@ type isGetSockNameResponse_Result interface {
 }
 
 type GetSockNameResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type GetSockNameResponse_Address struct {
-	Address *AddressResponse `protobuf:"bytes,2,opt,name=address,oneof"`
+	Address *AddressResponse `protobuf:"bytes,2,opt,name=address,proto3,oneof"`
 }
 
 func (*GetSockNameResponse_ErrorNumber) isGetSockNameResponse_Result() {}
-func (*GetSockNameResponse_Address) isGetSockNameResponse_Result()     {}
+
+func (*GetSockNameResponse_Address) isGetSockNameResponse_Result() {}
 
 func (m *GetSockNameResponse) GetResult() isGetSockNameResponse_Result {
 	if m != nil {
@@ -2666,7 +2686,7 @@ func _GetSockNameResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type GetPeerNameRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2742,14 +2762,16 @@ type isGetPeerNameResponse_Result interface {
 }
 
 type GetPeerNameResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type GetPeerNameResponse_Address struct {
-	Address *AddressResponse `protobuf:"bytes,2,opt,name=address,oneof"`
+	Address *AddressResponse `protobuf:"bytes,2,opt,name=address,proto3,oneof"`
 }
 
 func (*GetPeerNameResponse_ErrorNumber) isGetPeerNameResponse_Result() {}
-func (*GetPeerNameResponse_Address) isGetPeerNameResponse_Result()     {}
+
+func (*GetPeerNameResponse_Address) isGetPeerNameResponse_Result() {}
 
 func (m *GetPeerNameResponse) GetResult() isGetPeerNameResponse_Result {
 	if m != nil {
@@ -2842,9 +2864,9 @@ func _GetPeerNameResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type SocketRequest struct {
-	Family               int64    `protobuf:"varint,1,opt,name=family" json:"family,omitempty"`
-	Type                 int64    `protobuf:"varint,2,opt,name=type" json:"type,omitempty"`
-	Protocol             int64    `protobuf:"varint,3,opt,name=protocol" json:"protocol,omitempty"`
+	Family               int64    `protobuf:"varint,1,opt,name=family,proto3" json:"family,omitempty"`
+	Type                 int64    `protobuf:"varint,2,opt,name=type,proto3" json:"type,omitempty"`
+	Protocol             int64    `protobuf:"varint,3,opt,name=protocol,proto3" json:"protocol,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2934,14 +2956,16 @@ type isSocketResponse_Result interface {
 }
 
 type SocketResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type SocketResponse_Fd struct {
-	Fd uint32 `protobuf:"varint,2,opt,name=fd,oneof"`
+	Fd uint32 `protobuf:"varint,2,opt,name=fd,proto3,oneof"`
 }
 
 func (*SocketResponse_ErrorNumber) isSocketResponse_Result() {}
-func (*SocketResponse_Fd) isSocketResponse_Result()          {}
+
+func (*SocketResponse_Fd) isSocketResponse_Result() {}
 
 func (m *SocketResponse) GetResult() isSocketResponse_Result {
 	if m != nil {
@@ -3029,9 +3053,9 @@ func _SocketResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type EpollWaitRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	NumEvents            uint32   `protobuf:"varint,2,opt,name=num_events,json=numEvents" json:"num_events,omitempty"`
-	Msec                 int64    `protobuf:"zigzag64,3,opt,name=msec" json:"msec,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	NumEvents            uint32   `protobuf:"varint,2,opt,name=num_events,json=numEvents,proto3" json:"num_events,omitempty"`
+	Msec                 int64    `protobuf:"zigzag64,3,opt,name=msec,proto3" json:"msec,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -3083,8 +3107,8 @@ func (m *EpollWaitRequest) GetMsec() int64 {
 }
 
 type EpollEvent struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	Events               uint32   `protobuf:"varint,2,opt,name=events" json:"events,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	Events               uint32   `protobuf:"varint,2,opt,name=events,proto3" json:"events,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -3129,7 +3153,7 @@ func (m *EpollEvent) GetEvents() uint32 {
 }
 
 type EpollEvents struct {
-	Events               []*EpollEvent `protobuf:"bytes,1,rep,name=events" json:"events,omitempty"`
+	Events               []*EpollEvent `protobuf:"bytes,1,rep,name=events,proto3" json:"events,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
 	XXX_sizecache        int32         `json:"-"`
@@ -3205,14 +3229,16 @@ type isEpollWaitResponse_Result interface {
 }
 
 type EpollWaitResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type EpollWaitResponse_Events struct {
-	Events *EpollEvents `protobuf:"bytes,2,opt,name=events,oneof"`
+	Events *EpollEvents `protobuf:"bytes,2,opt,name=events,proto3,oneof"`
 }
 
 func (*EpollWaitResponse_ErrorNumber) isEpollWaitResponse_Result() {}
-func (*EpollWaitResponse_Events) isEpollWaitResponse_Result()      {}
+
+func (*EpollWaitResponse_Events) isEpollWaitResponse_Result() {}
 
 func (m *EpollWaitResponse) GetResult() isEpollWaitResponse_Result {
 	if m != nil {
@@ -3305,10 +3331,10 @@ func _EpollWaitResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type EpollCtlRequest struct {
-	Epfd                 uint32      `protobuf:"varint,1,opt,name=epfd" json:"epfd,omitempty"`
-	Op                   int64       `protobuf:"varint,2,opt,name=op" json:"op,omitempty"`
-	Fd                   uint32      `protobuf:"varint,3,opt,name=fd" json:"fd,omitempty"`
-	Event                *EpollEvent `protobuf:"bytes,4,opt,name=event" json:"event,omitempty"`
+	Epfd                 uint32      `protobuf:"varint,1,opt,name=epfd,proto3" json:"epfd,omitempty"`
+	Op                   int64       `protobuf:"varint,2,opt,name=op,proto3" json:"op,omitempty"`
+	Fd                   uint32      `protobuf:"varint,3,opt,name=fd,proto3" json:"fd,omitempty"`
+	Event                *EpollEvent `protobuf:"bytes,4,opt,name=event,proto3" json:"event,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -3367,7 +3393,7 @@ func (m *EpollCtlRequest) GetEvent() *EpollEvent {
 }
 
 type EpollCtlResponse struct {
-	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber" json:"error_number,omitempty"`
+	ErrorNumber          uint32   `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3" json:"error_number,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -3405,7 +3431,7 @@ func (m *EpollCtlResponse) GetErrorNumber() uint32 {
 }
 
 type EpollCreate1Request struct {
-	Flag                 int64    `protobuf:"varint,1,opt,name=flag" json:"flag,omitempty"`
+	Flag                 int64    `protobuf:"varint,1,opt,name=flag,proto3" json:"flag,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -3481,14 +3507,16 @@ type isEpollCreate1Response_Result interface {
 }
 
 type EpollCreate1Response_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type EpollCreate1Response_Fd struct {
-	Fd uint32 `protobuf:"varint,2,opt,name=fd,oneof"`
+	Fd uint32 `protobuf:"varint,2,opt,name=fd,proto3,oneof"`
 }
 
 func (*EpollCreate1Response_ErrorNumber) isEpollCreate1Response_Result() {}
-func (*EpollCreate1Response_Fd) isEpollCreate1Response_Result()          {}
+
+func (*EpollCreate1Response_Fd) isEpollCreate1Response_Result() {}
 
 func (m *EpollCreate1Response) GetResult() isEpollCreate1Response_Result {
 	if m != nil {
@@ -3576,8 +3604,8 @@ func _EpollCreate1Response_OneofSizer(msg proto.Message) (n int) {
 }
 
 type PollRequest struct {
-	Fd                   uint32   `protobuf:"varint,1,opt,name=fd" json:"fd,omitempty"`
-	Events               uint32   `protobuf:"varint,2,opt,name=events" json:"events,omitempty"`
+	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
+	Events               uint32   `protobuf:"varint,2,opt,name=events,proto3" json:"events,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -3660,14 +3688,16 @@ type isPollResponse_Result interface {
 }
 
 type PollResponse_ErrorNumber struct {
-	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,oneof"`
+	ErrorNumber uint32 `protobuf:"varint,1,opt,name=error_number,json=errorNumber,proto3,oneof"`
 }
+
 type PollResponse_Events struct {
-	Events uint32 `protobuf:"varint,2,opt,name=events,oneof"`
+	Events uint32 `protobuf:"varint,2,opt,name=events,proto3,oneof"`
 }
 
 func (*PollResponse_ErrorNumber) isPollResponse_Result() {}
-func (*PollResponse_Events) isPollResponse_Result()      {}
+
+func (*PollResponse_Events) isPollResponse_Result() {}
 
 func (m *PollResponse) GetResult() isPollResponse_Result {
 	if m != nil {
@@ -3814,98 +3844,142 @@ type isSyscallRequest_Args interface {
 }
 
 type SyscallRequest_Socket struct {
-	Socket *SocketRequest `protobuf:"bytes,1,opt,name=socket,oneof"`
-}
-type SyscallRequest_Sendmsg struct {
-	Sendmsg *SendmsgRequest `protobuf:"bytes,2,opt,name=sendmsg,oneof"`
-}
-type SyscallRequest_Recvmsg struct {
-	Recvmsg *RecvmsgRequest `protobuf:"bytes,3,opt,name=recvmsg,oneof"`
-}
-type SyscallRequest_Bind struct {
-	Bind *BindRequest `protobuf:"bytes,4,opt,name=bind,oneof"`
-}
-type SyscallRequest_Accept struct {
-	Accept *AcceptRequest `protobuf:"bytes,5,opt,name=accept,oneof"`
-}
-type SyscallRequest_Connect struct {
-	Connect *ConnectRequest `protobuf:"bytes,6,opt,name=connect,oneof"`
-}
-type SyscallRequest_Listen struct {
-	Listen *ListenRequest `protobuf:"bytes,7,opt,name=listen,oneof"`
-}
-type SyscallRequest_Shutdown struct {
-	Shutdown *ShutdownRequest `protobuf:"bytes,8,opt,name=shutdown,oneof"`
-}
-type SyscallRequest_Close struct {
-	Close *CloseRequest `protobuf:"bytes,9,opt,name=close,oneof"`
-}
-type SyscallRequest_GetSockOpt struct {
-	GetSockOpt *GetSockOptRequest `protobuf:"bytes,10,opt,name=get_sock_opt,json=getSockOpt,oneof"`
-}
-type SyscallRequest_SetSockOpt struct {
-	SetSockOpt *SetSockOptRequest `protobuf:"bytes,11,opt,name=set_sock_opt,json=setSockOpt,oneof"`
-}
-type SyscallRequest_GetSockName struct {
-	GetSockName *GetSockNameRequest `protobuf:"bytes,12,opt,name=get_sock_name,json=getSockName,oneof"`
-}
-type SyscallRequest_GetPeerName struct {
-	GetPeerName *GetPeerNameRequest `protobuf:"bytes,13,opt,name=get_peer_name,json=getPeerName,oneof"`
-}
-type SyscallRequest_EpollWait struct {
-	EpollWait *EpollWaitRequest `protobuf:"bytes,14,opt,name=epoll_wait,json=epollWait,oneof"`
-}
-type SyscallRequest_EpollCtl struct {
-	EpollCtl *EpollCtlRequest `protobuf:"bytes,15,opt,name=epoll_ctl,json=epollCtl,oneof"`
-}
-type SyscallRequest_EpollCreate1 struct {
-	EpollCreate1 *EpollCreate1Request `protobuf:"bytes,16,opt,name=epoll_create1,json=epollCreate1,oneof"`
-}
-type SyscallRequest_Poll struct {
-	Poll *PollRequest `protobuf:"bytes,17,opt,name=poll,oneof"`
-}
-type SyscallRequest_Read struct {
-	Read *ReadRequest `protobuf:"bytes,18,opt,name=read,oneof"`
-}
-type SyscallRequest_Write struct {
-	Write *WriteRequest `protobuf:"bytes,19,opt,name=write,oneof"`
-}
-type SyscallRequest_Open struct {
-	Open *OpenRequest `protobuf:"bytes,20,opt,name=open,oneof"`
-}
-type SyscallRequest_Ioctl struct {
-	Ioctl *IOCtlRequest `protobuf:"bytes,21,opt,name=ioctl,oneof"`
-}
-type SyscallRequest_WriteFile struct {
-	WriteFile *WriteFileRequest `protobuf:"bytes,22,opt,name=write_file,json=writeFile,oneof"`
-}
-type SyscallRequest_ReadFile struct {
-	ReadFile *ReadFileRequest `protobuf:"bytes,23,opt,name=read_file,json=readFile,oneof"`
+	Socket *SocketRequest `protobuf:"bytes,1,opt,name=socket,proto3,oneof"`
 }
 
-func (*SyscallRequest_Socket) isSyscallRequest_Args()       {}
-func (*SyscallRequest_Sendmsg) isSyscallRequest_Args()      {}
-func (*SyscallRequest_Recvmsg) isSyscallRequest_Args()      {}
-func (*SyscallRequest_Bind) isSyscallRequest_Args()         {}
-func (*SyscallRequest_Accept) isSyscallRequest_Args()       {}
-func (*SyscallRequest_Connect) isSyscallRequest_Args()      {}
-func (*SyscallRequest_Listen) isSyscallRequest_Args()       {}
-func (*SyscallRequest_Shutdown) isSyscallRequest_Args()     {}
-func (*SyscallRequest_Close) isSyscallRequest_Args()        {}
-func (*SyscallRequest_GetSockOpt) isSyscallRequest_Args()   {}
-func (*SyscallRequest_SetSockOpt) isSyscallRequest_Args()   {}
-func (*SyscallRequest_GetSockName) isSyscallRequest_Args()  {}
-func (*SyscallRequest_GetPeerName) isSyscallRequest_Args()  {}
-func (*SyscallRequest_EpollWait) isSyscallRequest_Args()    {}
-func (*SyscallRequest_EpollCtl) isSyscallRequest_Args()     {}
+type SyscallRequest_Sendmsg struct {
+	Sendmsg *SendmsgRequest `protobuf:"bytes,2,opt,name=sendmsg,proto3,oneof"`
+}
+
+type SyscallRequest_Recvmsg struct {
+	Recvmsg *RecvmsgRequest `protobuf:"bytes,3,opt,name=recvmsg,proto3,oneof"`
+}
+
+type SyscallRequest_Bind struct {
+	Bind *BindRequest `protobuf:"bytes,4,opt,name=bind,proto3,oneof"`
+}
+
+type SyscallRequest_Accept struct {
+	Accept *AcceptRequest `protobuf:"bytes,5,opt,name=accept,proto3,oneof"`
+}
+
+type SyscallRequest_Connect struct {
+	Connect *ConnectRequest `protobuf:"bytes,6,opt,name=connect,proto3,oneof"`
+}
+
+type SyscallRequest_Listen struct {
+	Listen *ListenRequest `protobuf:"bytes,7,opt,name=listen,proto3,oneof"`
+}
+
+type SyscallRequest_Shutdown struct {
+	Shutdown *ShutdownRequest `protobuf:"bytes,8,opt,name=shutdown,proto3,oneof"`
+}
+
+type SyscallRequest_Close struct {
+	Close *CloseRequest `protobuf:"bytes,9,opt,name=close,proto3,oneof"`
+}
+
+type SyscallRequest_GetSockOpt struct {
+	GetSockOpt *GetSockOptRequest `protobuf:"bytes,10,opt,name=get_sock_opt,json=getSockOpt,proto3,oneof"`
+}
+
+type SyscallRequest_SetSockOpt struct {
+	SetSockOpt *SetSockOptRequest `protobuf:"bytes,11,opt,name=set_sock_opt,json=setSockOpt,proto3,oneof"`
+}
+
+type SyscallRequest_GetSockName struct {
+	GetSockName *GetSockNameRequest `protobuf:"bytes,12,opt,name=get_sock_name,json=getSockName,proto3,oneof"`
+}
+
+type SyscallRequest_GetPeerName struct {
+	GetPeerName *GetPeerNameRequest `protobuf:"bytes,13,opt,name=get_peer_name,json=getPeerName,proto3,oneof"`
+}
+
+type SyscallRequest_EpollWait struct {
+	EpollWait *EpollWaitRequest `protobuf:"bytes,14,opt,name=epoll_wait,json=epollWait,proto3,oneof"`
+}
+
+type SyscallRequest_EpollCtl struct {
+	EpollCtl *EpollCtlRequest `protobuf:"bytes,15,opt,name=epoll_ctl,json=epollCtl,proto3,oneof"`
+}
+
+type SyscallRequest_EpollCreate1 struct {
+	EpollCreate1 *EpollCreate1Request `protobuf:"bytes,16,opt,name=epoll_create1,json=epollCreate1,proto3,oneof"`
+}
+
+type SyscallRequest_Poll struct {
+	Poll *PollRequest `protobuf:"bytes,17,opt,name=poll,proto3,oneof"`
+}
+
+type SyscallRequest_Read struct {
+	Read *ReadRequest `protobuf:"bytes,18,opt,name=read,proto3,oneof"`
+}
+
+type SyscallRequest_Write struct {
+	Write *WriteRequest `protobuf:"bytes,19,opt,name=write,proto3,oneof"`
+}
+
+type SyscallRequest_Open struct {
+	Open *OpenRequest `protobuf:"bytes,20,opt,name=open,proto3,oneof"`
+}
+
+type SyscallRequest_Ioctl struct {
+	Ioctl *IOCtlRequest `protobuf:"bytes,21,opt,name=ioctl,proto3,oneof"`
+}
+
+type SyscallRequest_WriteFile struct {
+	WriteFile *WriteFileRequest `protobuf:"bytes,22,opt,name=write_file,json=writeFile,proto3,oneof"`
+}
+
+type SyscallRequest_ReadFile struct {
+	ReadFile *ReadFileRequest `protobuf:"bytes,23,opt,name=read_file,json=readFile,proto3,oneof"`
+}
+
+func (*SyscallRequest_Socket) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Sendmsg) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Recvmsg) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Bind) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Accept) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Connect) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Listen) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Shutdown) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Close) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_GetSockOpt) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_SetSockOpt) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_GetSockName) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_GetPeerName) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_EpollWait) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_EpollCtl) isSyscallRequest_Args() {}
+
 func (*SyscallRequest_EpollCreate1) isSyscallRequest_Args() {}
-func (*SyscallRequest_Poll) isSyscallRequest_Args()         {}
-func (*SyscallRequest_Read) isSyscallRequest_Args()         {}
-func (*SyscallRequest_Write) isSyscallRequest_Args()        {}
-func (*SyscallRequest_Open) isSyscallRequest_Args()         {}
-func (*SyscallRequest_Ioctl) isSyscallRequest_Args()        {}
-func (*SyscallRequest_WriteFile) isSyscallRequest_Args()    {}
-func (*SyscallRequest_ReadFile) isSyscallRequest_Args()     {}
+
+func (*SyscallRequest_Poll) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Read) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Write) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Open) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_Ioctl) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_WriteFile) isSyscallRequest_Args() {}
+
+func (*SyscallRequest_ReadFile) isSyscallRequest_Args() {}
 
 func (m *SyscallRequest) GetArgs() isSyscallRequest_Args {
 	if m != nil {
@@ -4608,98 +4682,142 @@ type isSyscallResponse_Result interface {
 }
 
 type SyscallResponse_Socket struct {
-	Socket *SocketResponse `protobuf:"bytes,1,opt,name=socket,oneof"`
-}
-type SyscallResponse_Sendmsg struct {
-	Sendmsg *SendmsgResponse `protobuf:"bytes,2,opt,name=sendmsg,oneof"`
-}
-type SyscallResponse_Recvmsg struct {
-	Recvmsg *RecvmsgResponse `protobuf:"bytes,3,opt,name=recvmsg,oneof"`
-}
-type SyscallResponse_Bind struct {
-	Bind *BindResponse `protobuf:"bytes,4,opt,name=bind,oneof"`
-}
-type SyscallResponse_Accept struct {
-	Accept *AcceptResponse `protobuf:"bytes,5,opt,name=accept,oneof"`
-}
-type SyscallResponse_Connect struct {
-	Connect *ConnectResponse `protobuf:"bytes,6,opt,name=connect,oneof"`
-}
-type SyscallResponse_Listen struct {
-	Listen *ListenResponse `protobuf:"bytes,7,opt,name=listen,oneof"`
-}
-type SyscallResponse_Shutdown struct {
-	Shutdown *ShutdownResponse `protobuf:"bytes,8,opt,name=shutdown,oneof"`
-}
-type SyscallResponse_Close struct {
-	Close *CloseResponse `protobuf:"bytes,9,opt,name=close,oneof"`
-}
-type SyscallResponse_GetSockOpt struct {
-	GetSockOpt *GetSockOptResponse `protobuf:"bytes,10,opt,name=get_sock_opt,json=getSockOpt,oneof"`
-}
-type SyscallResponse_SetSockOpt struct {
-	SetSockOpt *SetSockOptResponse `protobuf:"bytes,11,opt,name=set_sock_opt,json=setSockOpt,oneof"`
-}
-type SyscallResponse_GetSockName struct {
-	GetSockName *GetSockNameResponse `protobuf:"bytes,12,opt,name=get_sock_name,json=getSockName,oneof"`
-}
-type SyscallResponse_GetPeerName struct {
-	GetPeerName *GetPeerNameResponse `protobuf:"bytes,13,opt,name=get_peer_name,json=getPeerName,oneof"`
-}
-type SyscallResponse_EpollWait struct {
-	EpollWait *EpollWaitResponse `protobuf:"bytes,14,opt,name=epoll_wait,json=epollWait,oneof"`
-}
-type SyscallResponse_EpollCtl struct {
-	EpollCtl *EpollCtlResponse `protobuf:"bytes,15,opt,name=epoll_ctl,json=epollCtl,oneof"`
-}
-type SyscallResponse_EpollCreate1 struct {
-	EpollCreate1 *EpollCreate1Response `protobuf:"bytes,16,opt,name=epoll_create1,json=epollCreate1,oneof"`
-}
-type SyscallResponse_Poll struct {
-	Poll *PollResponse `protobuf:"bytes,17,opt,name=poll,oneof"`
-}
-type SyscallResponse_Read struct {
-	Read *ReadResponse `protobuf:"bytes,18,opt,name=read,oneof"`
-}
-type SyscallResponse_Write struct {
-	Write *WriteResponse `protobuf:"bytes,19,opt,name=write,oneof"`
-}
-type SyscallResponse_Open struct {
-	Open *OpenResponse `protobuf:"bytes,20,opt,name=open,oneof"`
-}
-type SyscallResponse_Ioctl struct {
-	Ioctl *IOCtlResponse `protobuf:"bytes,21,opt,name=ioctl,oneof"`
-}
-type SyscallResponse_WriteFile struct {
-	WriteFile *WriteFileResponse `protobuf:"bytes,22,opt,name=write_file,json=writeFile,oneof"`
-}
-type SyscallResponse_ReadFile struct {
-	ReadFile *ReadFileResponse `protobuf:"bytes,23,opt,name=read_file,json=readFile,oneof"`
+	Socket *SocketResponse `protobuf:"bytes,1,opt,name=socket,proto3,oneof"`
 }
 
-func (*SyscallResponse_Socket) isSyscallResponse_Result()       {}
-func (*SyscallResponse_Sendmsg) isSyscallResponse_Result()      {}
-func (*SyscallResponse_Recvmsg) isSyscallResponse_Result()      {}
-func (*SyscallResponse_Bind) isSyscallResponse_Result()         {}
-func (*SyscallResponse_Accept) isSyscallResponse_Result()       {}
-func (*SyscallResponse_Connect) isSyscallResponse_Result()      {}
-func (*SyscallResponse_Listen) isSyscallResponse_Result()       {}
-func (*SyscallResponse_Shutdown) isSyscallResponse_Result()     {}
-func (*SyscallResponse_Close) isSyscallResponse_Result()        {}
-func (*SyscallResponse_GetSockOpt) isSyscallResponse_Result()   {}
-func (*SyscallResponse_SetSockOpt) isSyscallResponse_Result()   {}
-func (*SyscallResponse_GetSockName) isSyscallResponse_Result()  {}
-func (*SyscallResponse_GetPeerName) isSyscallResponse_Result()  {}
-func (*SyscallResponse_EpollWait) isSyscallResponse_Result()    {}
-func (*SyscallResponse_EpollCtl) isSyscallResponse_Result()     {}
+type SyscallResponse_Sendmsg struct {
+	Sendmsg *SendmsgResponse `protobuf:"bytes,2,opt,name=sendmsg,proto3,oneof"`
+}
+
+type SyscallResponse_Recvmsg struct {
+	Recvmsg *RecvmsgResponse `protobuf:"bytes,3,opt,name=recvmsg,proto3,oneof"`
+}
+
+type SyscallResponse_Bind struct {
+	Bind *BindResponse `protobuf:"bytes,4,opt,name=bind,proto3,oneof"`
+}
+
+type SyscallResponse_Accept struct {
+	Accept *AcceptResponse `protobuf:"bytes,5,opt,name=accept,proto3,oneof"`
+}
+
+type SyscallResponse_Connect struct {
+	Connect *ConnectResponse `protobuf:"bytes,6,opt,name=connect,proto3,oneof"`
+}
+
+type SyscallResponse_Listen struct {
+	Listen *ListenResponse `protobuf:"bytes,7,opt,name=listen,proto3,oneof"`
+}
+
+type SyscallResponse_Shutdown struct {
+	Shutdown *ShutdownResponse `protobuf:"bytes,8,opt,name=shutdown,proto3,oneof"`
+}
+
+type SyscallResponse_Close struct {
+	Close *CloseResponse `protobuf:"bytes,9,opt,name=close,proto3,oneof"`
+}
+
+type SyscallResponse_GetSockOpt struct {
+	GetSockOpt *GetSockOptResponse `protobuf:"bytes,10,opt,name=get_sock_opt,json=getSockOpt,proto3,oneof"`
+}
+
+type SyscallResponse_SetSockOpt struct {
+	SetSockOpt *SetSockOptResponse `protobuf:"bytes,11,opt,name=set_sock_opt,json=setSockOpt,proto3,oneof"`
+}
+
+type SyscallResponse_GetSockName struct {
+	GetSockName *GetSockNameResponse `protobuf:"bytes,12,opt,name=get_sock_name,json=getSockName,proto3,oneof"`
+}
+
+type SyscallResponse_GetPeerName struct {
+	GetPeerName *GetPeerNameResponse `protobuf:"bytes,13,opt,name=get_peer_name,json=getPeerName,proto3,oneof"`
+}
+
+type SyscallResponse_EpollWait struct {
+	EpollWait *EpollWaitResponse `protobuf:"bytes,14,opt,name=epoll_wait,json=epollWait,proto3,oneof"`
+}
+
+type SyscallResponse_EpollCtl struct {
+	EpollCtl *EpollCtlResponse `protobuf:"bytes,15,opt,name=epoll_ctl,json=epollCtl,proto3,oneof"`
+}
+
+type SyscallResponse_EpollCreate1 struct {
+	EpollCreate1 *EpollCreate1Response `protobuf:"bytes,16,opt,name=epoll_create1,json=epollCreate1,proto3,oneof"`
+}
+
+type SyscallResponse_Poll struct {
+	Poll *PollResponse `protobuf:"bytes,17,opt,name=poll,proto3,oneof"`
+}
+
+type SyscallResponse_Read struct {
+	Read *ReadResponse `protobuf:"bytes,18,opt,name=read,proto3,oneof"`
+}
+
+type SyscallResponse_Write struct {
+	Write *WriteResponse `protobuf:"bytes,19,opt,name=write,proto3,oneof"`
+}
+
+type SyscallResponse_Open struct {
+	Open *OpenResponse `protobuf:"bytes,20,opt,name=open,proto3,oneof"`
+}
+
+type SyscallResponse_Ioctl struct {
+	Ioctl *IOCtlResponse `protobuf:"bytes,21,opt,name=ioctl,proto3,oneof"`
+}
+
+type SyscallResponse_WriteFile struct {
+	WriteFile *WriteFileResponse `protobuf:"bytes,22,opt,name=write_file,json=writeFile,proto3,oneof"`
+}
+
+type SyscallResponse_ReadFile struct {
+	ReadFile *ReadFileResponse `protobuf:"bytes,23,opt,name=read_file,json=readFile,proto3,oneof"`
+}
+
+func (*SyscallResponse_Socket) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Sendmsg) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Recvmsg) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Bind) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Accept) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Connect) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Listen) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Shutdown) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Close) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_GetSockOpt) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_SetSockOpt) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_GetSockName) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_GetPeerName) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_EpollWait) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_EpollCtl) isSyscallResponse_Result() {}
+
 func (*SyscallResponse_EpollCreate1) isSyscallResponse_Result() {}
-func (*SyscallResponse_Poll) isSyscallResponse_Result()         {}
-func (*SyscallResponse_Read) isSyscallResponse_Result()         {}
-func (*SyscallResponse_Write) isSyscallResponse_Result()        {}
-func (*SyscallResponse_Open) isSyscallResponse_Result()         {}
-func (*SyscallResponse_Ioctl) isSyscallResponse_Result()        {}
-func (*SyscallResponse_WriteFile) isSyscallResponse_Result()    {}
-func (*SyscallResponse_ReadFile) isSyscallResponse_Result()     {}
+
+func (*SyscallResponse_Poll) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Read) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Write) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Open) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_Ioctl) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_WriteFile) isSyscallResponse_Result() {}
+
+func (*SyscallResponse_ReadFile) isSyscallResponse_Result() {}
 
 func (m *SyscallResponse) GetResult() isSyscallResponse_Result {
 	if m != nil {

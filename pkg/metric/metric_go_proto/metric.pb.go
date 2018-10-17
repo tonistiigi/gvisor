@@ -39,11 +39,11 @@ func (MetricMetadata_Type) EnumDescriptor() ([]byte, []int) {
 }
 
 type MetricMetadata struct {
-	Name                 string              `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Description          string              `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Cumulative           bool                `protobuf:"varint,3,opt,name=cumulative" json:"cumulative,omitempty"`
-	Sync                 bool                `protobuf:"varint,4,opt,name=sync" json:"sync,omitempty"`
-	Type                 MetricMetadata_Type `protobuf:"varint,5,opt,name=type,enum=gvisor.MetricMetadata_Type" json:"type,omitempty"`
+	Name                 string              `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description          string              `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Cumulative           bool                `protobuf:"varint,3,opt,name=cumulative,proto3" json:"cumulative,omitempty"`
+	Sync                 bool                `protobuf:"varint,4,opt,name=sync,proto3" json:"sync,omitempty"`
+	Type                 MetricMetadata_Type `protobuf:"varint,5,opt,name=type,proto3,enum=gvisor.MetricMetadata_Type" json:"type,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
 	XXX_sizecache        int32               `json:"-"`
@@ -109,7 +109,7 @@ func (m *MetricMetadata) GetType() MetricMetadata_Type {
 }
 
 type MetricRegistration struct {
-	Metrics              []*MetricMetadata `protobuf:"bytes,1,rep,name=metrics" json:"metrics,omitempty"`
+	Metrics              []*MetricMetadata `protobuf:"bytes,1,rep,name=metrics,proto3" json:"metrics,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -147,7 +147,7 @@ func (m *MetricRegistration) GetMetrics() []*MetricMetadata {
 }
 
 type MetricValue struct {
-	Name string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Types that are valid to be assigned to Value:
 	//	*MetricValue_Uint64Value
 	Value                isMetricValue_Value `protobuf_oneof:"value"`
@@ -180,12 +180,19 @@ func (m *MetricValue) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MetricValue proto.InternalMessageInfo
 
+func (m *MetricValue) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
 type isMetricValue_Value interface {
 	isMetricValue_Value()
 }
 
 type MetricValue_Uint64Value struct {
-	Uint64Value uint64 `protobuf:"varint,2,opt,name=uint64_value,json=uint64Value,oneof"`
+	Uint64Value uint64 `protobuf:"varint,2,opt,name=uint64_value,json=uint64Value,proto3,oneof"`
 }
 
 func (*MetricValue_Uint64Value) isMetricValue_Value() {}
@@ -195,13 +202,6 @@ func (m *MetricValue) GetValue() isMetricValue_Value {
 		return m.Value
 	}
 	return nil
-}
-
-func (m *MetricValue) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
 }
 
 func (m *MetricValue) GetUint64Value() uint64 {
@@ -262,7 +262,7 @@ func _MetricValue_OneofSizer(msg proto.Message) (n int) {
 }
 
 type MetricUpdate struct {
-	Metrics              []*MetricValue `protobuf:"bytes,1,rep,name=metrics" json:"metrics,omitempty"`
+	Metrics              []*MetricValue `protobuf:"bytes,1,rep,name=metrics,proto3" json:"metrics,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
 	XXX_sizecache        int32          `json:"-"`

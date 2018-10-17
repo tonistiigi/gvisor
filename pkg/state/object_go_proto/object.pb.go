@@ -19,9 +19,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Slice struct {
-	Length               uint32   `protobuf:"varint,1,opt,name=length" json:"length,omitempty"`
-	Capacity             uint32   `protobuf:"varint,2,opt,name=capacity" json:"capacity,omitempty"`
-	RefValue             uint64   `protobuf:"varint,3,opt,name=ref_value,json=refValue" json:"ref_value,omitempty"`
+	Length               uint32   `protobuf:"varint,1,opt,name=length,proto3" json:"length,omitempty"`
+	Capacity             uint32   `protobuf:"varint,2,opt,name=capacity,proto3" json:"capacity,omitempty"`
+	RefValue             uint64   `protobuf:"varint,3,opt,name=ref_value,json=refValue,proto3" json:"ref_value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -73,7 +73,7 @@ func (m *Slice) GetRefValue() uint64 {
 }
 
 type Array struct {
-	Contents             []*Object `protobuf:"bytes,1,rep,name=contents" json:"contents,omitempty"`
+	Contents             []*Object `protobuf:"bytes,1,rep,name=contents,proto3" json:"contents,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -111,8 +111,8 @@ func (m *Array) GetContents() []*Object {
 }
 
 type Map struct {
-	Keys                 []*Object `protobuf:"bytes,1,rep,name=keys" json:"keys,omitempty"`
-	Values               []*Object `protobuf:"bytes,2,rep,name=values" json:"values,omitempty"`
+	Keys                 []*Object `protobuf:"bytes,1,rep,name=keys,proto3" json:"keys,omitempty"`
+	Values               []*Object `protobuf:"bytes,2,rep,name=values,proto3" json:"values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -157,8 +157,8 @@ func (m *Map) GetValues() []*Object {
 }
 
 type Interface struct {
-	Type                 string   `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
-	Value                *Object  `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
+	Type                 string   `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Value                *Object  `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -203,7 +203,7 @@ func (m *Interface) GetValue() *Object {
 }
 
 type Struct struct {
-	Fields               []*Field `protobuf:"bytes,1,rep,name=fields" json:"fields,omitempty"`
+	Fields               []*Field `protobuf:"bytes,1,rep,name=fields,proto3" json:"fields,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -241,8 +241,8 @@ func (m *Struct) GetFields() []*Field {
 }
 
 type Field struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Value                *Object  `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
+	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Value                *Object  `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -287,7 +287,7 @@ func (m *Field) GetValue() *Object {
 }
 
 type Uint16S struct {
-	Values               []uint32 `protobuf:"varint,1,rep,packed,name=values" json:"values,omitempty"`
+	Values               []uint32 `protobuf:"varint,1,rep,packed,name=values,proto3" json:"values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -325,7 +325,7 @@ func (m *Uint16S) GetValues() []uint32 {
 }
 
 type Uint32S struct {
-	Values               []uint32 `protobuf:"fixed32,1,rep,packed,name=values" json:"values,omitempty"`
+	Values               []uint32 `protobuf:"fixed32,1,rep,packed,name=values,proto3" json:"values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -363,7 +363,7 @@ func (m *Uint32S) GetValues() []uint32 {
 }
 
 type Uint64S struct {
-	Values               []uint64 `protobuf:"fixed64,1,rep,packed,name=values" json:"values,omitempty"`
+	Values               []uint64 `protobuf:"fixed64,1,rep,packed,name=values,proto3" json:"values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -401,7 +401,7 @@ func (m *Uint64S) GetValues() []uint64 {
 }
 
 type Uintptrs struct {
-	Values               []uint64 `protobuf:"fixed64,1,rep,packed,name=values" json:"values,omitempty"`
+	Values               []uint64 `protobuf:"fixed64,1,rep,packed,name=values,proto3" json:"values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -477,7 +477,7 @@ func (m *Int8S) GetValues() []byte {
 }
 
 type Int16S struct {
-	Values               []int32  `protobuf:"varint,1,rep,packed,name=values" json:"values,omitempty"`
+	Values               []int32  `protobuf:"varint,1,rep,packed,name=values,proto3" json:"values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -515,7 +515,7 @@ func (m *Int16S) GetValues() []int32 {
 }
 
 type Int32S struct {
-	Values               []int32  `protobuf:"fixed32,1,rep,packed,name=values" json:"values,omitempty"`
+	Values               []int32  `protobuf:"fixed32,1,rep,packed,name=values,proto3" json:"values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -553,7 +553,7 @@ func (m *Int32S) GetValues() []int32 {
 }
 
 type Int64S struct {
-	Values               []int64  `protobuf:"fixed64,1,rep,packed,name=values" json:"values,omitempty"`
+	Values               []int64  `protobuf:"fixed64,1,rep,packed,name=values,proto3" json:"values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -591,7 +591,7 @@ func (m *Int64S) GetValues() []int64 {
 }
 
 type Bools struct {
-	Values               []bool   `protobuf:"varint,1,rep,packed,name=values" json:"values,omitempty"`
+	Values               []bool   `protobuf:"varint,1,rep,packed,name=values,proto3" json:"values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -629,7 +629,7 @@ func (m *Bools) GetValues() []bool {
 }
 
 type Float64S struct {
-	Values               []float64 `protobuf:"fixed64,1,rep,packed,name=values" json:"values,omitempty"`
+	Values               []float64 `protobuf:"fixed64,1,rep,packed,name=values,proto3" json:"values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -667,7 +667,7 @@ func (m *Float64S) GetValues() []float64 {
 }
 
 type Float32S struct {
-	Values               []float32 `protobuf:"fixed32,1,rep,packed,name=values" json:"values,omitempty"`
+	Values               []float32 `protobuf:"fixed32,1,rep,packed,name=values,proto3" json:"values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -764,97 +764,141 @@ type isObject_Value interface {
 }
 
 type Object_BoolValue struct {
-	BoolValue bool `protobuf:"varint,1,opt,name=bool_value,json=boolValue,oneof"`
+	BoolValue bool `protobuf:"varint,1,opt,name=bool_value,json=boolValue,proto3,oneof"`
 }
+
 type Object_StringValue struct {
 	StringValue []byte `protobuf:"bytes,2,opt,name=string_value,json=stringValue,proto3,oneof"`
 }
+
 type Object_Int64Value struct {
-	Int64Value int64 `protobuf:"varint,3,opt,name=int64_value,json=int64Value,oneof"`
+	Int64Value int64 `protobuf:"varint,3,opt,name=int64_value,json=int64Value,proto3,oneof"`
 }
+
 type Object_Uint64Value struct {
-	Uint64Value uint64 `protobuf:"varint,4,opt,name=uint64_value,json=uint64Value,oneof"`
+	Uint64Value uint64 `protobuf:"varint,4,opt,name=uint64_value,json=uint64Value,proto3,oneof"`
 }
+
 type Object_DoubleValue struct {
-	DoubleValue float64 `protobuf:"fixed64,5,opt,name=double_value,json=doubleValue,oneof"`
+	DoubleValue float64 `protobuf:"fixed64,5,opt,name=double_value,json=doubleValue,proto3,oneof"`
 }
+
 type Object_RefValue struct {
-	RefValue uint64 `protobuf:"varint,6,opt,name=ref_value,json=refValue,oneof"`
+	RefValue uint64 `protobuf:"varint,6,opt,name=ref_value,json=refValue,proto3,oneof"`
 }
+
 type Object_SliceValue struct {
-	SliceValue *Slice `protobuf:"bytes,7,opt,name=slice_value,json=sliceValue,oneof"`
+	SliceValue *Slice `protobuf:"bytes,7,opt,name=slice_value,json=sliceValue,proto3,oneof"`
 }
+
 type Object_ArrayValue struct {
-	ArrayValue *Array `protobuf:"bytes,8,opt,name=array_value,json=arrayValue,oneof"`
+	ArrayValue *Array `protobuf:"bytes,8,opt,name=array_value,json=arrayValue,proto3,oneof"`
 }
+
 type Object_InterfaceValue struct {
-	InterfaceValue *Interface `protobuf:"bytes,9,opt,name=interface_value,json=interfaceValue,oneof"`
+	InterfaceValue *Interface `protobuf:"bytes,9,opt,name=interface_value,json=interfaceValue,proto3,oneof"`
 }
+
 type Object_StructValue struct {
-	StructValue *Struct `protobuf:"bytes,10,opt,name=struct_value,json=structValue,oneof"`
+	StructValue *Struct `protobuf:"bytes,10,opt,name=struct_value,json=structValue,proto3,oneof"`
 }
+
 type Object_MapValue struct {
-	MapValue *Map `protobuf:"bytes,11,opt,name=map_value,json=mapValue,oneof"`
+	MapValue *Map `protobuf:"bytes,11,opt,name=map_value,json=mapValue,proto3,oneof"`
 }
+
 type Object_ByteArrayValue struct {
 	ByteArrayValue []byte `protobuf:"bytes,12,opt,name=byte_array_value,json=byteArrayValue,proto3,oneof"`
 }
+
 type Object_Uint16ArrayValue struct {
-	Uint16ArrayValue *Uint16S `protobuf:"bytes,13,opt,name=uint16_array_value,json=uint16ArrayValue,oneof"`
-}
-type Object_Uint32ArrayValue struct {
-	Uint32ArrayValue *Uint32S `protobuf:"bytes,14,opt,name=uint32_array_value,json=uint32ArrayValue,oneof"`
-}
-type Object_Uint64ArrayValue struct {
-	Uint64ArrayValue *Uint64S `protobuf:"bytes,15,opt,name=uint64_array_value,json=uint64ArrayValue,oneof"`
-}
-type Object_UintptrArrayValue struct {
-	UintptrArrayValue *Uintptrs `protobuf:"bytes,16,opt,name=uintptr_array_value,json=uintptrArrayValue,oneof"`
-}
-type Object_Int8ArrayValue struct {
-	Int8ArrayValue *Int8S `protobuf:"bytes,17,opt,name=int8_array_value,json=int8ArrayValue,oneof"`
-}
-type Object_Int16ArrayValue struct {
-	Int16ArrayValue *Int16S `protobuf:"bytes,18,opt,name=int16_array_value,json=int16ArrayValue,oneof"`
-}
-type Object_Int32ArrayValue struct {
-	Int32ArrayValue *Int32S `protobuf:"bytes,19,opt,name=int32_array_value,json=int32ArrayValue,oneof"`
-}
-type Object_Int64ArrayValue struct {
-	Int64ArrayValue *Int64S `protobuf:"bytes,20,opt,name=int64_array_value,json=int64ArrayValue,oneof"`
-}
-type Object_BoolArrayValue struct {
-	BoolArrayValue *Bools `protobuf:"bytes,21,opt,name=bool_array_value,json=boolArrayValue,oneof"`
-}
-type Object_Float64ArrayValue struct {
-	Float64ArrayValue *Float64S `protobuf:"bytes,22,opt,name=float64_array_value,json=float64ArrayValue,oneof"`
-}
-type Object_Float32ArrayValue struct {
-	Float32ArrayValue *Float32S `protobuf:"bytes,23,opt,name=float32_array_value,json=float32ArrayValue,oneof"`
+	Uint16ArrayValue *Uint16S `protobuf:"bytes,13,opt,name=uint16_array_value,json=uint16ArrayValue,proto3,oneof"`
 }
 
-func (*Object_BoolValue) isObject_Value()         {}
-func (*Object_StringValue) isObject_Value()       {}
-func (*Object_Int64Value) isObject_Value()        {}
-func (*Object_Uint64Value) isObject_Value()       {}
-func (*Object_DoubleValue) isObject_Value()       {}
-func (*Object_RefValue) isObject_Value()          {}
-func (*Object_SliceValue) isObject_Value()        {}
-func (*Object_ArrayValue) isObject_Value()        {}
-func (*Object_InterfaceValue) isObject_Value()    {}
-func (*Object_StructValue) isObject_Value()       {}
-func (*Object_MapValue) isObject_Value()          {}
-func (*Object_ByteArrayValue) isObject_Value()    {}
-func (*Object_Uint16ArrayValue) isObject_Value()  {}
-func (*Object_Uint32ArrayValue) isObject_Value()  {}
-func (*Object_Uint64ArrayValue) isObject_Value()  {}
+type Object_Uint32ArrayValue struct {
+	Uint32ArrayValue *Uint32S `protobuf:"bytes,14,opt,name=uint32_array_value,json=uint32ArrayValue,proto3,oneof"`
+}
+
+type Object_Uint64ArrayValue struct {
+	Uint64ArrayValue *Uint64S `protobuf:"bytes,15,opt,name=uint64_array_value,json=uint64ArrayValue,proto3,oneof"`
+}
+
+type Object_UintptrArrayValue struct {
+	UintptrArrayValue *Uintptrs `protobuf:"bytes,16,opt,name=uintptr_array_value,json=uintptrArrayValue,proto3,oneof"`
+}
+
+type Object_Int8ArrayValue struct {
+	Int8ArrayValue *Int8S `protobuf:"bytes,17,opt,name=int8_array_value,json=int8ArrayValue,proto3,oneof"`
+}
+
+type Object_Int16ArrayValue struct {
+	Int16ArrayValue *Int16S `protobuf:"bytes,18,opt,name=int16_array_value,json=int16ArrayValue,proto3,oneof"`
+}
+
+type Object_Int32ArrayValue struct {
+	Int32ArrayValue *Int32S `protobuf:"bytes,19,opt,name=int32_array_value,json=int32ArrayValue,proto3,oneof"`
+}
+
+type Object_Int64ArrayValue struct {
+	Int64ArrayValue *Int64S `protobuf:"bytes,20,opt,name=int64_array_value,json=int64ArrayValue,proto3,oneof"`
+}
+
+type Object_BoolArrayValue struct {
+	BoolArrayValue *Bools `protobuf:"bytes,21,opt,name=bool_array_value,json=boolArrayValue,proto3,oneof"`
+}
+
+type Object_Float64ArrayValue struct {
+	Float64ArrayValue *Float64S `protobuf:"bytes,22,opt,name=float64_array_value,json=float64ArrayValue,proto3,oneof"`
+}
+
+type Object_Float32ArrayValue struct {
+	Float32ArrayValue *Float32S `protobuf:"bytes,23,opt,name=float32_array_value,json=float32ArrayValue,proto3,oneof"`
+}
+
+func (*Object_BoolValue) isObject_Value() {}
+
+func (*Object_StringValue) isObject_Value() {}
+
+func (*Object_Int64Value) isObject_Value() {}
+
+func (*Object_Uint64Value) isObject_Value() {}
+
+func (*Object_DoubleValue) isObject_Value() {}
+
+func (*Object_RefValue) isObject_Value() {}
+
+func (*Object_SliceValue) isObject_Value() {}
+
+func (*Object_ArrayValue) isObject_Value() {}
+
+func (*Object_InterfaceValue) isObject_Value() {}
+
+func (*Object_StructValue) isObject_Value() {}
+
+func (*Object_MapValue) isObject_Value() {}
+
+func (*Object_ByteArrayValue) isObject_Value() {}
+
+func (*Object_Uint16ArrayValue) isObject_Value() {}
+
+func (*Object_Uint32ArrayValue) isObject_Value() {}
+
+func (*Object_Uint64ArrayValue) isObject_Value() {}
+
 func (*Object_UintptrArrayValue) isObject_Value() {}
-func (*Object_Int8ArrayValue) isObject_Value()    {}
-func (*Object_Int16ArrayValue) isObject_Value()   {}
-func (*Object_Int32ArrayValue) isObject_Value()   {}
-func (*Object_Int64ArrayValue) isObject_Value()   {}
-func (*Object_BoolArrayValue) isObject_Value()    {}
+
+func (*Object_Int8ArrayValue) isObject_Value() {}
+
+func (*Object_Int16ArrayValue) isObject_Value() {}
+
+func (*Object_Int32ArrayValue) isObject_Value() {}
+
+func (*Object_Int64ArrayValue) isObject_Value() {}
+
+func (*Object_BoolArrayValue) isObject_Value() {}
+
 func (*Object_Float64ArrayValue) isObject_Value() {}
+
 func (*Object_Float32ArrayValue) isObject_Value() {}
 
 func (m *Object) GetValue() isObject_Value {

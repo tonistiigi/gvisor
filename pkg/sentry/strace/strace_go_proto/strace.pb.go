@@ -19,9 +19,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Strace struct {
-	Process  string   `protobuf:"bytes,1,opt,name=process" json:"process,omitempty"`
-	Function string   `protobuf:"bytes,2,opt,name=function" json:"function,omitempty"`
-	Args     []string `protobuf:"bytes,3,rep,name=args" json:"args,omitempty"`
+	Process  string   `protobuf:"bytes,1,opt,name=process,proto3" json:"process,omitempty"`
+	Function string   `protobuf:"bytes,2,opt,name=function,proto3" json:"function,omitempty"`
+	Args     []string `protobuf:"bytes,3,rep,name=args,proto3" json:"args,omitempty"`
 	// Types that are valid to be assigned to Info:
 	//	*Strace_Enter
 	//	*Strace_Exit
@@ -55,27 +55,6 @@ func (m *Strace) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Strace proto.InternalMessageInfo
 
-type isStrace_Info interface {
-	isStrace_Info()
-}
-
-type Strace_Enter struct {
-	Enter *StraceEnter `protobuf:"bytes,4,opt,name=enter,oneof"`
-}
-type Strace_Exit struct {
-	Exit *StraceExit `protobuf:"bytes,5,opt,name=exit,oneof"`
-}
-
-func (*Strace_Enter) isStrace_Info() {}
-func (*Strace_Exit) isStrace_Info()  {}
-
-func (m *Strace) GetInfo() isStrace_Info {
-	if m != nil {
-		return m.Info
-	}
-	return nil
-}
-
 func (m *Strace) GetProcess() string {
 	if m != nil {
 		return m.Process
@@ -93,6 +72,29 @@ func (m *Strace) GetFunction() string {
 func (m *Strace) GetArgs() []string {
 	if m != nil {
 		return m.Args
+	}
+	return nil
+}
+
+type isStrace_Info interface {
+	isStrace_Info()
+}
+
+type Strace_Enter struct {
+	Enter *StraceEnter `protobuf:"bytes,4,opt,name=enter,proto3,oneof"`
+}
+
+type Strace_Exit struct {
+	Exit *StraceExit `protobuf:"bytes,5,opt,name=exit,proto3,oneof"`
+}
+
+func (*Strace_Enter) isStrace_Info() {}
+
+func (*Strace_Exit) isStrace_Info() {}
+
+func (m *Strace) GetInfo() isStrace_Info {
+	if m != nil {
+		return m.Info
 	}
 	return nil
 }
@@ -216,10 +218,10 @@ func (m *StraceEnter) XXX_DiscardUnknown() {
 var xxx_messageInfo_StraceEnter proto.InternalMessageInfo
 
 type StraceExit struct {
-	Return               string   `protobuf:"bytes,1,opt,name=return" json:"return,omitempty"`
-	Error                string   `protobuf:"bytes,2,opt,name=error" json:"error,omitempty"`
-	ErrNo                int64    `protobuf:"varint,3,opt,name=err_no,json=errNo" json:"err_no,omitempty"`
-	ElapsedNs            int64    `protobuf:"varint,4,opt,name=elapsed_ns,json=elapsedNs" json:"elapsed_ns,omitempty"`
+	Return               string   `protobuf:"bytes,1,opt,name=return,proto3" json:"return,omitempty"`
+	Error                string   `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	ErrNo                int64    `protobuf:"varint,3,opt,name=err_no,json=errNo,proto3" json:"err_no,omitempty"`
+	ElapsedNs            int64    `protobuf:"varint,4,opt,name=elapsed_ns,json=elapsedNs,proto3" json:"elapsed_ns,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

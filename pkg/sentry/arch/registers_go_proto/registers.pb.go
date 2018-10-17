@@ -19,33 +19,33 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type AMD64Registers struct {
-	Rax                  uint64   `protobuf:"varint,1,opt,name=rax" json:"rax,omitempty"`
-	Rbx                  uint64   `protobuf:"varint,2,opt,name=rbx" json:"rbx,omitempty"`
-	Rcx                  uint64   `protobuf:"varint,3,opt,name=rcx" json:"rcx,omitempty"`
-	Rdx                  uint64   `protobuf:"varint,4,opt,name=rdx" json:"rdx,omitempty"`
-	Rsi                  uint64   `protobuf:"varint,5,opt,name=rsi" json:"rsi,omitempty"`
-	Rdi                  uint64   `protobuf:"varint,6,opt,name=rdi" json:"rdi,omitempty"`
-	Rsp                  uint64   `protobuf:"varint,7,opt,name=rsp" json:"rsp,omitempty"`
-	Rbp                  uint64   `protobuf:"varint,8,opt,name=rbp" json:"rbp,omitempty"`
-	R8                   uint64   `protobuf:"varint,9,opt,name=r8" json:"r8,omitempty"`
-	R9                   uint64   `protobuf:"varint,10,opt,name=r9" json:"r9,omitempty"`
-	R10                  uint64   `protobuf:"varint,11,opt,name=r10" json:"r10,omitempty"`
-	R11                  uint64   `protobuf:"varint,12,opt,name=r11" json:"r11,omitempty"`
-	R12                  uint64   `protobuf:"varint,13,opt,name=r12" json:"r12,omitempty"`
-	R13                  uint64   `protobuf:"varint,14,opt,name=r13" json:"r13,omitempty"`
-	R14                  uint64   `protobuf:"varint,15,opt,name=r14" json:"r14,omitempty"`
-	R15                  uint64   `protobuf:"varint,16,opt,name=r15" json:"r15,omitempty"`
-	Rip                  uint64   `protobuf:"varint,17,opt,name=rip" json:"rip,omitempty"`
-	Rflags               uint64   `protobuf:"varint,18,opt,name=rflags" json:"rflags,omitempty"`
-	OrigRax              uint64   `protobuf:"varint,19,opt,name=orig_rax,json=origRax" json:"orig_rax,omitempty"`
-	Cs                   uint64   `protobuf:"varint,20,opt,name=cs" json:"cs,omitempty"`
-	Ds                   uint64   `protobuf:"varint,21,opt,name=ds" json:"ds,omitempty"`
-	Es                   uint64   `protobuf:"varint,22,opt,name=es" json:"es,omitempty"`
-	Fs                   uint64   `protobuf:"varint,23,opt,name=fs" json:"fs,omitempty"`
-	Gs                   uint64   `protobuf:"varint,24,opt,name=gs" json:"gs,omitempty"`
-	Ss                   uint64   `protobuf:"varint,25,opt,name=ss" json:"ss,omitempty"`
-	FsBase               uint64   `protobuf:"varint,26,opt,name=fs_base,json=fsBase" json:"fs_base,omitempty"`
-	GsBase               uint64   `protobuf:"varint,27,opt,name=gs_base,json=gsBase" json:"gs_base,omitempty"`
+	Rax                  uint64   `protobuf:"varint,1,opt,name=rax,proto3" json:"rax,omitempty"`
+	Rbx                  uint64   `protobuf:"varint,2,opt,name=rbx,proto3" json:"rbx,omitempty"`
+	Rcx                  uint64   `protobuf:"varint,3,opt,name=rcx,proto3" json:"rcx,omitempty"`
+	Rdx                  uint64   `protobuf:"varint,4,opt,name=rdx,proto3" json:"rdx,omitempty"`
+	Rsi                  uint64   `protobuf:"varint,5,opt,name=rsi,proto3" json:"rsi,omitempty"`
+	Rdi                  uint64   `protobuf:"varint,6,opt,name=rdi,proto3" json:"rdi,omitempty"`
+	Rsp                  uint64   `protobuf:"varint,7,opt,name=rsp,proto3" json:"rsp,omitempty"`
+	Rbp                  uint64   `protobuf:"varint,8,opt,name=rbp,proto3" json:"rbp,omitempty"`
+	R8                   uint64   `protobuf:"varint,9,opt,name=r8,proto3" json:"r8,omitempty"`
+	R9                   uint64   `protobuf:"varint,10,opt,name=r9,proto3" json:"r9,omitempty"`
+	R10                  uint64   `protobuf:"varint,11,opt,name=r10,proto3" json:"r10,omitempty"`
+	R11                  uint64   `protobuf:"varint,12,opt,name=r11,proto3" json:"r11,omitempty"`
+	R12                  uint64   `protobuf:"varint,13,opt,name=r12,proto3" json:"r12,omitempty"`
+	R13                  uint64   `protobuf:"varint,14,opt,name=r13,proto3" json:"r13,omitempty"`
+	R14                  uint64   `protobuf:"varint,15,opt,name=r14,proto3" json:"r14,omitempty"`
+	R15                  uint64   `protobuf:"varint,16,opt,name=r15,proto3" json:"r15,omitempty"`
+	Rip                  uint64   `protobuf:"varint,17,opt,name=rip,proto3" json:"rip,omitempty"`
+	Rflags               uint64   `protobuf:"varint,18,opt,name=rflags,proto3" json:"rflags,omitempty"`
+	OrigRax              uint64   `protobuf:"varint,19,opt,name=orig_rax,json=origRax,proto3" json:"orig_rax,omitempty"`
+	Cs                   uint64   `protobuf:"varint,20,opt,name=cs,proto3" json:"cs,omitempty"`
+	Ds                   uint64   `protobuf:"varint,21,opt,name=ds,proto3" json:"ds,omitempty"`
+	Es                   uint64   `protobuf:"varint,22,opt,name=es,proto3" json:"es,omitempty"`
+	Fs                   uint64   `protobuf:"varint,23,opt,name=fs,proto3" json:"fs,omitempty"`
+	Gs                   uint64   `protobuf:"varint,24,opt,name=gs,proto3" json:"gs,omitempty"`
+	Ss                   uint64   `protobuf:"varint,25,opt,name=ss,proto3" json:"ss,omitempty"`
+	FsBase               uint64   `protobuf:"varint,26,opt,name=fs_base,json=fsBase,proto3" json:"fs_base,omitempty"`
+	GsBase               uint64   `protobuf:"varint,27,opt,name=gs_base,json=gsBase,proto3" json:"gs_base,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -302,7 +302,7 @@ type isRegisters_Arch interface {
 }
 
 type Registers_Amd64 struct {
-	Amd64 *AMD64Registers `protobuf:"bytes,1,opt,name=amd64,oneof"`
+	Amd64 *AMD64Registers `protobuf:"bytes,1,opt,name=amd64,proto3,oneof"`
 }
 
 func (*Registers_Amd64) isRegisters_Arch() {}
