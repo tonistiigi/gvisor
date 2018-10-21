@@ -40,6 +40,7 @@ func (x *connectionlessEndpoint) load(m state.Map) {
 func (x *queue) beforeSave() {}
 func (x *queue) save(m state.Map) {
 	x.beforeSave()
+	m.Save("AtomicRefCount", &x.AtomicRefCount)
 	m.Save("ReaderQueue", &x.ReaderQueue)
 	m.Save("WriterQueue", &x.WriterQueue)
 	m.Save("closed", &x.closed)
@@ -50,6 +51,7 @@ func (x *queue) save(m state.Map) {
 
 func (x *queue) afterLoad() {}
 func (x *queue) load(m state.Map) {
+	m.Load("AtomicRefCount", &x.AtomicRefCount)
 	m.Load("ReaderQueue", &x.ReaderQueue)
 	m.Load("WriterQueue", &x.WriterQueue)
 	m.Load("closed", &x.closed)
