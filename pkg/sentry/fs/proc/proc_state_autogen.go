@@ -152,6 +152,28 @@ func (x *mountsFile) load(m state.Map) {
 	m.Load("t", &x.t)
 }
 
+func (x *ifinet6) beforeSave() {}
+func (x *ifinet6) save(m state.Map) {
+	x.beforeSave()
+	m.Save("s", &x.s)
+}
+
+func (x *ifinet6) afterLoad() {}
+func (x *ifinet6) load(m state.Map) {
+	m.Load("s", &x.s)
+}
+
+func (x *netDev) beforeSave() {}
+func (x *netDev) save(m state.Map) {
+	x.beforeSave()
+	m.Save("s", &x.s)
+}
+
+func (x *netDev) afterLoad() {}
+func (x *netDev) load(m state.Map) {
+	m.Load("s", &x.s)
+}
+
 func (x *proc) beforeSave() {}
 func (x *proc) save(m state.Map) {
 	x.beforeSave()
@@ -231,12 +253,12 @@ func (x *tcpMem) save(m state.Map) {
 	m.Save("dir", &x.dir)
 }
 
-func (x *tcpMem) afterLoad() {}
 func (x *tcpMem) load(m state.Map) {
 	m.Load("Entry", &x.Entry)
-	m.Load("s", &x.s)
+	m.LoadWait("s", &x.s)
 	m.Load("size", &x.size)
 	m.Load("dir", &x.dir)
+	m.AfterLoad(x.afterLoad)
 }
 
 func (x *tcpSack) beforeSave() {}
@@ -244,12 +266,14 @@ func (x *tcpSack) save(m state.Map) {
 	x.beforeSave()
 	m.Save("Entry", &x.Entry)
 	m.Save("s", &x.s)
+	m.Save("enabled", &x.enabled)
 }
 
-func (x *tcpSack) afterLoad() {}
 func (x *tcpSack) load(m state.Map) {
 	m.Load("Entry", &x.Entry)
-	m.Load("s", &x.s)
+	m.LoadWait("s", &x.s)
+	m.Load("enabled", &x.enabled)
+	m.AfterLoad(x.afterLoad)
 }
 
 func (x *taskDir) beforeSave() {}
@@ -465,6 +489,8 @@ func init() {
 	state.Register("proc.meminfoData", (*meminfoData)(nil), state.Fns{Save: (*meminfoData).save, Load: (*meminfoData).load})
 	state.Register("proc.mountInfoFile", (*mountInfoFile)(nil), state.Fns{Save: (*mountInfoFile).save, Load: (*mountInfoFile).load})
 	state.Register("proc.mountsFile", (*mountsFile)(nil), state.Fns{Save: (*mountsFile).save, Load: (*mountsFile).load})
+	state.Register("proc.ifinet6", (*ifinet6)(nil), state.Fns{Save: (*ifinet6).save, Load: (*ifinet6).load})
+	state.Register("proc.netDev", (*netDev)(nil), state.Fns{Save: (*netDev).save, Load: (*netDev).load})
 	state.Register("proc.proc", (*proc)(nil), state.Fns{Save: (*proc).save, Load: (*proc).load})
 	state.Register("proc.stubProcFSFile", (*stubProcFSFile)(nil), state.Fns{Save: (*stubProcFSFile).save, Load: (*stubProcFSFile).load})
 	state.Register("proc.statData", (*statData)(nil), state.Fns{Save: (*statData).save, Load: (*statData).load})
