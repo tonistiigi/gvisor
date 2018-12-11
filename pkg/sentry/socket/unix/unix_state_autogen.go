@@ -12,6 +12,7 @@ func (x *SocketOperations) save(m state.Map) {
 	m.Save("AtomicRefCount", &x.AtomicRefCount)
 	m.Save("ReceiveTimeout", &x.ReceiveTimeout)
 	m.Save("ep", &x.ep)
+	m.Save("isPacket", &x.isPacket)
 }
 
 func (x *SocketOperations) afterLoad() {}
@@ -19,6 +20,7 @@ func (x *SocketOperations) load(m state.Map) {
 	m.Load("AtomicRefCount", &x.AtomicRefCount)
 	m.Load("ReceiveTimeout", &x.ReceiveTimeout)
 	m.Load("ep", &x.ep)
+	m.Load("isPacket", &x.isPacket)
 }
 
 func init() {
