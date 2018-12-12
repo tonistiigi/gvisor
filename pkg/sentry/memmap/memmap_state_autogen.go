@@ -24,12 +24,14 @@ func (x *MappingOfRange) save(m state.Map) {
 	x.beforeSave()
 	m.Save("MappingSpace", &x.MappingSpace)
 	m.Save("AddrRange", &x.AddrRange)
+	m.Save("Writable", &x.Writable)
 }
 
 func (x *MappingOfRange) afterLoad() {}
 func (x *MappingOfRange) load(m state.Map) {
 	m.Load("MappingSpace", &x.MappingSpace)
 	m.Load("AddrRange", &x.AddrRange)
+	m.Load("Writable", &x.Writable)
 }
 
 func (x *MappingSet) beforeSave() {}
