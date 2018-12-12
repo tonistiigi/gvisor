@@ -11,6 +11,7 @@ func (x *Registry) save(m state.Map) {
 	x.beforeSave()
 	m.Save("userNS", &x.userNS)
 	m.Save("shms", &x.shms)
+	m.Save("keysToShms", &x.keysToShms)
 	m.Save("totalPages", &x.totalPages)
 	m.Save("lastIDUsed", &x.lastIDUsed)
 }
@@ -19,6 +20,7 @@ func (x *Registry) afterLoad() {}
 func (x *Registry) load(m state.Map) {
 	m.Load("userNS", &x.userNS)
 	m.Load("shms", &x.shms)
+	m.Load("keysToShms", &x.keysToShms)
 	m.Load("totalPages", &x.totalPages)
 	m.Load("lastIDUsed", &x.lastIDUsed)
 }
