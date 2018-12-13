@@ -29,7 +29,7 @@ func (x *Filesystem) load(m state.Map) {
 func (x *fileInodeOperations) beforeSave() {}
 func (x *fileInodeOperations) save(m state.Map) {
 	x.beforeSave()
-	m.Save("platform", &x.platform)
+	m.Save("kernel", &x.kernel)
 	m.Save("memUsage", &x.memUsage)
 	m.Save("attr", &x.attr)
 	m.Save("mappings", &x.mappings)
@@ -38,7 +38,7 @@ func (x *fileInodeOperations) save(m state.Map) {
 
 func (x *fileInodeOperations) afterLoad() {}
 func (x *fileInodeOperations) load(m state.Map) {
-	m.Load("platform", &x.platform)
+	m.Load("kernel", &x.kernel)
 	m.Load("memUsage", &x.memUsage)
 	m.Load("attr", &x.attr)
 	m.Load("mappings", &x.mappings)
@@ -49,12 +49,12 @@ func (x *Dir) beforeSave() {}
 func (x *Dir) save(m state.Map) {
 	x.beforeSave()
 	m.Save("Dir", &x.Dir)
-	m.Save("platform", &x.platform)
+	m.Save("kernel", &x.kernel)
 }
 
 func (x *Dir) load(m state.Map) {
 	m.Load("Dir", &x.Dir)
-	m.Load("platform", &x.platform)
+	m.Load("kernel", &x.kernel)
 	m.AfterLoad(x.afterLoad)
 }
 
