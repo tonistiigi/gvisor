@@ -9,7 +9,7 @@ import (
 func (x *Socket) beforeSave() {}
 func (x *Socket) save(m state.Map) {
 	x.beforeSave()
-	m.Save("ReceiveTimeout", &x.ReceiveTimeout)
+	m.Save("SendReceiveTimeout", &x.SendReceiveTimeout)
 	m.Save("ports", &x.ports)
 	m.Save("protocol", &x.protocol)
 	m.Save("ep", &x.ep)
@@ -21,7 +21,7 @@ func (x *Socket) save(m state.Map) {
 
 func (x *Socket) afterLoad() {}
 func (x *Socket) load(m state.Map) {
-	m.Load("ReceiveTimeout", &x.ReceiveTimeout)
+	m.Load("SendReceiveTimeout", &x.SendReceiveTimeout)
 	m.Load("ports", &x.ports)
 	m.Load("protocol", &x.protocol)
 	m.Load("ep", &x.ep)

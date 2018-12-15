@@ -6,17 +6,19 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/state"
 )
 
-func (x *ReceiveTimeout) beforeSave() {}
-func (x *ReceiveTimeout) save(m state.Map) {
+func (x *SendReceiveTimeout) beforeSave() {}
+func (x *SendReceiveTimeout) save(m state.Map) {
 	x.beforeSave()
-	m.Save("ns", &x.ns)
+	m.Save("send", &x.send)
+	m.Save("recv", &x.recv)
 }
 
-func (x *ReceiveTimeout) afterLoad() {}
-func (x *ReceiveTimeout) load(m state.Map) {
-	m.Load("ns", &x.ns)
+func (x *SendReceiveTimeout) afterLoad() {}
+func (x *SendReceiveTimeout) load(m state.Map) {
+	m.Load("send", &x.send)
+	m.Load("recv", &x.recv)
 }
 
 func init() {
-	state.Register("socket.ReceiveTimeout", (*ReceiveTimeout)(nil), state.Fns{Save: (*ReceiveTimeout).save, Load: (*ReceiveTimeout).load})
+	state.Register("socket.SendReceiveTimeout", (*SendReceiveTimeout)(nil), state.Fns{Save: (*SendReceiveTimeout).save, Load: (*SendReceiveTimeout).load})
 }
