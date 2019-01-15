@@ -9,12 +9,16 @@ import (
 func (x *cpunum) beforeSave() {}
 func (x *cpunum) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
+	m.Save("InodeSimpleAttributes", &x.InodeSimpleAttributes)
+	m.Save("InodeStaticFileGetter", &x.InodeStaticFileGetter)
+	m.Save("k", &x.k)
 }
 
 func (x *cpunum) afterLoad() {}
 func (x *cpunum) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
+	m.Load("InodeSimpleAttributes", &x.InodeSimpleAttributes)
+	m.Load("InodeStaticFileGetter", &x.InodeStaticFileGetter)
+	m.Load("k", &x.k)
 }
 
 func (x *filesystem) beforeSave() {}
@@ -26,19 +30,7 @@ func (x *filesystem) afterLoad() {}
 func (x *filesystem) load(m state.Map) {
 }
 
-func (x *sys) beforeSave() {}
-func (x *sys) save(m state.Map) {
-	x.beforeSave()
-	m.Save("Dir", &x.Dir)
-}
-
-func (x *sys) afterLoad() {}
-func (x *sys) load(m state.Map) {
-	m.Load("Dir", &x.Dir)
-}
-
 func init() {
 	state.Register("sys.cpunum", (*cpunum)(nil), state.Fns{Save: (*cpunum).save, Load: (*cpunum).load})
 	state.Register("sys.filesystem", (*filesystem)(nil), state.Fns{Save: (*filesystem).save, Load: (*filesystem).load})
-	state.Register("sys.sys", (*sys)(nil), state.Fns{Save: (*sys).save, Load: (*sys).load})
 }

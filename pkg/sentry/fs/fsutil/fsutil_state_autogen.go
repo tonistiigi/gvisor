@@ -67,17 +67,39 @@ func (x *DirtySegmentDataSlices) load(m state.Map) {
 	m.Load("Values", &x.Values)
 }
 
-func (x *DirFileOperations) beforeSave() {}
-func (x *DirFileOperations) save(m state.Map) {
+func (x *StaticDirFileOperations) beforeSave() {}
+func (x *StaticDirFileOperations) save(m state.Map) {
 	x.beforeSave()
+	m.Save("DirFileOperations", &x.DirFileOperations)
 	m.Save("dentryMap", &x.dentryMap)
 	m.Save("dirCursor", &x.dirCursor)
 }
 
-func (x *DirFileOperations) afterLoad() {}
-func (x *DirFileOperations) load(m state.Map) {
+func (x *StaticDirFileOperations) afterLoad() {}
+func (x *StaticDirFileOperations) load(m state.Map) {
+	m.Load("DirFileOperations", &x.DirFileOperations)
 	m.Load("dentryMap", &x.dentryMap)
 	m.Load("dirCursor", &x.dirCursor)
+}
+
+func (x *NoReadWriteFile) beforeSave() {}
+func (x *NoReadWriteFile) save(m state.Map) {
+	x.beforeSave()
+}
+
+func (x *NoReadWriteFile) afterLoad() {}
+func (x *NoReadWriteFile) load(m state.Map) {
+}
+
+func (x *FileStaticContentReader) beforeSave() {}
+func (x *FileStaticContentReader) save(m state.Map) {
+	x.beforeSave()
+	m.Save("content", &x.content)
+}
+
+func (x *FileStaticContentReader) afterLoad() {}
+func (x *FileStaticContentReader) load(m state.Map) {
+	m.Load("content", &x.content)
 }
 
 func (x *FileRangeSet) beforeSave() {}
@@ -180,19 +202,6 @@ func (x *frameRefSegmentDataSlices) load(m state.Map) {
 	m.Load("Values", &x.Values)
 }
 
-func (x *Handle) beforeSave() {}
-func (x *Handle) save(m state.Map) {
-	x.beforeSave()
-	m.Save("HandleOperations", &x.HandleOperations)
-	m.Save("dirCursor", &x.dirCursor)
-}
-
-func (x *Handle) afterLoad() {}
-func (x *Handle) load(m state.Map) {
-	m.Load("HandleOperations", &x.HandleOperations)
-	m.Load("dirCursor", &x.dirCursor)
-}
-
 func (x *HostFileMapper) beforeSave() {}
 func (x *HostFileMapper) save(m state.Map) {
 	x.beforeSave()
@@ -204,14 +213,25 @@ func (x *HostFileMapper) load(m state.Map) {
 	m.AfterLoad(x.afterLoad)
 }
 
-func (x *simpleInodeOperations) beforeSave() {}
-func (x *simpleInodeOperations) save(m state.Map) {
+func (x *SimpleFileInode) beforeSave() {}
+func (x *SimpleFileInode) save(m state.Map) {
 	x.beforeSave()
 	m.Save("InodeSimpleAttributes", &x.InodeSimpleAttributes)
 }
 
-func (x *simpleInodeOperations) afterLoad() {}
-func (x *simpleInodeOperations) load(m state.Map) {
+func (x *SimpleFileInode) afterLoad() {}
+func (x *SimpleFileInode) load(m state.Map) {
+	m.Load("InodeSimpleAttributes", &x.InodeSimpleAttributes)
+}
+
+func (x *NoReadWriteFileInode) beforeSave() {}
+func (x *NoReadWriteFileInode) save(m state.Map) {
+	x.beforeSave()
+	m.Save("InodeSimpleAttributes", &x.InodeSimpleAttributes)
+}
+
+func (x *NoReadWriteFileInode) afterLoad() {}
+func (x *NoReadWriteFileInode) load(m state.Map) {
 	m.Load("InodeSimpleAttributes", &x.InodeSimpleAttributes)
 }
 
@@ -219,26 +239,46 @@ func (x *InodeSimpleAttributes) beforeSave() {}
 func (x *InodeSimpleAttributes) save(m state.Map) {
 	x.beforeSave()
 	m.Save("FSType", &x.FSType)
-	m.Save("UAttr", &x.UAttr)
+	m.Save("Unstable", &x.Unstable)
 }
 
 func (x *InodeSimpleAttributes) afterLoad() {}
 func (x *InodeSimpleAttributes) load(m state.Map) {
 	m.Load("FSType", &x.FSType)
-	m.Load("UAttr", &x.UAttr)
-}
-
-func (x *InMemoryAttributes) beforeSave() {}
-func (x *InMemoryAttributes) save(m state.Map) {
-	x.beforeSave()
-	m.Save("Unstable", &x.Unstable)
-	m.Save("Xattrs", &x.Xattrs)
-}
-
-func (x *InMemoryAttributes) afterLoad() {}
-func (x *InMemoryAttributes) load(m state.Map) {
 	m.Load("Unstable", &x.Unstable)
-	m.Load("Xattrs", &x.Xattrs)
+}
+
+func (x *InodeSimpleExtendedAttributes) beforeSave() {}
+func (x *InodeSimpleExtendedAttributes) save(m state.Map) {
+	x.beforeSave()
+	m.Save("xattrs", &x.xattrs)
+}
+
+func (x *InodeSimpleExtendedAttributes) afterLoad() {}
+func (x *InodeSimpleExtendedAttributes) load(m state.Map) {
+	m.Load("xattrs", &x.xattrs)
+}
+
+func (x *staticFile) beforeSave() {}
+func (x *staticFile) save(m state.Map) {
+	x.beforeSave()
+	m.Save("FileStaticContentReader", &x.FileStaticContentReader)
+}
+
+func (x *staticFile) afterLoad() {}
+func (x *staticFile) load(m state.Map) {
+	m.Load("FileStaticContentReader", &x.FileStaticContentReader)
+}
+
+func (x *InodeStaticFileGetter) beforeSave() {}
+func (x *InodeStaticFileGetter) save(m state.Map) {
+	x.beforeSave()
+	m.Save("Contents", &x.Contents)
+}
+
+func (x *InodeStaticFileGetter) afterLoad() {}
+func (x *InodeStaticFileGetter) load(m state.Map) {
+	m.Load("Contents", &x.Contents)
 }
 
 func (x *CachingInodeOperations) beforeSave() {}
@@ -275,17 +315,21 @@ func init() {
 	state.Register("fsutil.DirtySet", (*DirtySet)(nil), state.Fns{Save: (*DirtySet).save, Load: (*DirtySet).load})
 	state.Register("fsutil.Dirtynode", (*Dirtynode)(nil), state.Fns{Save: (*Dirtynode).save, Load: (*Dirtynode).load})
 	state.Register("fsutil.DirtySegmentDataSlices", (*DirtySegmentDataSlices)(nil), state.Fns{Save: (*DirtySegmentDataSlices).save, Load: (*DirtySegmentDataSlices).load})
-	state.Register("fsutil.DirFileOperations", (*DirFileOperations)(nil), state.Fns{Save: (*DirFileOperations).save, Load: (*DirFileOperations).load})
+	state.Register("fsutil.StaticDirFileOperations", (*StaticDirFileOperations)(nil), state.Fns{Save: (*StaticDirFileOperations).save, Load: (*StaticDirFileOperations).load})
+	state.Register("fsutil.NoReadWriteFile", (*NoReadWriteFile)(nil), state.Fns{Save: (*NoReadWriteFile).save, Load: (*NoReadWriteFile).load})
+	state.Register("fsutil.FileStaticContentReader", (*FileStaticContentReader)(nil), state.Fns{Save: (*FileStaticContentReader).save, Load: (*FileStaticContentReader).load})
 	state.Register("fsutil.FileRangeSet", (*FileRangeSet)(nil), state.Fns{Save: (*FileRangeSet).save, Load: (*FileRangeSet).load})
 	state.Register("fsutil.FileRangenode", (*FileRangenode)(nil), state.Fns{Save: (*FileRangenode).save, Load: (*FileRangenode).load})
 	state.Register("fsutil.FileRangeSegmentDataSlices", (*FileRangeSegmentDataSlices)(nil), state.Fns{Save: (*FileRangeSegmentDataSlices).save, Load: (*FileRangeSegmentDataSlices).load})
 	state.Register("fsutil.frameRefSet", (*frameRefSet)(nil), state.Fns{Save: (*frameRefSet).save, Load: (*frameRefSet).load})
 	state.Register("fsutil.frameRefnode", (*frameRefnode)(nil), state.Fns{Save: (*frameRefnode).save, Load: (*frameRefnode).load})
 	state.Register("fsutil.frameRefSegmentDataSlices", (*frameRefSegmentDataSlices)(nil), state.Fns{Save: (*frameRefSegmentDataSlices).save, Load: (*frameRefSegmentDataSlices).load})
-	state.Register("fsutil.Handle", (*Handle)(nil), state.Fns{Save: (*Handle).save, Load: (*Handle).load})
 	state.Register("fsutil.HostFileMapper", (*HostFileMapper)(nil), state.Fns{Save: (*HostFileMapper).save, Load: (*HostFileMapper).load})
-	state.Register("fsutil.simpleInodeOperations", (*simpleInodeOperations)(nil), state.Fns{Save: (*simpleInodeOperations).save, Load: (*simpleInodeOperations).load})
+	state.Register("fsutil.SimpleFileInode", (*SimpleFileInode)(nil), state.Fns{Save: (*SimpleFileInode).save, Load: (*SimpleFileInode).load})
+	state.Register("fsutil.NoReadWriteFileInode", (*NoReadWriteFileInode)(nil), state.Fns{Save: (*NoReadWriteFileInode).save, Load: (*NoReadWriteFileInode).load})
 	state.Register("fsutil.InodeSimpleAttributes", (*InodeSimpleAttributes)(nil), state.Fns{Save: (*InodeSimpleAttributes).save, Load: (*InodeSimpleAttributes).load})
-	state.Register("fsutil.InMemoryAttributes", (*InMemoryAttributes)(nil), state.Fns{Save: (*InMemoryAttributes).save, Load: (*InMemoryAttributes).load})
+	state.Register("fsutil.InodeSimpleExtendedAttributes", (*InodeSimpleExtendedAttributes)(nil), state.Fns{Save: (*InodeSimpleExtendedAttributes).save, Load: (*InodeSimpleExtendedAttributes).load})
+	state.Register("fsutil.staticFile", (*staticFile)(nil), state.Fns{Save: (*staticFile).save, Load: (*staticFile).load})
+	state.Register("fsutil.InodeStaticFileGetter", (*InodeStaticFileGetter)(nil), state.Fns{Save: (*InodeStaticFileGetter).save, Load: (*InodeStaticFileGetter).load})
 	state.Register("fsutil.CachingInodeOperations", (*CachingInodeOperations)(nil), state.Fns{Save: (*CachingInodeOperations).save, Load: (*CachingInodeOperations).load})
 }

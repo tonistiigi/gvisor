@@ -22,13 +22,13 @@ func (x *Buffer) load(m state.Map) {
 func (x *inodeOperations) beforeSave() {}
 func (x *inodeOperations) save(m state.Map) {
 	x.beforeSave()
-	m.Save("InodeOperations", &x.InodeOperations)
+	m.Save("InodeSimpleAttributes", &x.InodeSimpleAttributes)
 	m.Save("p", &x.p)
 }
 
 func (x *inodeOperations) afterLoad() {}
 func (x *inodeOperations) load(m state.Map) {
-	m.Load("InodeOperations", &x.InodeOperations)
+	m.Load("InodeSimpleAttributes", &x.InodeSimpleAttributes)
 	m.Load("p", &x.p)
 }
 
@@ -36,7 +36,7 @@ func (x *Pipe) beforeSave() {}
 func (x *Pipe) save(m state.Map) {
 	x.beforeSave()
 	m.Save("isNamed", &x.isNamed)
-	m.Save("dirent", &x.dirent)
+	m.Save("Dirent", &x.Dirent)
 	m.Save("data", &x.data)
 	m.Save("max", &x.max)
 	m.Save("size", &x.size)
@@ -49,7 +49,7 @@ func (x *Pipe) save(m state.Map) {
 func (x *Pipe) afterLoad() {}
 func (x *Pipe) load(m state.Map) {
 	m.Load("isNamed", &x.isNamed)
-	m.Load("dirent", &x.dirent)
+	m.Load("Dirent", &x.Dirent)
 	m.Load("data", &x.data)
 	m.Load("max", &x.max)
 	m.Load("size", &x.size)

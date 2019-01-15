@@ -29,6 +29,7 @@ func (x *Filesystem) load(m state.Map) {
 func (x *fileInodeOperations) beforeSave() {}
 func (x *fileInodeOperations) save(m state.Map) {
 	x.beforeSave()
+	m.Save("InodeSimpleExtendedAttributes", &x.InodeSimpleExtendedAttributes)
 	m.Save("kernel", &x.kernel)
 	m.Save("memUsage", &x.memUsage)
 	m.Save("attr", &x.attr)
@@ -38,6 +39,7 @@ func (x *fileInodeOperations) save(m state.Map) {
 
 func (x *fileInodeOperations) afterLoad() {}
 func (x *fileInodeOperations) load(m state.Map) {
+	m.Load("InodeSimpleExtendedAttributes", &x.InodeSimpleExtendedAttributes)
 	m.Load("kernel", &x.kernel)
 	m.Load("memUsage", &x.memUsage)
 	m.Load("attr", &x.attr)
@@ -48,12 +50,12 @@ func (x *fileInodeOperations) load(m state.Map) {
 func (x *Dir) beforeSave() {}
 func (x *Dir) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Dir", &x.Dir)
+	m.Save("ramfsDir", &x.ramfsDir)
 	m.Save("kernel", &x.kernel)
 }
 
 func (x *Dir) load(m state.Map) {
-	m.Load("Dir", &x.Dir)
+	m.Load("ramfsDir", &x.ramfsDir)
 	m.Load("kernel", &x.kernel)
 	m.AfterLoad(x.afterLoad)
 }
@@ -83,12 +85,12 @@ func (x *Socket) load(m state.Map) {
 func (x *Fifo) beforeSave() {}
 func (x *Fifo) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
+	m.Save("InodeOperations", &x.InodeOperations)
 }
 
 func (x *Fifo) afterLoad() {}
 func (x *Fifo) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
+	m.Load("InodeOperations", &x.InodeOperations)
 }
 
 func init() {

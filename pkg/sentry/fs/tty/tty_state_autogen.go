@@ -9,8 +9,8 @@ import (
 func (x *dirInodeOperations) beforeSave() {}
 func (x *dirInodeOperations) save(m state.Map) {
 	x.beforeSave()
+	m.Save("InodeSimpleAttributes", &x.InodeSimpleAttributes)
 	m.Save("msrc", &x.msrc)
-	m.Save("attr", &x.attr)
 	m.Save("master", &x.master)
 	m.Save("slaves", &x.slaves)
 	m.Save("dentryMap", &x.dentryMap)
@@ -19,8 +19,8 @@ func (x *dirInodeOperations) save(m state.Map) {
 
 func (x *dirInodeOperations) afterLoad() {}
 func (x *dirInodeOperations) load(m state.Map) {
+	m.Load("InodeSimpleAttributes", &x.InodeSimpleAttributes)
 	m.Load("msrc", &x.msrc)
-	m.Load("attr", &x.attr)
 	m.Load("master", &x.master)
 	m.Load("slaves", &x.slaves)
 	m.Load("dentryMap", &x.dentryMap)
@@ -56,17 +56,6 @@ func (x *superOperations) save(m state.Map) {
 
 func (x *superOperations) afterLoad() {}
 func (x *superOperations) load(m state.Map) {
-}
-
-func (x *inodeOperations) beforeSave() {}
-func (x *inodeOperations) save(m state.Map) {
-	x.beforeSave()
-	m.Save("uattr", &x.uattr)
-}
-
-func (x *inodeOperations) afterLoad() {}
-func (x *inodeOperations) load(m state.Map) {
-	m.Load("uattr", &x.uattr)
 }
 
 func (x *lineDiscipline) beforeSave() {}
@@ -111,13 +100,13 @@ func (x *inputQueueTransformer) load(m state.Map) {
 func (x *masterInodeOperations) beforeSave() {}
 func (x *masterInodeOperations) save(m state.Map) {
 	x.beforeSave()
-	m.Save("inodeOperations", &x.inodeOperations)
+	m.Save("SimpleFileInode", &x.SimpleFileInode)
 	m.Save("d", &x.d)
 }
 
 func (x *masterInodeOperations) afterLoad() {}
 func (x *masterInodeOperations) load(m state.Map) {
-	m.Load("inodeOperations", &x.inodeOperations)
+	m.Load("SimpleFileInode", &x.SimpleFileInode)
 	m.Load("d", &x.d)
 }
 
@@ -156,14 +145,14 @@ func (x *queue) load(m state.Map) {
 func (x *slaveInodeOperations) beforeSave() {}
 func (x *slaveInodeOperations) save(m state.Map) {
 	x.beforeSave()
-	m.Save("inodeOperations", &x.inodeOperations)
+	m.Save("SimpleFileInode", &x.SimpleFileInode)
 	m.Save("d", &x.d)
 	m.Save("t", &x.t)
 }
 
 func (x *slaveInodeOperations) afterLoad() {}
 func (x *slaveInodeOperations) load(m state.Map) {
-	m.Load("inodeOperations", &x.inodeOperations)
+	m.Load("SimpleFileInode", &x.SimpleFileInode)
 	m.Load("d", &x.d)
 	m.Load("t", &x.t)
 }
@@ -201,7 +190,6 @@ func init() {
 	state.Register("tty.dirFileOperations", (*dirFileOperations)(nil), state.Fns{Save: (*dirFileOperations).save, Load: (*dirFileOperations).load})
 	state.Register("tty.filesystem", (*filesystem)(nil), state.Fns{Save: (*filesystem).save, Load: (*filesystem).load})
 	state.Register("tty.superOperations", (*superOperations)(nil), state.Fns{Save: (*superOperations).save, Load: (*superOperations).load})
-	state.Register("tty.inodeOperations", (*inodeOperations)(nil), state.Fns{Save: (*inodeOperations).save, Load: (*inodeOperations).load})
 	state.Register("tty.lineDiscipline", (*lineDiscipline)(nil), state.Fns{Save: (*lineDiscipline).save, Load: (*lineDiscipline).load})
 	state.Register("tty.outputQueueTransformer", (*outputQueueTransformer)(nil), state.Fns{Save: (*outputQueueTransformer).save, Load: (*outputQueueTransformer).load})
 	state.Register("tty.inputQueueTransformer", (*inputQueueTransformer)(nil), state.Fns{Save: (*inputQueueTransformer).save, Load: (*inputQueueTransformer).load})

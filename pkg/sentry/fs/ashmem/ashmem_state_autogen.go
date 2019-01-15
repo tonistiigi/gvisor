@@ -30,12 +30,12 @@ func (x *Area) load(m state.Map) {
 func (x *Device) beforeSave() {}
 func (x *Device) save(m state.Map) {
 	x.beforeSave()
-	m.Save("unstable", &x.unstable)
+	m.Save("InodeSimpleAttributes", &x.InodeSimpleAttributes)
 }
 
 func (x *Device) afterLoad() {}
 func (x *Device) load(m state.Map) {
-	m.Load("unstable", &x.unstable)
+	m.Load("InodeSimpleAttributes", &x.InodeSimpleAttributes)
 }
 
 func (x *PinBoard) beforeSave() {}

@@ -43,12 +43,12 @@ func (x *pollEntry) load(m state.Map) {
 func (x *EventPoll) beforeSave() {}
 func (x *EventPoll) save(m state.Map) {
 	x.beforeSave()
-	if !state.IsZeroValue(x.PipeSeek) { m.Failf("PipeSeek is %v, expected zero", x.PipeSeek) }
-	if !state.IsZeroValue(x.NotDirReaddir) { m.Failf("NotDirReaddir is %v, expected zero", x.NotDirReaddir) }
-	if !state.IsZeroValue(x.NoFsync) { m.Failf("NoFsync is %v, expected zero", x.NoFsync) }
-	if !state.IsZeroValue(x.NoopFlush) { m.Failf("NoopFlush is %v, expected zero", x.NoopFlush) }
-	if !state.IsZeroValue(x.NoMMap) { m.Failf("NoMMap is %v, expected zero", x.NoMMap) }
-	if !state.IsZeroValue(x.NoIoctl) { m.Failf("NoIoctl is %v, expected zero", x.NoIoctl) }
+	if !state.IsZeroValue(x.FilePipeSeek) { m.Failf("FilePipeSeek is %v, expected zero", x.FilePipeSeek) }
+	if !state.IsZeroValue(x.FileNotDirReaddir) { m.Failf("FileNotDirReaddir is %v, expected zero", x.FileNotDirReaddir) }
+	if !state.IsZeroValue(x.FileNoFsync) { m.Failf("FileNoFsync is %v, expected zero", x.FileNoFsync) }
+	if !state.IsZeroValue(x.FileNoopFlush) { m.Failf("FileNoopFlush is %v, expected zero", x.FileNoopFlush) }
+	if !state.IsZeroValue(x.FileNoMMap) { m.Failf("FileNoMMap is %v, expected zero", x.FileNoMMap) }
+	if !state.IsZeroValue(x.FileNoIoctl) { m.Failf("FileNoIoctl is %v, expected zero", x.FileNoIoctl) }
 	if !state.IsZeroValue(x.Queue) { m.Failf("Queue is %v, expected zero", x.Queue) }
 	m.Save("files", &x.files)
 	m.Save("readyList", &x.readyList)

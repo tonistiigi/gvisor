@@ -6,30 +6,30 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/state"
 )
 
-func (x *cpuinfo) beforeSave() {}
-func (x *cpuinfo) save(m state.Map) {
+func (x *execArgInode) beforeSave() {}
+func (x *execArgInode) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
-	m.Save("k", &x.k)
+	m.Save("SimpleFileInode", &x.SimpleFileInode)
+	m.Save("arg", &x.arg)
+	m.Save("t", &x.t)
 }
 
-func (x *cpuinfo) afterLoad() {}
-func (x *cpuinfo) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
-	m.Load("k", &x.k)
+func (x *execArgInode) afterLoad() {}
+func (x *execArgInode) load(m state.Map) {
+	m.Load("SimpleFileInode", &x.SimpleFileInode)
+	m.Load("arg", &x.arg)
+	m.Load("t", &x.t)
 }
 
 func (x *execArgFile) beforeSave() {}
 func (x *execArgFile) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
 	m.Save("arg", &x.arg)
 	m.Save("t", &x.t)
 }
 
 func (x *execArgFile) afterLoad() {}
 func (x *execArgFile) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
 	m.Load("arg", &x.arg)
 	m.Load("t", &x.t)
 }
@@ -47,18 +47,31 @@ func (x *fdDir) load(m state.Map) {
 	m.Load("t", &x.t)
 }
 
-func (x *fdInfo) beforeSave() {}
-func (x *fdInfo) save(m state.Map) {
+func (x *fdDirFile) beforeSave() {}
+func (x *fdDirFile) save(m state.Map) {
 	x.beforeSave()
-	m.Save("File", &x.File)
+	m.Save("isInfoFile", &x.isInfoFile)
+	m.Save("t", &x.t)
+}
+
+func (x *fdDirFile) afterLoad() {}
+func (x *fdDirFile) load(m state.Map) {
+	m.Load("isInfoFile", &x.isInfoFile)
+	m.Load("t", &x.t)
+}
+
+func (x *fdInfoInode) beforeSave() {}
+func (x *fdInfoInode) save(m state.Map) {
+	x.beforeSave()
+	m.Save("staticFileInodeOps", &x.staticFileInodeOps)
 	m.Save("file", &x.file)
 	m.Save("flags", &x.flags)
 	m.Save("fdFlags", &x.fdFlags)
 }
 
-func (x *fdInfo) afterLoad() {}
-func (x *fdInfo) load(m state.Map) {
-	m.Load("File", &x.File)
+func (x *fdInfoInode) afterLoad() {}
+func (x *fdInfoInode) load(m state.Map) {
+	m.Load("staticFileInodeOps", &x.staticFileInodeOps)
 	m.Load("file", &x.file)
 	m.Load("flags", &x.flags)
 	m.Load("fdFlags", &x.fdFlags)
@@ -74,21 +87,6 @@ func (x *fdInfoDir) save(m state.Map) {
 func (x *fdInfoDir) afterLoad() {}
 func (x *fdInfoDir) load(m state.Map) {
 	m.Load("Dir", &x.Dir)
-	m.Load("t", &x.t)
-}
-
-func (x *file) beforeSave() {}
-func (x *file) save(m state.Map) {
-	x.beforeSave()
-	m.Save("InodeOperations", &x.InodeOperations)
-	m.Save("nodeType", &x.nodeType)
-	m.Save("t", &x.t)
-}
-
-func (x *file) afterLoad() {}
-func (x *file) load(m state.Map) {
-	m.Load("InodeOperations", &x.InodeOperations)
-	m.Load("nodeType", &x.nodeType)
 	m.Load("t", &x.t)
 }
 
@@ -108,6 +106,32 @@ func (x *filesystem) save(m state.Map) {
 
 func (x *filesystem) afterLoad() {}
 func (x *filesystem) load(m state.Map) {
+}
+
+func (x *taskOwnedInodeOps) beforeSave() {}
+func (x *taskOwnedInodeOps) save(m state.Map) {
+	x.beforeSave()
+	m.Save("InodeOperations", &x.InodeOperations)
+	m.Save("t", &x.t)
+}
+
+func (x *taskOwnedInodeOps) afterLoad() {}
+func (x *taskOwnedInodeOps) load(m state.Map) {
+	m.Load("InodeOperations", &x.InodeOperations)
+	m.Load("t", &x.t)
+}
+
+func (x *staticFileInodeOps) beforeSave() {}
+func (x *staticFileInodeOps) save(m state.Map) {
+	x.beforeSave()
+	m.Save("InodeSimpleAttributes", &x.InodeSimpleAttributes)
+	m.Save("InodeStaticFileGetter", &x.InodeStaticFileGetter)
+}
+
+func (x *staticFileInodeOps) afterLoad() {}
+func (x *staticFileInodeOps) load(m state.Map) {
+	m.Load("InodeSimpleAttributes", &x.InodeSimpleAttributes)
+	m.Load("InodeStaticFileGetter", &x.InodeStaticFileGetter)
 }
 
 func (x *loadavgData) beforeSave() {}
@@ -189,19 +213,6 @@ func (x *proc) load(m state.Map) {
 	m.Load("pidns", &x.pidns)
 }
 
-func (x *stubProcFSFile) beforeSave() {}
-func (x *stubProcFSFile) save(m state.Map) {
-	x.beforeSave()
-	m.Save("Entry", &x.Entry)
-	m.Save("contents", &x.contents)
-}
-
-func (x *stubProcFSFile) afterLoad() {}
-func (x *stubProcFSFile) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
-	m.Load("contents", &x.contents)
-}
-
 func (x *self) beforeSave() {}
 func (x *self) save(m state.Map) {
 	x.beforeSave()
@@ -228,6 +239,17 @@ func (x *threadSelf) load(m state.Map) {
 	m.Load("pidns", &x.pidns)
 }
 
+func (x *rootProcFile) beforeSave() {}
+func (x *rootProcFile) save(m state.Map) {
+	x.beforeSave()
+	m.Save("iops", &x.iops)
+}
+
+func (x *rootProcFile) afterLoad() {}
+func (x *rootProcFile) load(m state.Map) {
+	m.Load("iops", &x.iops)
+}
+
 func (x *statData) beforeSave() {}
 func (x *statData) save(m state.Map) {
 	x.beforeSave()
@@ -237,17 +259,6 @@ func (x *statData) save(m state.Map) {
 func (x *statData) afterLoad() {}
 func (x *statData) load(m state.Map) {
 	m.Load("k", &x.k)
-}
-
-func (x *hostname) beforeSave() {}
-func (x *hostname) save(m state.Map) {
-	x.beforeSave()
-	m.Save("Entry", &x.Entry)
-}
-
-func (x *hostname) afterLoad() {}
-func (x *hostname) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
 }
 
 func (x *mmapMinAddrData) beforeSave() {}
@@ -270,36 +281,79 @@ func (x *overcommitMemory) afterLoad() {}
 func (x *overcommitMemory) load(m state.Map) {
 }
 
-func (x *tcpMem) beforeSave() {}
-func (x *tcpMem) save(m state.Map) {
+func (x *hostname) beforeSave() {}
+func (x *hostname) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
-	m.Save("s", &x.s)
-	m.Save("size", &x.size)
-	m.Save("dir", &x.dir)
+	m.Save("SimpleFileInode", &x.SimpleFileInode)
 }
 
-func (x *tcpMem) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
+func (x *hostname) afterLoad() {}
+func (x *hostname) load(m state.Map) {
+	m.Load("SimpleFileInode", &x.SimpleFileInode)
+}
+
+func (x *hostnameFile) beforeSave() {}
+func (x *hostnameFile) save(m state.Map) {
+	x.beforeSave()
+}
+
+func (x *hostnameFile) afterLoad() {}
+func (x *hostnameFile) load(m state.Map) {
+}
+
+func (x *tcpMemInode) save(m state.Map) {
+	x.beforeSave()
+	m.Save("SimpleFileInode", &x.SimpleFileInode)
+	m.Save("dir", &x.dir)
+	m.Save("s", &x.s)
+	m.Save("size", &x.size)
+}
+
+func (x *tcpMemInode) load(m state.Map) {
+	m.Load("SimpleFileInode", &x.SimpleFileInode)
+	m.Load("dir", &x.dir)
 	m.LoadWait("s", &x.s)
 	m.Load("size", &x.size)
-	m.Load("dir", &x.dir)
 	m.AfterLoad(x.afterLoad)
+}
+
+func (x *tcpMemFile) beforeSave() {}
+func (x *tcpMemFile) save(m state.Map) {
+	x.beforeSave()
+	m.Save("tcpMemInode", &x.tcpMemInode)
+}
+
+func (x *tcpMemFile) afterLoad() {}
+func (x *tcpMemFile) load(m state.Map) {
+	m.Load("tcpMemInode", &x.tcpMemInode)
 }
 
 func (x *tcpSack) beforeSave() {}
 func (x *tcpSack) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
-	m.Save("s", &x.s)
+	m.Save("stack", &x.stack)
 	m.Save("enabled", &x.enabled)
+	m.Save("SimpleFileInode", &x.SimpleFileInode)
 }
 
 func (x *tcpSack) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
-	m.LoadWait("s", &x.s)
+	m.LoadWait("stack", &x.stack)
 	m.Load("enabled", &x.enabled)
+	m.Load("SimpleFileInode", &x.SimpleFileInode)
 	m.AfterLoad(x.afterLoad)
+}
+
+func (x *tcpSackFile) beforeSave() {}
+func (x *tcpSackFile) save(m state.Map) {
+	x.beforeSave()
+	m.Save("tcpSack", &x.tcpSack)
+	m.Save("stack", &x.stack)
+}
+
+func (x *tcpSackFile) afterLoad() {}
+func (x *tcpSackFile) load(m state.Map) {
+	m.Load("tcpSack", &x.tcpSack)
+	m.LoadWait("stack", &x.stack)
 }
 
 func (x *taskDir) beforeSave() {}
@@ -307,12 +361,14 @@ func (x *taskDir) save(m state.Map) {
 	x.beforeSave()
 	m.Save("Dir", &x.Dir)
 	m.Save("t", &x.t)
+	m.Save("pidns", &x.pidns)
 }
 
 func (x *taskDir) afterLoad() {}
 func (x *taskDir) load(m state.Map) {
 	m.Load("Dir", &x.Dir)
 	m.Load("t", &x.t)
+	m.Load("pidns", &x.pidns)
 }
 
 func (x *subtasks) beforeSave() {}
@@ -330,6 +386,19 @@ func (x *subtasks) load(m state.Map) {
 	m.Load("pidns", &x.pidns)
 }
 
+func (x *subtasksFile) beforeSave() {}
+func (x *subtasksFile) save(m state.Map) {
+	x.beforeSave()
+	m.Save("t", &x.t)
+	m.Save("pidns", &x.pidns)
+}
+
+func (x *subtasksFile) afterLoad() {}
+func (x *subtasksFile) load(m state.Map) {
+	m.Load("t", &x.t)
+	m.Load("pidns", &x.pidns)
+}
+
 func (x *exe) beforeSave() {}
 func (x *exe) save(m state.Map) {
 	x.beforeSave()
@@ -343,15 +412,15 @@ func (x *exe) load(m state.Map) {
 	m.Load("t", &x.t)
 }
 
-func (x *namespaceFile) beforeSave() {}
-func (x *namespaceFile) save(m state.Map) {
+func (x *namespaceSymlink) beforeSave() {}
+func (x *namespaceSymlink) save(m state.Map) {
 	x.beforeSave()
 	m.Save("Symlink", &x.Symlink)
 	m.Save("t", &x.t)
 }
 
-func (x *namespaceFile) afterLoad() {}
-func (x *namespaceFile) load(m state.Map) {
+func (x *namespaceSymlink) afterLoad() {}
+func (x *namespaceSymlink) load(m state.Map) {
 	m.Load("Symlink", &x.Symlink)
 	m.Load("t", &x.t)
 }
@@ -431,26 +500,48 @@ func (x *ioData) load(m state.Map) {
 func (x *comm) beforeSave() {}
 func (x *comm) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
+	m.Save("SimpleFileInode", &x.SimpleFileInode)
 	m.Save("t", &x.t)
 }
 
 func (x *comm) afterLoad() {}
 func (x *comm) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
+	m.Load("SimpleFileInode", &x.SimpleFileInode)
+	m.Load("t", &x.t)
+}
+
+func (x *commFile) beforeSave() {}
+func (x *commFile) save(m state.Map) {
+	x.beforeSave()
+	m.Save("t", &x.t)
+}
+
+func (x *commFile) afterLoad() {}
+func (x *commFile) load(m state.Map) {
 	m.Load("t", &x.t)
 }
 
 func (x *auxvec) beforeSave() {}
 func (x *auxvec) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
+	m.Save("SimpleFileInode", &x.SimpleFileInode)
 	m.Save("t", &x.t)
 }
 
 func (x *auxvec) afterLoad() {}
 func (x *auxvec) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
+	m.Load("SimpleFileInode", &x.SimpleFileInode)
+	m.Load("t", &x.t)
+}
+
+func (x *auxvecFile) beforeSave() {}
+func (x *auxvecFile) save(m state.Map) {
+	x.beforeSave()
+	m.Save("t", &x.t)
+}
+
+func (x *auxvecFile) afterLoad() {}
+func (x *auxvecFile) load(m state.Map) {
 	m.Load("t", &x.t)
 }
 
@@ -492,13 +583,24 @@ func (x *idMapSeqFile) load(m state.Map) {
 func (x *uptime) beforeSave() {}
 func (x *uptime) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
+	m.Save("SimpleFileInode", &x.SimpleFileInode)
 	m.Save("startTime", &x.startTime)
 }
 
 func (x *uptime) afterLoad() {}
 func (x *uptime) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
+	m.Load("SimpleFileInode", &x.SimpleFileInode)
+	m.Load("startTime", &x.startTime)
+}
+
+func (x *uptimeFile) beforeSave() {}
+func (x *uptimeFile) save(m state.Map) {
+	x.beforeSave()
+	m.Save("startTime", &x.startTime)
+}
+
+func (x *uptimeFile) afterLoad() {}
+func (x *uptimeFile) load(m state.Map) {
 	m.Load("startTime", &x.startTime)
 }
 
@@ -514,14 +616,16 @@ func (x *versionData) load(m state.Map) {
 }
 
 func init() {
-	state.Register("proc.cpuinfo", (*cpuinfo)(nil), state.Fns{Save: (*cpuinfo).save, Load: (*cpuinfo).load})
+	state.Register("proc.execArgInode", (*execArgInode)(nil), state.Fns{Save: (*execArgInode).save, Load: (*execArgInode).load})
 	state.Register("proc.execArgFile", (*execArgFile)(nil), state.Fns{Save: (*execArgFile).save, Load: (*execArgFile).load})
 	state.Register("proc.fdDir", (*fdDir)(nil), state.Fns{Save: (*fdDir).save, Load: (*fdDir).load})
-	state.Register("proc.fdInfo", (*fdInfo)(nil), state.Fns{Save: (*fdInfo).save, Load: (*fdInfo).load})
+	state.Register("proc.fdDirFile", (*fdDirFile)(nil), state.Fns{Save: (*fdDirFile).save, Load: (*fdDirFile).load})
+	state.Register("proc.fdInfoInode", (*fdInfoInode)(nil), state.Fns{Save: (*fdInfoInode).save, Load: (*fdInfoInode).load})
 	state.Register("proc.fdInfoDir", (*fdInfoDir)(nil), state.Fns{Save: (*fdInfoDir).save, Load: (*fdInfoDir).load})
-	state.Register("proc.file", (*file)(nil), state.Fns{Save: (*file).save, Load: (*file).load})
 	state.Register("proc.filesystemsData", (*filesystemsData)(nil), state.Fns{Save: (*filesystemsData).save, Load: (*filesystemsData).load})
 	state.Register("proc.filesystem", (*filesystem)(nil), state.Fns{Save: (*filesystem).save, Load: (*filesystem).load})
+	state.Register("proc.taskOwnedInodeOps", (*taskOwnedInodeOps)(nil), state.Fns{Save: (*taskOwnedInodeOps).save, Load: (*taskOwnedInodeOps).load})
+	state.Register("proc.staticFileInodeOps", (*staticFileInodeOps)(nil), state.Fns{Save: (*staticFileInodeOps).save, Load: (*staticFileInodeOps).load})
 	state.Register("proc.loadavgData", (*loadavgData)(nil), state.Fns{Save: (*loadavgData).save, Load: (*loadavgData).load})
 	state.Register("proc.meminfoData", (*meminfoData)(nil), state.Fns{Save: (*meminfoData).save, Load: (*meminfoData).load})
 	state.Register("proc.mountInfoFile", (*mountInfoFile)(nil), state.Fns{Save: (*mountInfoFile).save, Load: (*mountInfoFile).load})
@@ -529,19 +633,23 @@ func init() {
 	state.Register("proc.ifinet6", (*ifinet6)(nil), state.Fns{Save: (*ifinet6).save, Load: (*ifinet6).load})
 	state.Register("proc.netDev", (*netDev)(nil), state.Fns{Save: (*netDev).save, Load: (*netDev).load})
 	state.Register("proc.proc", (*proc)(nil), state.Fns{Save: (*proc).save, Load: (*proc).load})
-	state.Register("proc.stubProcFSFile", (*stubProcFSFile)(nil), state.Fns{Save: (*stubProcFSFile).save, Load: (*stubProcFSFile).load})
 	state.Register("proc.self", (*self)(nil), state.Fns{Save: (*self).save, Load: (*self).load})
 	state.Register("proc.threadSelf", (*threadSelf)(nil), state.Fns{Save: (*threadSelf).save, Load: (*threadSelf).load})
+	state.Register("proc.rootProcFile", (*rootProcFile)(nil), state.Fns{Save: (*rootProcFile).save, Load: (*rootProcFile).load})
 	state.Register("proc.statData", (*statData)(nil), state.Fns{Save: (*statData).save, Load: (*statData).load})
-	state.Register("proc.hostname", (*hostname)(nil), state.Fns{Save: (*hostname).save, Load: (*hostname).load})
 	state.Register("proc.mmapMinAddrData", (*mmapMinAddrData)(nil), state.Fns{Save: (*mmapMinAddrData).save, Load: (*mmapMinAddrData).load})
 	state.Register("proc.overcommitMemory", (*overcommitMemory)(nil), state.Fns{Save: (*overcommitMemory).save, Load: (*overcommitMemory).load})
-	state.Register("proc.tcpMem", (*tcpMem)(nil), state.Fns{Save: (*tcpMem).save, Load: (*tcpMem).load})
+	state.Register("proc.hostname", (*hostname)(nil), state.Fns{Save: (*hostname).save, Load: (*hostname).load})
+	state.Register("proc.hostnameFile", (*hostnameFile)(nil), state.Fns{Save: (*hostnameFile).save, Load: (*hostnameFile).load})
+	state.Register("proc.tcpMemInode", (*tcpMemInode)(nil), state.Fns{Save: (*tcpMemInode).save, Load: (*tcpMemInode).load})
+	state.Register("proc.tcpMemFile", (*tcpMemFile)(nil), state.Fns{Save: (*tcpMemFile).save, Load: (*tcpMemFile).load})
 	state.Register("proc.tcpSack", (*tcpSack)(nil), state.Fns{Save: (*tcpSack).save, Load: (*tcpSack).load})
+	state.Register("proc.tcpSackFile", (*tcpSackFile)(nil), state.Fns{Save: (*tcpSackFile).save, Load: (*tcpSackFile).load})
 	state.Register("proc.taskDir", (*taskDir)(nil), state.Fns{Save: (*taskDir).save, Load: (*taskDir).load})
 	state.Register("proc.subtasks", (*subtasks)(nil), state.Fns{Save: (*subtasks).save, Load: (*subtasks).load})
+	state.Register("proc.subtasksFile", (*subtasksFile)(nil), state.Fns{Save: (*subtasksFile).save, Load: (*subtasksFile).load})
 	state.Register("proc.exe", (*exe)(nil), state.Fns{Save: (*exe).save, Load: (*exe).load})
-	state.Register("proc.namespaceFile", (*namespaceFile)(nil), state.Fns{Save: (*namespaceFile).save, Load: (*namespaceFile).load})
+	state.Register("proc.namespaceSymlink", (*namespaceSymlink)(nil), state.Fns{Save: (*namespaceSymlink).save, Load: (*namespaceSymlink).load})
 	state.Register("proc.mapsData", (*mapsData)(nil), state.Fns{Save: (*mapsData).save, Load: (*mapsData).load})
 	state.Register("proc.smapsData", (*smapsData)(nil), state.Fns{Save: (*smapsData).save, Load: (*smapsData).load})
 	state.Register("proc.taskStatData", (*taskStatData)(nil), state.Fns{Save: (*taskStatData).save, Load: (*taskStatData).load})
@@ -549,10 +657,13 @@ func init() {
 	state.Register("proc.statusData", (*statusData)(nil), state.Fns{Save: (*statusData).save, Load: (*statusData).load})
 	state.Register("proc.ioData", (*ioData)(nil), state.Fns{Save: (*ioData).save, Load: (*ioData).load})
 	state.Register("proc.comm", (*comm)(nil), state.Fns{Save: (*comm).save, Load: (*comm).load})
+	state.Register("proc.commFile", (*commFile)(nil), state.Fns{Save: (*commFile).save, Load: (*commFile).load})
 	state.Register("proc.auxvec", (*auxvec)(nil), state.Fns{Save: (*auxvec).save, Load: (*auxvec).load})
+	state.Register("proc.auxvecFile", (*auxvecFile)(nil), state.Fns{Save: (*auxvecFile).save, Load: (*auxvecFile).load})
 	state.Register("proc.idMapSeqSource", (*idMapSeqSource)(nil), state.Fns{Save: (*idMapSeqSource).save, Load: (*idMapSeqSource).load})
 	state.Register("proc.idMapSeqHandle", (*idMapSeqHandle)(nil), state.Fns{Save: (*idMapSeqHandle).save, Load: (*idMapSeqHandle).load})
 	state.Register("proc.idMapSeqFile", (*idMapSeqFile)(nil), state.Fns{Save: (*idMapSeqFile).save, Load: (*idMapSeqFile).load})
 	state.Register("proc.uptime", (*uptime)(nil), state.Fns{Save: (*uptime).save, Load: (*uptime).load})
+	state.Register("proc.uptimeFile", (*uptimeFile)(nil), state.Fns{Save: (*uptimeFile).save, Load: (*uptimeFile).load})
 	state.Register("proc.versionData", (*versionData)(nil), state.Fns{Save: (*versionData).save, Load: (*versionData).load})
 }
