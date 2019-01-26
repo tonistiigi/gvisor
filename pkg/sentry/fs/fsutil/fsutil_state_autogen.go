@@ -213,6 +213,19 @@ func (x *HostFileMapper) load(m state.Map) {
 	m.AfterLoad(x.afterLoad)
 }
 
+func (x *HostMappable) beforeSave() {}
+func (x *HostMappable) save(m state.Map) {
+	x.beforeSave()
+	m.Save("hostFileMapper", &x.hostFileMapper)
+	m.Save("mappings", &x.mappings)
+}
+
+func (x *HostMappable) load(m state.Map) {
+	m.Load("hostFileMapper", &x.hostFileMapper)
+	m.Load("mappings", &x.mappings)
+	m.AfterLoad(x.afterLoad)
+}
+
 func (x *SimpleFileInode) beforeSave() {}
 func (x *SimpleFileInode) save(m state.Map) {
 	x.beforeSave()
@@ -325,6 +338,7 @@ func init() {
 	state.Register("fsutil.frameRefnode", (*frameRefnode)(nil), state.Fns{Save: (*frameRefnode).save, Load: (*frameRefnode).load})
 	state.Register("fsutil.frameRefSegmentDataSlices", (*frameRefSegmentDataSlices)(nil), state.Fns{Save: (*frameRefSegmentDataSlices).save, Load: (*frameRefSegmentDataSlices).load})
 	state.Register("fsutil.HostFileMapper", (*HostFileMapper)(nil), state.Fns{Save: (*HostFileMapper).save, Load: (*HostFileMapper).load})
+	state.Register("fsutil.HostMappable", (*HostMappable)(nil), state.Fns{Save: (*HostMappable).save, Load: (*HostMappable).load})
 	state.Register("fsutil.SimpleFileInode", (*SimpleFileInode)(nil), state.Fns{Save: (*SimpleFileInode).save, Load: (*SimpleFileInode).load})
 	state.Register("fsutil.NoReadWriteFileInode", (*NoReadWriteFileInode)(nil), state.Fns{Save: (*NoReadWriteFileInode).save, Load: (*NoReadWriteFileInode).load})
 	state.Register("fsutil.InodeSimpleAttributes", (*InodeSimpleAttributes)(nil), state.Fns{Save: (*InodeSimpleAttributes).save, Load: (*InodeSimpleAttributes).load})
