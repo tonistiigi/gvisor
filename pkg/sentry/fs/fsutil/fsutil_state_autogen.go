@@ -251,14 +251,14 @@ func (x *NoReadWriteFileInode) load(m state.Map) {
 func (x *InodeSimpleAttributes) beforeSave() {}
 func (x *InodeSimpleAttributes) save(m state.Map) {
 	x.beforeSave()
-	m.Save("FSType", &x.FSType)
-	m.Save("Unstable", &x.Unstable)
+	m.Save("fsType", &x.fsType)
+	m.Save("unstable", &x.unstable)
 }
 
 func (x *InodeSimpleAttributes) afterLoad() {}
 func (x *InodeSimpleAttributes) load(m state.Map) {
-	m.Load("FSType", &x.FSType)
-	m.Load("Unstable", &x.Unstable)
+	m.Load("fsType", &x.fsType)
+	m.Load("unstable", &x.unstable)
 }
 
 func (x *InodeSimpleExtendedAttributes) beforeSave() {}
