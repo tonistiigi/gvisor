@@ -12,7 +12,8 @@ require (
 	github.com/syndtr/gocapability v0.0.0-20180916011248-d98352740cb2
 	github.com/vishvananda/netlink v0.0.0-20180206203732-d35d6b58e1cb
 	github.com/vishvananda/netns v0.0.0-20171111001504-be1fbeda1936 // indirect
-	golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4 // indirect
-	golang.org/x/sys v0.0.0-20171117071000-0dd5e194bbf5
+	golang.org/x/net v0.0.0-20181106065722-10aee1819953 // indirect
+	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f // indirect
+	golang.org/x/sys v0.0.0-20180830151530-49385e6e1522
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 )
