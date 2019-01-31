@@ -217,13 +217,15 @@ func (x *HostMappable) beforeSave() {}
 func (x *HostMappable) save(m state.Map) {
 	x.beforeSave()
 	m.Save("hostFileMapper", &x.hostFileMapper)
+	m.Save("backingFile", &x.backingFile)
 	m.Save("mappings", &x.mappings)
 }
 
+func (x *HostMappable) afterLoad() {}
 func (x *HostMappable) load(m state.Map) {
 	m.Load("hostFileMapper", &x.hostFileMapper)
+	m.Load("backingFile", &x.backingFile)
 	m.Load("mappings", &x.mappings)
-	m.AfterLoad(x.afterLoad)
 }
 
 func (x *SimpleFileInode) beforeSave() {}
