@@ -136,6 +136,7 @@ func (x *Kernel) save(m state.Map) {
 	m.Save("uniqueID", &x.uniqueID)
 	m.Save("nextInotifyCookie", &x.nextInotifyCookie)
 	m.Save("netlinkPorts", &x.netlinkPorts)
+	m.Save("socketTable", &x.socketTable)
 }
 
 func (x *Kernel) afterLoad() {}
@@ -162,7 +163,23 @@ func (x *Kernel) load(m state.Map) {
 	m.Load("uniqueID", &x.uniqueID)
 	m.Load("nextInotifyCookie", &x.nextInotifyCookie)
 	m.Load("netlinkPorts", &x.netlinkPorts)
+	m.Load("socketTable", &x.socketTable)
 	m.LoadValue("danglingEndpoints", new([]tcpip.Endpoint), func(y interface{}) { x.loadDanglingEndpoints(y.([]tcpip.Endpoint)) })
+}
+
+func (x *socketEntry) beforeSave() {}
+func (x *socketEntry) save(m state.Map) {
+	x.beforeSave()
+	m.Save("k", &x.k)
+	m.Save("sock", &x.sock)
+	m.Save("family", &x.family)
+}
+
+func (x *socketEntry) afterLoad() {}
+func (x *socketEntry) load(m state.Map) {
+	m.Load("k", &x.k)
+	m.Load("sock", &x.sock)
+	m.Load("family", &x.family)
 }
 
 func (x *pendingSignals) beforeSave() {}
@@ -1055,6 +1072,7 @@ func init() {
 	state.Register("kernel.FSContext", (*FSContext)(nil), state.Fns{Save: (*FSContext).save, Load: (*FSContext).load})
 	state.Register("kernel.IPCNamespace", (*IPCNamespace)(nil), state.Fns{Save: (*IPCNamespace).save, Load: (*IPCNamespace).load})
 	state.Register("kernel.Kernel", (*Kernel)(nil), state.Fns{Save: (*Kernel).save, Load: (*Kernel).load})
+	state.Register("kernel.socketEntry", (*socketEntry)(nil), state.Fns{Save: (*socketEntry).save, Load: (*socketEntry).load})
 	state.Register("kernel.pendingSignals", (*pendingSignals)(nil), state.Fns{Save: (*pendingSignals).save, Load: (*pendingSignals).load})
 	state.Register("kernel.pendingSignalQueue", (*pendingSignalQueue)(nil), state.Fns{Save: (*pendingSignalQueue).save, Load: (*pendingSignalQueue).load})
 	state.Register("kernel.pendingSignal", (*pendingSignal)(nil), state.Fns{Save: (*pendingSignal).save, Load: (*pendingSignal).load})

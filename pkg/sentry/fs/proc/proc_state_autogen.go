@@ -198,6 +198,17 @@ func (x *netDev) load(m state.Map) {
 	m.Load("s", &x.s)
 }
 
+func (x *netUnix) beforeSave() {}
+func (x *netUnix) save(m state.Map) {
+	x.beforeSave()
+	m.Save("k", &x.k)
+}
+
+func (x *netUnix) afterLoad() {}
+func (x *netUnix) load(m state.Map) {
+	m.Load("k", &x.k)
+}
+
 func (x *proc) beforeSave() {}
 func (x *proc) save(m state.Map) {
 	x.beforeSave()
@@ -632,6 +643,7 @@ func init() {
 	state.Register("proc.mountsFile", (*mountsFile)(nil), state.Fns{Save: (*mountsFile).save, Load: (*mountsFile).load})
 	state.Register("proc.ifinet6", (*ifinet6)(nil), state.Fns{Save: (*ifinet6).save, Load: (*ifinet6).load})
 	state.Register("proc.netDev", (*netDev)(nil), state.Fns{Save: (*netDev).save, Load: (*netDev).load})
+	state.Register("proc.netUnix", (*netUnix)(nil), state.Fns{Save: (*netUnix).save, Load: (*netUnix).load})
 	state.Register("proc.proc", (*proc)(nil), state.Fns{Save: (*proc).save, Load: (*proc).load})
 	state.Register("proc.self", (*self)(nil), state.Fns{Save: (*self).save, Load: (*self).load})
 	state.Register("proc.threadSelf", (*threadSelf)(nil), state.Fns{Save: (*threadSelf).save, Load: (*threadSelf).load})
