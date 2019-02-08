@@ -76,6 +76,19 @@ func (x *endpoint) load(m state.Map) {
 	m.AfterLoad(x.afterLoad)
 }
 
+func (x *multicastMembership) beforeSave() {}
+func (x *multicastMembership) save(m state.Map) {
+	x.beforeSave()
+	m.Save("nicID", &x.nicID)
+	m.Save("multicastAddr", &x.multicastAddr)
+}
+
+func (x *multicastMembership) afterLoad() {}
+func (x *multicastMembership) load(m state.Map) {
+	m.Load("nicID", &x.nicID)
+	m.Load("multicastAddr", &x.multicastAddr)
+}
+
 func (x *udpPacketList) beforeSave() {}
 func (x *udpPacketList) save(m state.Map) {
 	x.beforeSave()
@@ -105,6 +118,7 @@ func (x *udpPacketEntry) load(m state.Map) {
 func init() {
 	state.Register("udp.udpPacket", (*udpPacket)(nil), state.Fns{Save: (*udpPacket).save, Load: (*udpPacket).load})
 	state.Register("udp.endpoint", (*endpoint)(nil), state.Fns{Save: (*endpoint).save, Load: (*endpoint).load})
+	state.Register("udp.multicastMembership", (*multicastMembership)(nil), state.Fns{Save: (*multicastMembership).save, Load: (*multicastMembership).load})
 	state.Register("udp.udpPacketList", (*udpPacketList)(nil), state.Fns{Save: (*udpPacketList).save, Load: (*udpPacketList).load})
 	state.Register("udp.udpPacketEntry", (*udpPacketEntry)(nil), state.Fns{Save: (*udpPacketEntry).save, Load: (*udpPacketEntry).load})
 }
