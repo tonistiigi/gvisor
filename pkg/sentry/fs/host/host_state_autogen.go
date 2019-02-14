@@ -119,12 +119,14 @@ func (x *TTYFileOperations) beforeSave() {}
 func (x *TTYFileOperations) save(m state.Map) {
 	x.beforeSave()
 	m.Save("fileOperations", &x.fileOperations)
+	m.Save("session", &x.session)
 	m.Save("fgProcessGroup", &x.fgProcessGroup)
 }
 
 func (x *TTYFileOperations) afterLoad() {}
 func (x *TTYFileOperations) load(m state.Map) {
 	m.Load("fileOperations", &x.fileOperations)
+	m.Load("session", &x.session)
 	m.Load("fgProcessGroup", &x.fgProcessGroup)
 }
 
