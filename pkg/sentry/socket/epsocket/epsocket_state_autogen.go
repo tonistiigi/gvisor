@@ -17,6 +17,9 @@ func (x *SocketOperations) save(m state.Map) {
 	m.Save("readView", &x.readView)
 	m.Save("readCM", &x.readCM)
 	m.Save("sender", &x.sender)
+	m.Save("sockOptTimestamp", &x.sockOptTimestamp)
+	m.Save("timestampValid", &x.timestampValid)
+	m.Save("timestampNS", &x.timestampNS)
 }
 
 func (x *SocketOperations) afterLoad() {}
@@ -29,6 +32,9 @@ func (x *SocketOperations) load(m state.Map) {
 	m.Load("readView", &x.readView)
 	m.Load("readCM", &x.readCM)
 	m.Load("sender", &x.sender)
+	m.Load("sockOptTimestamp", &x.sockOptTimestamp)
+	m.Load("timestampValid", &x.timestampValid)
+	m.Load("timestampNS", &x.timestampNS)
 }
 
 func (x *Stack) beforeSave() {}

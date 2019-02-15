@@ -15,7 +15,6 @@ func (x *pingPacket) save(m state.Map) {
 	m.Save("pingPacketEntry", &x.pingPacketEntry)
 	m.Save("senderAddress", &x.senderAddress)
 	m.Save("timestamp", &x.timestamp)
-	m.Save("hasTimestamp", &x.hasTimestamp)
 }
 
 func (x *pingPacket) afterLoad() {}
@@ -23,7 +22,6 @@ func (x *pingPacket) load(m state.Map) {
 	m.Load("pingPacketEntry", &x.pingPacketEntry)
 	m.Load("senderAddress", &x.senderAddress)
 	m.Load("timestamp", &x.timestamp)
-	m.Load("hasTimestamp", &x.hasTimestamp)
 	m.LoadValue("data", new(buffer.VectorisedView), func(y interface{}) { x.loadData(y.(buffer.VectorisedView)) })
 }
 
