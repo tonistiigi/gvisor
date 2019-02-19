@@ -556,39 +556,32 @@ func (x *auxvecFile) load(m state.Map) {
 	m.Load("t", &x.t)
 }
 
-func (x *idMapSeqSource) beforeSave() {}
-func (x *idMapSeqSource) save(m state.Map) {
+func (x *idMapInodeOperations) beforeSave() {}
+func (x *idMapInodeOperations) save(m state.Map) {
 	x.beforeSave()
+	m.Save("InodeSimpleAttributes", &x.InodeSimpleAttributes)
+	m.Save("InodeSimpleExtendedAttributes", &x.InodeSimpleExtendedAttributes)
 	m.Save("t", &x.t)
 	m.Save("gids", &x.gids)
 }
 
-func (x *idMapSeqSource) afterLoad() {}
-func (x *idMapSeqSource) load(m state.Map) {
+func (x *idMapInodeOperations) afterLoad() {}
+func (x *idMapInodeOperations) load(m state.Map) {
+	m.Load("InodeSimpleAttributes", &x.InodeSimpleAttributes)
+	m.Load("InodeSimpleExtendedAttributes", &x.InodeSimpleExtendedAttributes)
 	m.Load("t", &x.t)
 	m.Load("gids", &x.gids)
 }
 
-func (x *idMapSeqHandle) beforeSave() {}
-func (x *idMapSeqHandle) save(m state.Map) {
+func (x *idMapFileOperations) beforeSave() {}
+func (x *idMapFileOperations) save(m state.Map) {
 	x.beforeSave()
-	m.Save("value", &x.value)
+	m.Save("iops", &x.iops)
 }
 
-func (x *idMapSeqHandle) afterLoad() {}
-func (x *idMapSeqHandle) load(m state.Map) {
-	m.Load("value", &x.value)
-}
-
-func (x *idMapSeqFile) beforeSave() {}
-func (x *idMapSeqFile) save(m state.Map) {
-	x.beforeSave()
-	m.Save("SeqFile", &x.SeqFile)
-}
-
-func (x *idMapSeqFile) afterLoad() {}
-func (x *idMapSeqFile) load(m state.Map) {
-	m.Load("SeqFile", &x.SeqFile)
+func (x *idMapFileOperations) afterLoad() {}
+func (x *idMapFileOperations) load(m state.Map) {
+	m.Load("iops", &x.iops)
 }
 
 func (x *uptime) beforeSave() {}
@@ -672,9 +665,8 @@ func init() {
 	state.Register("proc.commFile", (*commFile)(nil), state.Fns{Save: (*commFile).save, Load: (*commFile).load})
 	state.Register("proc.auxvec", (*auxvec)(nil), state.Fns{Save: (*auxvec).save, Load: (*auxvec).load})
 	state.Register("proc.auxvecFile", (*auxvecFile)(nil), state.Fns{Save: (*auxvecFile).save, Load: (*auxvecFile).load})
-	state.Register("proc.idMapSeqSource", (*idMapSeqSource)(nil), state.Fns{Save: (*idMapSeqSource).save, Load: (*idMapSeqSource).load})
-	state.Register("proc.idMapSeqHandle", (*idMapSeqHandle)(nil), state.Fns{Save: (*idMapSeqHandle).save, Load: (*idMapSeqHandle).load})
-	state.Register("proc.idMapSeqFile", (*idMapSeqFile)(nil), state.Fns{Save: (*idMapSeqFile).save, Load: (*idMapSeqFile).load})
+	state.Register("proc.idMapInodeOperations", (*idMapInodeOperations)(nil), state.Fns{Save: (*idMapInodeOperations).save, Load: (*idMapInodeOperations).load})
+	state.Register("proc.idMapFileOperations", (*idMapFileOperations)(nil), state.Fns{Save: (*idMapFileOperations).save, Load: (*idMapFileOperations).load})
 	state.Register("proc.uptime", (*uptime)(nil), state.Fns{Save: (*uptime).save, Load: (*uptime).load})
 	state.Register("proc.uptimeFile", (*uptimeFile)(nil), state.Fns{Save: (*uptimeFile).save, Load: (*uptimeFile).load})
 	state.Register("proc.versionData", (*versionData)(nil), state.Fns{Save: (*versionData).save, Load: (*versionData).load})
