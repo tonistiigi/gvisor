@@ -1,12 +1,12 @@
 package ring0
 
 import (
-	"fmt"
 	"gvisor.googlesource.com/gvisor/pkg/cpuid"
 	"io"
 	"reflect"
 	"syscall"
 
+	"fmt"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/platform/ring0/pagetables"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/usermem"
 )
