@@ -52,6 +52,7 @@ func (x *endpoint) save(m state.Map) {
 	m.Save("reusePort", &x.reusePort)
 	m.Save("delay", &x.delay)
 	m.Save("cork", &x.cork)
+	m.Save("scoreboard", &x.scoreboard)
 	m.Save("reuseAddr", &x.reuseAddr)
 	m.Save("slowAck", &x.slowAck)
 	m.Save("segmentQueue", &x.segmentQueue)
@@ -93,6 +94,7 @@ func (x *endpoint) load(m state.Map) {
 	m.Load("reusePort", &x.reusePort)
 	m.Load("delay", &x.delay)
 	m.Load("cork", &x.cork)
+	m.Load("scoreboard", &x.scoreboard)
 	m.Load("reuseAddr", &x.reuseAddr)
 	m.Load("slowAck", &x.slowAck)
 	m.LoadWait("segmentQueue", &x.segmentQueue)
@@ -171,6 +173,19 @@ func (x *renoState) load(m state.Map) {
 	m.Load("s", &x.s)
 }
 
+func (x *SACKScoreboard) beforeSave() {}
+func (x *SACKScoreboard) save(m state.Map) {
+	x.beforeSave()
+	m.Save("smss", &x.smss)
+	m.Save("maxSACKED", &x.maxSACKED)
+}
+
+func (x *SACKScoreboard) afterLoad() {}
+func (x *SACKScoreboard) load(m state.Map) {
+	m.Load("smss", &x.smss)
+	m.Load("maxSACKED", &x.maxSACKED)
+}
+
 func (x *segment) beforeSave() {}
 func (x *segment) save(m state.Map) {
 	x.beforeSave()
@@ -178,6 +193,8 @@ func (x *segment) save(m state.Map) {
 	m.SaveValue("data", data)
 	var options []byte = x.saveOptions()
 	m.SaveValue("options", options)
+	var rcvdTime unixTime = x.saveRcvdTime()
+	m.SaveValue("rcvdTime", rcvdTime)
 	m.Save("segmentEntry", &x.segmentEntry)
 	m.Save("refCnt", &x.refCnt)
 	m.Save("viewToDeliver", &x.viewToDeliver)
@@ -186,6 +203,7 @@ func (x *segment) save(m state.Map) {
 	m.Save("flags", &x.flags)
 	m.Save("window", &x.window)
 	m.Save("parsedOptions", &x.parsedOptions)
+	m.Save("hasNewSACKInfo", &x.hasNewSACKInfo)
 }
 
 func (x *segment) afterLoad() {}
@@ -198,8 +216,10 @@ func (x *segment) load(m state.Map) {
 	m.Load("flags", &x.flags)
 	m.Load("window", &x.window)
 	m.Load("parsedOptions", &x.parsedOptions)
+	m.Load("hasNewSACKInfo", &x.hasNewSACKInfo)
 	m.LoadValue("data", new(buffer.VectorisedView), func(y interface{}) { x.loadData(y.(buffer.VectorisedView)) })
 	m.LoadValue("options", new([]byte), func(y interface{}) { x.loadOptions(y.([]byte)) })
+	m.LoadValue("rcvdTime", new(unixTime), func(y interface{}) { x.loadRcvdTime(y.(unixTime)) })
 }
 
 func (x *segmentQueue) beforeSave() {}
@@ -351,6 +371,7 @@ func init() {
 	state.Register("tcp.keepalive", (*keepalive)(nil), state.Fns{Save: (*keepalive).save, Load: (*keepalive).load})
 	state.Register("tcp.receiver", (*receiver)(nil), state.Fns{Save: (*receiver).save, Load: (*receiver).load})
 	state.Register("tcp.renoState", (*renoState)(nil), state.Fns{Save: (*renoState).save, Load: (*renoState).load})
+	state.Register("tcp.SACKScoreboard", (*SACKScoreboard)(nil), state.Fns{Save: (*SACKScoreboard).save, Load: (*SACKScoreboard).load})
 	state.Register("tcp.segment", (*segment)(nil), state.Fns{Save: (*segment).save, Load: (*segment).load})
 	state.Register("tcp.segmentQueue", (*segmentQueue)(nil), state.Fns{Save: (*segmentQueue).save, Load: (*segmentQueue).load})
 	state.Register("tcp.sender", (*sender)(nil), state.Fns{Save: (*sender).save, Load: (*sender).load})
