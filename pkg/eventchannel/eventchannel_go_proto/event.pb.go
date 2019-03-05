@@ -3,9 +3,11 @@
 
 package gvisor
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -16,7 +18,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type DebugEvent struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -30,16 +32,17 @@ func (m *DebugEvent) Reset()         { *m = DebugEvent{} }
 func (m *DebugEvent) String() string { return proto.CompactTextString(m) }
 func (*DebugEvent) ProtoMessage()    {}
 func (*DebugEvent) Descriptor() ([]byte, []int) {
-	return fileDescriptor_event_4bf35b04cfaf5c9c, []int{0}
+	return fileDescriptor_fcfbd51abd9de962, []int{0}
 }
+
 func (m *DebugEvent) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DebugEvent.Unmarshal(m, b)
 }
 func (m *DebugEvent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DebugEvent.Marshal(b, m, deterministic)
 }
-func (dst *DebugEvent) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DebugEvent.Merge(dst, src)
+func (m *DebugEvent) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DebugEvent.Merge(m, src)
 }
 func (m *DebugEvent) XXX_Size() int {
 	return xxx_messageInfo_DebugEvent.Size(m)
@@ -68,9 +71,9 @@ func init() {
 	proto.RegisterType((*DebugEvent)(nil), "gvisor.DebugEvent")
 }
 
-func init() { proto.RegisterFile("pkg/eventchannel/event.proto", fileDescriptor_event_4bf35b04cfaf5c9c) }
+func init() { proto.RegisterFile("pkg/eventchannel/event.proto", fileDescriptor_fcfbd51abd9de962) }
 
-var fileDescriptor_event_4bf35b04cfaf5c9c = []byte{
+var fileDescriptor_fcfbd51abd9de962 = []byte{
 	// 103 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x29, 0xc8, 0x4e, 0xd7,
 	0x4f, 0x2d, 0x4b, 0xcd, 0x2b, 0x49, 0xce, 0x48, 0xcc, 0xcb, 0x4b, 0xcd, 0x81, 0x70, 0xf4, 0x0a,

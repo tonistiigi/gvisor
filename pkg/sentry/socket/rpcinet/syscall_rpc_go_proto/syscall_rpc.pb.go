@@ -3,9 +3,11 @@
 
 package syscall_rpc
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -16,7 +18,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type SendmsgRequest struct {
 	Fd                   uint32   `protobuf:"varint,1,opt,name=fd,proto3" json:"fd,omitempty"`
@@ -33,16 +35,17 @@ func (m *SendmsgRequest) Reset()         { *m = SendmsgRequest{} }
 func (m *SendmsgRequest) String() string { return proto.CompactTextString(m) }
 func (*SendmsgRequest) ProtoMessage()    {}
 func (*SendmsgRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{0}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{0}
 }
+
 func (m *SendmsgRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SendmsgRequest.Unmarshal(m, b)
 }
 func (m *SendmsgRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SendmsgRequest.Marshal(b, m, deterministic)
 }
-func (dst *SendmsgRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SendmsgRequest.Merge(dst, src)
+func (m *SendmsgRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SendmsgRequest.Merge(m, src)
 }
 func (m *SendmsgRequest) XXX_Size() int {
 	return xxx_messageInfo_SendmsgRequest.Size(m)
@@ -102,16 +105,17 @@ func (m *SendmsgResponse) Reset()         { *m = SendmsgResponse{} }
 func (m *SendmsgResponse) String() string { return proto.CompactTextString(m) }
 func (*SendmsgResponse) ProtoMessage()    {}
 func (*SendmsgResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{1}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{1}
 }
+
 func (m *SendmsgResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SendmsgResponse.Unmarshal(m, b)
 }
 func (m *SendmsgResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SendmsgResponse.Marshal(b, m, deterministic)
 }
-func (dst *SendmsgResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SendmsgResponse.Merge(dst, src)
+func (m *SendmsgResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SendmsgResponse.Merge(m, src)
 }
 func (m *SendmsgResponse) XXX_Size() int {
 	return xxx_messageInfo_SendmsgResponse.Size(m)
@@ -159,68 +163,12 @@ func (m *SendmsgResponse) GetLength() uint32 {
 	return 0
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*SendmsgResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _SendmsgResponse_OneofMarshaler, _SendmsgResponse_OneofUnmarshaler, _SendmsgResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*SendmsgResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*SendmsgResponse_ErrorNumber)(nil),
 		(*SendmsgResponse_Length)(nil),
 	}
-}
-
-func _SendmsgResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*SendmsgResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *SendmsgResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *SendmsgResponse_Length:
-		b.EncodeVarint(2<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Length))
-	case nil:
-	default:
-		return fmt.Errorf("SendmsgResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _SendmsgResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*SendmsgResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &SendmsgResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.length
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &SendmsgResponse_Length{uint32(x)}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _SendmsgResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*SendmsgResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *SendmsgResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *SendmsgResponse_Length:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Length))
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type IOCtlRequest struct {
@@ -236,16 +184,17 @@ func (m *IOCtlRequest) Reset()         { *m = IOCtlRequest{} }
 func (m *IOCtlRequest) String() string { return proto.CompactTextString(m) }
 func (*IOCtlRequest) ProtoMessage()    {}
 func (*IOCtlRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{2}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{2}
 }
+
 func (m *IOCtlRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IOCtlRequest.Unmarshal(m, b)
 }
 func (m *IOCtlRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IOCtlRequest.Marshal(b, m, deterministic)
 }
-func (dst *IOCtlRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IOCtlRequest.Merge(dst, src)
+func (m *IOCtlRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IOCtlRequest.Merge(m, src)
 }
 func (m *IOCtlRequest) XXX_Size() int {
 	return xxx_messageInfo_IOCtlRequest.Size(m)
@@ -291,16 +240,17 @@ func (m *IOCtlResponse) Reset()         { *m = IOCtlResponse{} }
 func (m *IOCtlResponse) String() string { return proto.CompactTextString(m) }
 func (*IOCtlResponse) ProtoMessage()    {}
 func (*IOCtlResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{3}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{3}
 }
+
 func (m *IOCtlResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IOCtlResponse.Unmarshal(m, b)
 }
 func (m *IOCtlResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IOCtlResponse.Marshal(b, m, deterministic)
 }
-func (dst *IOCtlResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IOCtlResponse.Merge(dst, src)
+func (m *IOCtlResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IOCtlResponse.Merge(m, src)
 }
 func (m *IOCtlResponse) XXX_Size() int {
 	return xxx_messageInfo_IOCtlResponse.Size(m)
@@ -348,69 +298,12 @@ func (m *IOCtlResponse) GetValue() []byte {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*IOCtlResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _IOCtlResponse_OneofMarshaler, _IOCtlResponse_OneofUnmarshaler, _IOCtlResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*IOCtlResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*IOCtlResponse_ErrorNumber)(nil),
 		(*IOCtlResponse_Value)(nil),
 	}
-}
-
-func _IOCtlResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*IOCtlResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *IOCtlResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *IOCtlResponse_Value:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		b.EncodeRawBytes(x.Value)
-	case nil:
-	default:
-		return fmt.Errorf("IOCtlResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _IOCtlResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*IOCtlResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &IOCtlResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeRawBytes(true)
-		m.Result = &IOCtlResponse_Value{x}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _IOCtlResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*IOCtlResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *IOCtlResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *IOCtlResponse_Value:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(len(x.Value)))
-		n += len(x.Value)
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type RecvmsgRequest struct {
@@ -429,16 +322,17 @@ func (m *RecvmsgRequest) Reset()         { *m = RecvmsgRequest{} }
 func (m *RecvmsgRequest) String() string { return proto.CompactTextString(m) }
 func (*RecvmsgRequest) ProtoMessage()    {}
 func (*RecvmsgRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{4}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{4}
 }
+
 func (m *RecvmsgRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RecvmsgRequest.Unmarshal(m, b)
 }
 func (m *RecvmsgRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RecvmsgRequest.Marshal(b, m, deterministic)
 }
-func (dst *RecvmsgRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RecvmsgRequest.Merge(dst, src)
+func (m *RecvmsgRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RecvmsgRequest.Merge(m, src)
 }
 func (m *RecvmsgRequest) XXX_Size() int {
 	return xxx_messageInfo_RecvmsgRequest.Size(m)
@@ -504,16 +398,17 @@ func (m *OpenRequest) Reset()         { *m = OpenRequest{} }
 func (m *OpenRequest) String() string { return proto.CompactTextString(m) }
 func (*OpenRequest) ProtoMessage()    {}
 func (*OpenRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{5}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{5}
 }
+
 func (m *OpenRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpenRequest.Unmarshal(m, b)
 }
 func (m *OpenRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpenRequest.Marshal(b, m, deterministic)
 }
-func (dst *OpenRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpenRequest.Merge(dst, src)
+func (m *OpenRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpenRequest.Merge(m, src)
 }
 func (m *OpenRequest) XXX_Size() int {
 	return xxx_messageInfo_OpenRequest.Size(m)
@@ -559,16 +454,17 @@ func (m *OpenResponse) Reset()         { *m = OpenResponse{} }
 func (m *OpenResponse) String() string { return proto.CompactTextString(m) }
 func (*OpenResponse) ProtoMessage()    {}
 func (*OpenResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{6}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{6}
 }
+
 func (m *OpenResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpenResponse.Unmarshal(m, b)
 }
 func (m *OpenResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpenResponse.Marshal(b, m, deterministic)
 }
-func (dst *OpenResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpenResponse.Merge(dst, src)
+func (m *OpenResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpenResponse.Merge(m, src)
 }
 func (m *OpenResponse) XXX_Size() int {
 	return xxx_messageInfo_OpenResponse.Size(m)
@@ -616,68 +512,12 @@ func (m *OpenResponse) GetFd() uint32 {
 	return 0
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*OpenResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _OpenResponse_OneofMarshaler, _OpenResponse_OneofUnmarshaler, _OpenResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*OpenResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*OpenResponse_ErrorNumber)(nil),
 		(*OpenResponse_Fd)(nil),
 	}
-}
-
-func _OpenResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*OpenResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *OpenResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *OpenResponse_Fd:
-		b.EncodeVarint(2<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Fd))
-	case nil:
-	default:
-		return fmt.Errorf("OpenResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _OpenResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*OpenResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &OpenResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.fd
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &OpenResponse_Fd{uint32(x)}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _OpenResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*OpenResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *OpenResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *OpenResponse_Fd:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Fd))
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type ReadRequest struct {
@@ -692,16 +532,17 @@ func (m *ReadRequest) Reset()         { *m = ReadRequest{} }
 func (m *ReadRequest) String() string { return proto.CompactTextString(m) }
 func (*ReadRequest) ProtoMessage()    {}
 func (*ReadRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{7}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{7}
 }
+
 func (m *ReadRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ReadRequest.Unmarshal(m, b)
 }
 func (m *ReadRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ReadRequest.Marshal(b, m, deterministic)
 }
-func (dst *ReadRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ReadRequest.Merge(dst, src)
+func (m *ReadRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReadRequest.Merge(m, src)
 }
 func (m *ReadRequest) XXX_Size() int {
 	return xxx_messageInfo_ReadRequest.Size(m)
@@ -740,16 +581,17 @@ func (m *ReadResponse) Reset()         { *m = ReadResponse{} }
 func (m *ReadResponse) String() string { return proto.CompactTextString(m) }
 func (*ReadResponse) ProtoMessage()    {}
 func (*ReadResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{8}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{8}
 }
+
 func (m *ReadResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ReadResponse.Unmarshal(m, b)
 }
 func (m *ReadResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ReadResponse.Marshal(b, m, deterministic)
 }
-func (dst *ReadResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ReadResponse.Merge(dst, src)
+func (m *ReadResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReadResponse.Merge(m, src)
 }
 func (m *ReadResponse) XXX_Size() int {
 	return xxx_messageInfo_ReadResponse.Size(m)
@@ -797,69 +639,12 @@ func (m *ReadResponse) GetData() []byte {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*ReadResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _ReadResponse_OneofMarshaler, _ReadResponse_OneofUnmarshaler, _ReadResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*ReadResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*ReadResponse_ErrorNumber)(nil),
 		(*ReadResponse_Data)(nil),
 	}
-}
-
-func _ReadResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*ReadResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *ReadResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *ReadResponse_Data:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		b.EncodeRawBytes(x.Data)
-	case nil:
-	default:
-		return fmt.Errorf("ReadResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _ReadResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*ReadResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &ReadResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.data
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeRawBytes(true)
-		m.Result = &ReadResponse_Data{x}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _ReadResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*ReadResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *ReadResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *ReadResponse_Data:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(len(x.Data)))
-		n += len(x.Data)
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type ReadFileRequest struct {
@@ -873,16 +658,17 @@ func (m *ReadFileRequest) Reset()         { *m = ReadFileRequest{} }
 func (m *ReadFileRequest) String() string { return proto.CompactTextString(m) }
 func (*ReadFileRequest) ProtoMessage()    {}
 func (*ReadFileRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{9}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{9}
 }
+
 func (m *ReadFileRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ReadFileRequest.Unmarshal(m, b)
 }
 func (m *ReadFileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ReadFileRequest.Marshal(b, m, deterministic)
 }
-func (dst *ReadFileRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ReadFileRequest.Merge(dst, src)
+func (m *ReadFileRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReadFileRequest.Merge(m, src)
 }
 func (m *ReadFileRequest) XXX_Size() int {
 	return xxx_messageInfo_ReadFileRequest.Size(m)
@@ -914,16 +700,17 @@ func (m *ReadFileResponse) Reset()         { *m = ReadFileResponse{} }
 func (m *ReadFileResponse) String() string { return proto.CompactTextString(m) }
 func (*ReadFileResponse) ProtoMessage()    {}
 func (*ReadFileResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{10}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{10}
 }
+
 func (m *ReadFileResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ReadFileResponse.Unmarshal(m, b)
 }
 func (m *ReadFileResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ReadFileResponse.Marshal(b, m, deterministic)
 }
-func (dst *ReadFileResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ReadFileResponse.Merge(dst, src)
+func (m *ReadFileResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReadFileResponse.Merge(m, src)
 }
 func (m *ReadFileResponse) XXX_Size() int {
 	return xxx_messageInfo_ReadFileResponse.Size(m)
@@ -971,69 +758,12 @@ func (m *ReadFileResponse) GetData() []byte {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*ReadFileResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _ReadFileResponse_OneofMarshaler, _ReadFileResponse_OneofUnmarshaler, _ReadFileResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*ReadFileResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*ReadFileResponse_ErrorNumber)(nil),
 		(*ReadFileResponse_Data)(nil),
 	}
-}
-
-func _ReadFileResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*ReadFileResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *ReadFileResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *ReadFileResponse_Data:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		b.EncodeRawBytes(x.Data)
-	case nil:
-	default:
-		return fmt.Errorf("ReadFileResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _ReadFileResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*ReadFileResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &ReadFileResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.data
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeRawBytes(true)
-		m.Result = &ReadFileResponse_Data{x}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _ReadFileResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*ReadFileResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *ReadFileResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *ReadFileResponse_Data:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(len(x.Data)))
-		n += len(x.Data)
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type WriteRequest struct {
@@ -1048,16 +778,17 @@ func (m *WriteRequest) Reset()         { *m = WriteRequest{} }
 func (m *WriteRequest) String() string { return proto.CompactTextString(m) }
 func (*WriteRequest) ProtoMessage()    {}
 func (*WriteRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{11}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{11}
 }
+
 func (m *WriteRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_WriteRequest.Unmarshal(m, b)
 }
 func (m *WriteRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_WriteRequest.Marshal(b, m, deterministic)
 }
-func (dst *WriteRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_WriteRequest.Merge(dst, src)
+func (m *WriteRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_WriteRequest.Merge(m, src)
 }
 func (m *WriteRequest) XXX_Size() int {
 	return xxx_messageInfo_WriteRequest.Size(m)
@@ -1096,16 +827,17 @@ func (m *WriteResponse) Reset()         { *m = WriteResponse{} }
 func (m *WriteResponse) String() string { return proto.CompactTextString(m) }
 func (*WriteResponse) ProtoMessage()    {}
 func (*WriteResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{12}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{12}
 }
+
 func (m *WriteResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_WriteResponse.Unmarshal(m, b)
 }
 func (m *WriteResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_WriteResponse.Marshal(b, m, deterministic)
 }
-func (dst *WriteResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_WriteResponse.Merge(dst, src)
+func (m *WriteResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_WriteResponse.Merge(m, src)
 }
 func (m *WriteResponse) XXX_Size() int {
 	return xxx_messageInfo_WriteResponse.Size(m)
@@ -1153,68 +885,12 @@ func (m *WriteResponse) GetLength() uint32 {
 	return 0
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*WriteResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _WriteResponse_OneofMarshaler, _WriteResponse_OneofUnmarshaler, _WriteResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*WriteResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*WriteResponse_ErrorNumber)(nil),
 		(*WriteResponse_Length)(nil),
 	}
-}
-
-func _WriteResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*WriteResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *WriteResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *WriteResponse_Length:
-		b.EncodeVarint(2<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Length))
-	case nil:
-	default:
-		return fmt.Errorf("WriteResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _WriteResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*WriteResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &WriteResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.length
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &WriteResponse_Length{uint32(x)}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _WriteResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*WriteResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *WriteResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *WriteResponse_Length:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Length))
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type WriteFileRequest struct {
@@ -1229,16 +905,17 @@ func (m *WriteFileRequest) Reset()         { *m = WriteFileRequest{} }
 func (m *WriteFileRequest) String() string { return proto.CompactTextString(m) }
 func (*WriteFileRequest) ProtoMessage()    {}
 func (*WriteFileRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{13}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{13}
 }
+
 func (m *WriteFileRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_WriteFileRequest.Unmarshal(m, b)
 }
 func (m *WriteFileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_WriteFileRequest.Marshal(b, m, deterministic)
 }
-func (dst *WriteFileRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_WriteFileRequest.Merge(dst, src)
+func (m *WriteFileRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_WriteFileRequest.Merge(m, src)
 }
 func (m *WriteFileRequest) XXX_Size() int {
 	return xxx_messageInfo_WriteFileRequest.Size(m)
@@ -1275,16 +952,17 @@ func (m *WriteFileResponse) Reset()         { *m = WriteFileResponse{} }
 func (m *WriteFileResponse) String() string { return proto.CompactTextString(m) }
 func (*WriteFileResponse) ProtoMessage()    {}
 func (*WriteFileResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{14}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{14}
 }
+
 func (m *WriteFileResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_WriteFileResponse.Unmarshal(m, b)
 }
 func (m *WriteFileResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_WriteFileResponse.Marshal(b, m, deterministic)
 }
-func (dst *WriteFileResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_WriteFileResponse.Merge(dst, src)
+func (m *WriteFileResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_WriteFileResponse.Merge(m, src)
 }
 func (m *WriteFileResponse) XXX_Size() int {
 	return xxx_messageInfo_WriteFileResponse.Size(m)
@@ -1321,16 +999,17 @@ func (m *AddressResponse) Reset()         { *m = AddressResponse{} }
 func (m *AddressResponse) String() string { return proto.CompactTextString(m) }
 func (*AddressResponse) ProtoMessage()    {}
 func (*AddressResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{15}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{15}
 }
+
 func (m *AddressResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddressResponse.Unmarshal(m, b)
 }
 func (m *AddressResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AddressResponse.Marshal(b, m, deterministic)
 }
-func (dst *AddressResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AddressResponse.Merge(dst, src)
+func (m *AddressResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddressResponse.Merge(m, src)
 }
 func (m *AddressResponse) XXX_Size() int {
 	return xxx_messageInfo_AddressResponse.Size(m)
@@ -1369,16 +1048,17 @@ func (m *RecvmsgResponse) Reset()         { *m = RecvmsgResponse{} }
 func (m *RecvmsgResponse) String() string { return proto.CompactTextString(m) }
 func (*RecvmsgResponse) ProtoMessage()    {}
 func (*RecvmsgResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{16}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{16}
 }
+
 func (m *RecvmsgResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RecvmsgResponse.Unmarshal(m, b)
 }
 func (m *RecvmsgResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RecvmsgResponse.Marshal(b, m, deterministic)
 }
-func (dst *RecvmsgResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RecvmsgResponse.Merge(dst, src)
+func (m *RecvmsgResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RecvmsgResponse.Merge(m, src)
 }
 func (m *RecvmsgResponse) XXX_Size() int {
 	return xxx_messageInfo_RecvmsgResponse.Size(m)
@@ -1426,73 +1106,12 @@ func (m *RecvmsgResponse) GetPayload() *RecvmsgResponse_ResultPayload {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*RecvmsgResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _RecvmsgResponse_OneofMarshaler, _RecvmsgResponse_OneofUnmarshaler, _RecvmsgResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*RecvmsgResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*RecvmsgResponse_ErrorNumber)(nil),
 		(*RecvmsgResponse_Payload)(nil),
 	}
-}
-
-func _RecvmsgResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*RecvmsgResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *RecvmsgResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *RecvmsgResponse_Payload:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Payload); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("RecvmsgResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _RecvmsgResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*RecvmsgResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &RecvmsgResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.payload
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(RecvmsgResponse_ResultPayload)
-		err := b.DecodeMessage(msg)
-		m.Result = &RecvmsgResponse_Payload{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _RecvmsgResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*RecvmsgResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *RecvmsgResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *RecvmsgResponse_Payload:
-		s := proto.Size(x.Payload)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type RecvmsgResponse_ResultPayload struct {
@@ -1509,16 +1128,17 @@ func (m *RecvmsgResponse_ResultPayload) Reset()         { *m = RecvmsgResponse_R
 func (m *RecvmsgResponse_ResultPayload) String() string { return proto.CompactTextString(m) }
 func (*RecvmsgResponse_ResultPayload) ProtoMessage()    {}
 func (*RecvmsgResponse_ResultPayload) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{16, 0}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{16, 0}
 }
+
 func (m *RecvmsgResponse_ResultPayload) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RecvmsgResponse_ResultPayload.Unmarshal(m, b)
 }
 func (m *RecvmsgResponse_ResultPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RecvmsgResponse_ResultPayload.Marshal(b, m, deterministic)
 }
-func (dst *RecvmsgResponse_ResultPayload) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RecvmsgResponse_ResultPayload.Merge(dst, src)
+func (m *RecvmsgResponse_ResultPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RecvmsgResponse_ResultPayload.Merge(m, src)
 }
 func (m *RecvmsgResponse_ResultPayload) XXX_Size() int {
 	return xxx_messageInfo_RecvmsgResponse_ResultPayload.Size(m)
@@ -1569,16 +1189,17 @@ func (m *BindRequest) Reset()         { *m = BindRequest{} }
 func (m *BindRequest) String() string { return proto.CompactTextString(m) }
 func (*BindRequest) ProtoMessage()    {}
 func (*BindRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{17}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{17}
 }
+
 func (m *BindRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_BindRequest.Unmarshal(m, b)
 }
 func (m *BindRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_BindRequest.Marshal(b, m, deterministic)
 }
-func (dst *BindRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BindRequest.Merge(dst, src)
+func (m *BindRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BindRequest.Merge(m, src)
 }
 func (m *BindRequest) XXX_Size() int {
 	return xxx_messageInfo_BindRequest.Size(m)
@@ -1614,16 +1235,17 @@ func (m *BindResponse) Reset()         { *m = BindResponse{} }
 func (m *BindResponse) String() string { return proto.CompactTextString(m) }
 func (*BindResponse) ProtoMessage()    {}
 func (*BindResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{18}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{18}
 }
+
 func (m *BindResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_BindResponse.Unmarshal(m, b)
 }
 func (m *BindResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_BindResponse.Marshal(b, m, deterministic)
 }
-func (dst *BindResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BindResponse.Merge(dst, src)
+func (m *BindResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BindResponse.Merge(m, src)
 }
 func (m *BindResponse) XXX_Size() int {
 	return xxx_messageInfo_BindResponse.Size(m)
@@ -1654,16 +1276,17 @@ func (m *AcceptRequest) Reset()         { *m = AcceptRequest{} }
 func (m *AcceptRequest) String() string { return proto.CompactTextString(m) }
 func (*AcceptRequest) ProtoMessage()    {}
 func (*AcceptRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{19}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{19}
 }
+
 func (m *AcceptRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AcceptRequest.Unmarshal(m, b)
 }
 func (m *AcceptRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AcceptRequest.Marshal(b, m, deterministic)
 }
-func (dst *AcceptRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AcceptRequest.Merge(dst, src)
+func (m *AcceptRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AcceptRequest.Merge(m, src)
 }
 func (m *AcceptRequest) XXX_Size() int {
 	return xxx_messageInfo_AcceptRequest.Size(m)
@@ -1709,16 +1332,17 @@ func (m *AcceptResponse) Reset()         { *m = AcceptResponse{} }
 func (m *AcceptResponse) String() string { return proto.CompactTextString(m) }
 func (*AcceptResponse) ProtoMessage()    {}
 func (*AcceptResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{20}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{20}
 }
+
 func (m *AcceptResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AcceptResponse.Unmarshal(m, b)
 }
 func (m *AcceptResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AcceptResponse.Marshal(b, m, deterministic)
 }
-func (dst *AcceptResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AcceptResponse.Merge(dst, src)
+func (m *AcceptResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AcceptResponse.Merge(m, src)
 }
 func (m *AcceptResponse) XXX_Size() int {
 	return xxx_messageInfo_AcceptResponse.Size(m)
@@ -1766,73 +1390,12 @@ func (m *AcceptResponse) GetPayload() *AcceptResponse_ResultPayload {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*AcceptResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _AcceptResponse_OneofMarshaler, _AcceptResponse_OneofUnmarshaler, _AcceptResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*AcceptResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*AcceptResponse_ErrorNumber)(nil),
 		(*AcceptResponse_Payload)(nil),
 	}
-}
-
-func _AcceptResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*AcceptResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *AcceptResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *AcceptResponse_Payload:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Payload); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("AcceptResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _AcceptResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*AcceptResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &AcceptResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.payload
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(AcceptResponse_ResultPayload)
-		err := b.DecodeMessage(msg)
-		m.Result = &AcceptResponse_Payload{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _AcceptResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*AcceptResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *AcceptResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *AcceptResponse_Payload:
-		s := proto.Size(x.Payload)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type AcceptResponse_ResultPayload struct {
@@ -1847,16 +1410,17 @@ func (m *AcceptResponse_ResultPayload) Reset()         { *m = AcceptResponse_Res
 func (m *AcceptResponse_ResultPayload) String() string { return proto.CompactTextString(m) }
 func (*AcceptResponse_ResultPayload) ProtoMessage()    {}
 func (*AcceptResponse_ResultPayload) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{20, 0}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{20, 0}
 }
+
 func (m *AcceptResponse_ResultPayload) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AcceptResponse_ResultPayload.Unmarshal(m, b)
 }
 func (m *AcceptResponse_ResultPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AcceptResponse_ResultPayload.Marshal(b, m, deterministic)
 }
-func (dst *AcceptResponse_ResultPayload) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AcceptResponse_ResultPayload.Merge(dst, src)
+func (m *AcceptResponse_ResultPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AcceptResponse_ResultPayload.Merge(m, src)
 }
 func (m *AcceptResponse_ResultPayload) XXX_Size() int {
 	return xxx_messageInfo_AcceptResponse_ResultPayload.Size(m)
@@ -1893,16 +1457,17 @@ func (m *ConnectRequest) Reset()         { *m = ConnectRequest{} }
 func (m *ConnectRequest) String() string { return proto.CompactTextString(m) }
 func (*ConnectRequest) ProtoMessage()    {}
 func (*ConnectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{21}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{21}
 }
+
 func (m *ConnectRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ConnectRequest.Unmarshal(m, b)
 }
 func (m *ConnectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ConnectRequest.Marshal(b, m, deterministic)
 }
-func (dst *ConnectRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ConnectRequest.Merge(dst, src)
+func (m *ConnectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ConnectRequest.Merge(m, src)
 }
 func (m *ConnectRequest) XXX_Size() int {
 	return xxx_messageInfo_ConnectRequest.Size(m)
@@ -1938,16 +1503,17 @@ func (m *ConnectResponse) Reset()         { *m = ConnectResponse{} }
 func (m *ConnectResponse) String() string { return proto.CompactTextString(m) }
 func (*ConnectResponse) ProtoMessage()    {}
 func (*ConnectResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{22}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{22}
 }
+
 func (m *ConnectResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ConnectResponse.Unmarshal(m, b)
 }
 func (m *ConnectResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ConnectResponse.Marshal(b, m, deterministic)
 }
-func (dst *ConnectResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ConnectResponse.Merge(dst, src)
+func (m *ConnectResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ConnectResponse.Merge(m, src)
 }
 func (m *ConnectResponse) XXX_Size() int {
 	return xxx_messageInfo_ConnectResponse.Size(m)
@@ -1977,16 +1543,17 @@ func (m *ListenRequest) Reset()         { *m = ListenRequest{} }
 func (m *ListenRequest) String() string { return proto.CompactTextString(m) }
 func (*ListenRequest) ProtoMessage()    {}
 func (*ListenRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{23}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{23}
 }
+
 func (m *ListenRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListenRequest.Unmarshal(m, b)
 }
 func (m *ListenRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListenRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListenRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListenRequest.Merge(dst, src)
+func (m *ListenRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListenRequest.Merge(m, src)
 }
 func (m *ListenRequest) XXX_Size() int {
 	return xxx_messageInfo_ListenRequest.Size(m)
@@ -2022,16 +1589,17 @@ func (m *ListenResponse) Reset()         { *m = ListenResponse{} }
 func (m *ListenResponse) String() string { return proto.CompactTextString(m) }
 func (*ListenResponse) ProtoMessage()    {}
 func (*ListenResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{24}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{24}
 }
+
 func (m *ListenResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListenResponse.Unmarshal(m, b)
 }
 func (m *ListenResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListenResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListenResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListenResponse.Merge(dst, src)
+func (m *ListenResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListenResponse.Merge(m, src)
 }
 func (m *ListenResponse) XXX_Size() int {
 	return xxx_messageInfo_ListenResponse.Size(m)
@@ -2061,16 +1629,17 @@ func (m *ShutdownRequest) Reset()         { *m = ShutdownRequest{} }
 func (m *ShutdownRequest) String() string { return proto.CompactTextString(m) }
 func (*ShutdownRequest) ProtoMessage()    {}
 func (*ShutdownRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{25}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{25}
 }
+
 func (m *ShutdownRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ShutdownRequest.Unmarshal(m, b)
 }
 func (m *ShutdownRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ShutdownRequest.Marshal(b, m, deterministic)
 }
-func (dst *ShutdownRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ShutdownRequest.Merge(dst, src)
+func (m *ShutdownRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ShutdownRequest.Merge(m, src)
 }
 func (m *ShutdownRequest) XXX_Size() int {
 	return xxx_messageInfo_ShutdownRequest.Size(m)
@@ -2106,16 +1675,17 @@ func (m *ShutdownResponse) Reset()         { *m = ShutdownResponse{} }
 func (m *ShutdownResponse) String() string { return proto.CompactTextString(m) }
 func (*ShutdownResponse) ProtoMessage()    {}
 func (*ShutdownResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{26}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{26}
 }
+
 func (m *ShutdownResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ShutdownResponse.Unmarshal(m, b)
 }
 func (m *ShutdownResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ShutdownResponse.Marshal(b, m, deterministic)
 }
-func (dst *ShutdownResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ShutdownResponse.Merge(dst, src)
+func (m *ShutdownResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ShutdownResponse.Merge(m, src)
 }
 func (m *ShutdownResponse) XXX_Size() int {
 	return xxx_messageInfo_ShutdownResponse.Size(m)
@@ -2144,16 +1714,17 @@ func (m *CloseRequest) Reset()         { *m = CloseRequest{} }
 func (m *CloseRequest) String() string { return proto.CompactTextString(m) }
 func (*CloseRequest) ProtoMessage()    {}
 func (*CloseRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{27}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{27}
 }
+
 func (m *CloseRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CloseRequest.Unmarshal(m, b)
 }
 func (m *CloseRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CloseRequest.Marshal(b, m, deterministic)
 }
-func (dst *CloseRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CloseRequest.Merge(dst, src)
+func (m *CloseRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CloseRequest.Merge(m, src)
 }
 func (m *CloseRequest) XXX_Size() int {
 	return xxx_messageInfo_CloseRequest.Size(m)
@@ -2182,16 +1753,17 @@ func (m *CloseResponse) Reset()         { *m = CloseResponse{} }
 func (m *CloseResponse) String() string { return proto.CompactTextString(m) }
 func (*CloseResponse) ProtoMessage()    {}
 func (*CloseResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{28}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{28}
 }
+
 func (m *CloseResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CloseResponse.Unmarshal(m, b)
 }
 func (m *CloseResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CloseResponse.Marshal(b, m, deterministic)
 }
-func (dst *CloseResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CloseResponse.Merge(dst, src)
+func (m *CloseResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CloseResponse.Merge(m, src)
 }
 func (m *CloseResponse) XXX_Size() int {
 	return xxx_messageInfo_CloseResponse.Size(m)
@@ -2223,16 +1795,17 @@ func (m *GetSockOptRequest) Reset()         { *m = GetSockOptRequest{} }
 func (m *GetSockOptRequest) String() string { return proto.CompactTextString(m) }
 func (*GetSockOptRequest) ProtoMessage()    {}
 func (*GetSockOptRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{29}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{29}
 }
+
 func (m *GetSockOptRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetSockOptRequest.Unmarshal(m, b)
 }
 func (m *GetSockOptRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetSockOptRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetSockOptRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetSockOptRequest.Merge(dst, src)
+func (m *GetSockOptRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSockOptRequest.Merge(m, src)
 }
 func (m *GetSockOptRequest) XXX_Size() int {
 	return xxx_messageInfo_GetSockOptRequest.Size(m)
@@ -2285,16 +1858,17 @@ func (m *GetSockOptResponse) Reset()         { *m = GetSockOptResponse{} }
 func (m *GetSockOptResponse) String() string { return proto.CompactTextString(m) }
 func (*GetSockOptResponse) ProtoMessage()    {}
 func (*GetSockOptResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{30}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{30}
 }
+
 func (m *GetSockOptResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetSockOptResponse.Unmarshal(m, b)
 }
 func (m *GetSockOptResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetSockOptResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetSockOptResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetSockOptResponse.Merge(dst, src)
+func (m *GetSockOptResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSockOptResponse.Merge(m, src)
 }
 func (m *GetSockOptResponse) XXX_Size() int {
 	return xxx_messageInfo_GetSockOptResponse.Size(m)
@@ -2342,69 +1916,12 @@ func (m *GetSockOptResponse) GetOpt() []byte {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*GetSockOptResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _GetSockOptResponse_OneofMarshaler, _GetSockOptResponse_OneofUnmarshaler, _GetSockOptResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*GetSockOptResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*GetSockOptResponse_ErrorNumber)(nil),
 		(*GetSockOptResponse_Opt)(nil),
 	}
-}
-
-func _GetSockOptResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*GetSockOptResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *GetSockOptResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *GetSockOptResponse_Opt:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		b.EncodeRawBytes(x.Opt)
-	case nil:
-	default:
-		return fmt.Errorf("GetSockOptResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _GetSockOptResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*GetSockOptResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &GetSockOptResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.opt
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeRawBytes(true)
-		m.Result = &GetSockOptResponse_Opt{x}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _GetSockOptResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*GetSockOptResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *GetSockOptResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *GetSockOptResponse_Opt:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(len(x.Opt)))
-		n += len(x.Opt)
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type SetSockOptRequest struct {
@@ -2421,16 +1938,17 @@ func (m *SetSockOptRequest) Reset()         { *m = SetSockOptRequest{} }
 func (m *SetSockOptRequest) String() string { return proto.CompactTextString(m) }
 func (*SetSockOptRequest) ProtoMessage()    {}
 func (*SetSockOptRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{31}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{31}
 }
+
 func (m *SetSockOptRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SetSockOptRequest.Unmarshal(m, b)
 }
 func (m *SetSockOptRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SetSockOptRequest.Marshal(b, m, deterministic)
 }
-func (dst *SetSockOptRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SetSockOptRequest.Merge(dst, src)
+func (m *SetSockOptRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetSockOptRequest.Merge(m, src)
 }
 func (m *SetSockOptRequest) XXX_Size() int {
 	return xxx_messageInfo_SetSockOptRequest.Size(m)
@@ -2480,16 +1998,17 @@ func (m *SetSockOptResponse) Reset()         { *m = SetSockOptResponse{} }
 func (m *SetSockOptResponse) String() string { return proto.CompactTextString(m) }
 func (*SetSockOptResponse) ProtoMessage()    {}
 func (*SetSockOptResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{32}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{32}
 }
+
 func (m *SetSockOptResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SetSockOptResponse.Unmarshal(m, b)
 }
 func (m *SetSockOptResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SetSockOptResponse.Marshal(b, m, deterministic)
 }
-func (dst *SetSockOptResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SetSockOptResponse.Merge(dst, src)
+func (m *SetSockOptResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetSockOptResponse.Merge(m, src)
 }
 func (m *SetSockOptResponse) XXX_Size() int {
 	return xxx_messageInfo_SetSockOptResponse.Size(m)
@@ -2518,16 +2037,17 @@ func (m *GetSockNameRequest) Reset()         { *m = GetSockNameRequest{} }
 func (m *GetSockNameRequest) String() string { return proto.CompactTextString(m) }
 func (*GetSockNameRequest) ProtoMessage()    {}
 func (*GetSockNameRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{33}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{33}
 }
+
 func (m *GetSockNameRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetSockNameRequest.Unmarshal(m, b)
 }
 func (m *GetSockNameRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetSockNameRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetSockNameRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetSockNameRequest.Merge(dst, src)
+func (m *GetSockNameRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSockNameRequest.Merge(m, src)
 }
 func (m *GetSockNameRequest) XXX_Size() int {
 	return xxx_messageInfo_GetSockNameRequest.Size(m)
@@ -2559,16 +2079,17 @@ func (m *GetSockNameResponse) Reset()         { *m = GetSockNameResponse{} }
 func (m *GetSockNameResponse) String() string { return proto.CompactTextString(m) }
 func (*GetSockNameResponse) ProtoMessage()    {}
 func (*GetSockNameResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{34}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{34}
 }
+
 func (m *GetSockNameResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetSockNameResponse.Unmarshal(m, b)
 }
 func (m *GetSockNameResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetSockNameResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetSockNameResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetSockNameResponse.Merge(dst, src)
+func (m *GetSockNameResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSockNameResponse.Merge(m, src)
 }
 func (m *GetSockNameResponse) XXX_Size() int {
 	return xxx_messageInfo_GetSockNameResponse.Size(m)
@@ -2616,73 +2137,12 @@ func (m *GetSockNameResponse) GetAddress() *AddressResponse {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*GetSockNameResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _GetSockNameResponse_OneofMarshaler, _GetSockNameResponse_OneofUnmarshaler, _GetSockNameResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*GetSockNameResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*GetSockNameResponse_ErrorNumber)(nil),
 		(*GetSockNameResponse_Address)(nil),
 	}
-}
-
-func _GetSockNameResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*GetSockNameResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *GetSockNameResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *GetSockNameResponse_Address:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Address); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("GetSockNameResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _GetSockNameResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*GetSockNameResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &GetSockNameResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.address
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(AddressResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &GetSockNameResponse_Address{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _GetSockNameResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*GetSockNameResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *GetSockNameResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *GetSockNameResponse_Address:
-		s := proto.Size(x.Address)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type GetPeerNameRequest struct {
@@ -2696,16 +2156,17 @@ func (m *GetPeerNameRequest) Reset()         { *m = GetPeerNameRequest{} }
 func (m *GetPeerNameRequest) String() string { return proto.CompactTextString(m) }
 func (*GetPeerNameRequest) ProtoMessage()    {}
 func (*GetPeerNameRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{35}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{35}
 }
+
 func (m *GetPeerNameRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetPeerNameRequest.Unmarshal(m, b)
 }
 func (m *GetPeerNameRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetPeerNameRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetPeerNameRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetPeerNameRequest.Merge(dst, src)
+func (m *GetPeerNameRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetPeerNameRequest.Merge(m, src)
 }
 func (m *GetPeerNameRequest) XXX_Size() int {
 	return xxx_messageInfo_GetPeerNameRequest.Size(m)
@@ -2737,16 +2198,17 @@ func (m *GetPeerNameResponse) Reset()         { *m = GetPeerNameResponse{} }
 func (m *GetPeerNameResponse) String() string { return proto.CompactTextString(m) }
 func (*GetPeerNameResponse) ProtoMessage()    {}
 func (*GetPeerNameResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{36}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{36}
 }
+
 func (m *GetPeerNameResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetPeerNameResponse.Unmarshal(m, b)
 }
 func (m *GetPeerNameResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetPeerNameResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetPeerNameResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetPeerNameResponse.Merge(dst, src)
+func (m *GetPeerNameResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetPeerNameResponse.Merge(m, src)
 }
 func (m *GetPeerNameResponse) XXX_Size() int {
 	return xxx_messageInfo_GetPeerNameResponse.Size(m)
@@ -2794,73 +2256,12 @@ func (m *GetPeerNameResponse) GetAddress() *AddressResponse {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*GetPeerNameResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _GetPeerNameResponse_OneofMarshaler, _GetPeerNameResponse_OneofUnmarshaler, _GetPeerNameResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*GetPeerNameResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*GetPeerNameResponse_ErrorNumber)(nil),
 		(*GetPeerNameResponse_Address)(nil),
 	}
-}
-
-func _GetPeerNameResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*GetPeerNameResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *GetPeerNameResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *GetPeerNameResponse_Address:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Address); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("GetPeerNameResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _GetPeerNameResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*GetPeerNameResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &GetPeerNameResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.address
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(AddressResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &GetPeerNameResponse_Address{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _GetPeerNameResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*GetPeerNameResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *GetPeerNameResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *GetPeerNameResponse_Address:
-		s := proto.Size(x.Address)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type SocketRequest struct {
@@ -2876,16 +2277,17 @@ func (m *SocketRequest) Reset()         { *m = SocketRequest{} }
 func (m *SocketRequest) String() string { return proto.CompactTextString(m) }
 func (*SocketRequest) ProtoMessage()    {}
 func (*SocketRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{37}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{37}
 }
+
 func (m *SocketRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SocketRequest.Unmarshal(m, b)
 }
 func (m *SocketRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SocketRequest.Marshal(b, m, deterministic)
 }
-func (dst *SocketRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SocketRequest.Merge(dst, src)
+func (m *SocketRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SocketRequest.Merge(m, src)
 }
 func (m *SocketRequest) XXX_Size() int {
 	return xxx_messageInfo_SocketRequest.Size(m)
@@ -2931,16 +2333,17 @@ func (m *SocketResponse) Reset()         { *m = SocketResponse{} }
 func (m *SocketResponse) String() string { return proto.CompactTextString(m) }
 func (*SocketResponse) ProtoMessage()    {}
 func (*SocketResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{38}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{38}
 }
+
 func (m *SocketResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SocketResponse.Unmarshal(m, b)
 }
 func (m *SocketResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SocketResponse.Marshal(b, m, deterministic)
 }
-func (dst *SocketResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SocketResponse.Merge(dst, src)
+func (m *SocketResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SocketResponse.Merge(m, src)
 }
 func (m *SocketResponse) XXX_Size() int {
 	return xxx_messageInfo_SocketResponse.Size(m)
@@ -2988,68 +2391,12 @@ func (m *SocketResponse) GetFd() uint32 {
 	return 0
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*SocketResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _SocketResponse_OneofMarshaler, _SocketResponse_OneofUnmarshaler, _SocketResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*SocketResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*SocketResponse_ErrorNumber)(nil),
 		(*SocketResponse_Fd)(nil),
 	}
-}
-
-func _SocketResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*SocketResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *SocketResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *SocketResponse_Fd:
-		b.EncodeVarint(2<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Fd))
-	case nil:
-	default:
-		return fmt.Errorf("SocketResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _SocketResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*SocketResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &SocketResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.fd
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &SocketResponse_Fd{uint32(x)}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _SocketResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*SocketResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *SocketResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *SocketResponse_Fd:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Fd))
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type EpollWaitRequest struct {
@@ -3065,16 +2412,17 @@ func (m *EpollWaitRequest) Reset()         { *m = EpollWaitRequest{} }
 func (m *EpollWaitRequest) String() string { return proto.CompactTextString(m) }
 func (*EpollWaitRequest) ProtoMessage()    {}
 func (*EpollWaitRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{39}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{39}
 }
+
 func (m *EpollWaitRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EpollWaitRequest.Unmarshal(m, b)
 }
 func (m *EpollWaitRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EpollWaitRequest.Marshal(b, m, deterministic)
 }
-func (dst *EpollWaitRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EpollWaitRequest.Merge(dst, src)
+func (m *EpollWaitRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EpollWaitRequest.Merge(m, src)
 }
 func (m *EpollWaitRequest) XXX_Size() int {
 	return xxx_messageInfo_EpollWaitRequest.Size(m)
@@ -3118,16 +2466,17 @@ func (m *EpollEvent) Reset()         { *m = EpollEvent{} }
 func (m *EpollEvent) String() string { return proto.CompactTextString(m) }
 func (*EpollEvent) ProtoMessage()    {}
 func (*EpollEvent) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{40}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{40}
 }
+
 func (m *EpollEvent) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EpollEvent.Unmarshal(m, b)
 }
 func (m *EpollEvent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EpollEvent.Marshal(b, m, deterministic)
 }
-func (dst *EpollEvent) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EpollEvent.Merge(dst, src)
+func (m *EpollEvent) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EpollEvent.Merge(m, src)
 }
 func (m *EpollEvent) XXX_Size() int {
 	return xxx_messageInfo_EpollEvent.Size(m)
@@ -3163,16 +2512,17 @@ func (m *EpollEvents) Reset()         { *m = EpollEvents{} }
 func (m *EpollEvents) String() string { return proto.CompactTextString(m) }
 func (*EpollEvents) ProtoMessage()    {}
 func (*EpollEvents) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{41}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{41}
 }
+
 func (m *EpollEvents) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EpollEvents.Unmarshal(m, b)
 }
 func (m *EpollEvents) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EpollEvents.Marshal(b, m, deterministic)
 }
-func (dst *EpollEvents) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EpollEvents.Merge(dst, src)
+func (m *EpollEvents) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EpollEvents.Merge(m, src)
 }
 func (m *EpollEvents) XXX_Size() int {
 	return xxx_messageInfo_EpollEvents.Size(m)
@@ -3204,16 +2554,17 @@ func (m *EpollWaitResponse) Reset()         { *m = EpollWaitResponse{} }
 func (m *EpollWaitResponse) String() string { return proto.CompactTextString(m) }
 func (*EpollWaitResponse) ProtoMessage()    {}
 func (*EpollWaitResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{42}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{42}
 }
+
 func (m *EpollWaitResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EpollWaitResponse.Unmarshal(m, b)
 }
 func (m *EpollWaitResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EpollWaitResponse.Marshal(b, m, deterministic)
 }
-func (dst *EpollWaitResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EpollWaitResponse.Merge(dst, src)
+func (m *EpollWaitResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EpollWaitResponse.Merge(m, src)
 }
 func (m *EpollWaitResponse) XXX_Size() int {
 	return xxx_messageInfo_EpollWaitResponse.Size(m)
@@ -3261,73 +2612,12 @@ func (m *EpollWaitResponse) GetEvents() *EpollEvents {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*EpollWaitResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _EpollWaitResponse_OneofMarshaler, _EpollWaitResponse_OneofUnmarshaler, _EpollWaitResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*EpollWaitResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*EpollWaitResponse_ErrorNumber)(nil),
 		(*EpollWaitResponse_Events)(nil),
 	}
-}
-
-func _EpollWaitResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*EpollWaitResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *EpollWaitResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *EpollWaitResponse_Events:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Events); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("EpollWaitResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _EpollWaitResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*EpollWaitResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &EpollWaitResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.events
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(EpollEvents)
-		err := b.DecodeMessage(msg)
-		m.Result = &EpollWaitResponse_Events{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _EpollWaitResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*EpollWaitResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *EpollWaitResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *EpollWaitResponse_Events:
-		s := proto.Size(x.Events)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type EpollCtlRequest struct {
@@ -3344,16 +2634,17 @@ func (m *EpollCtlRequest) Reset()         { *m = EpollCtlRequest{} }
 func (m *EpollCtlRequest) String() string { return proto.CompactTextString(m) }
 func (*EpollCtlRequest) ProtoMessage()    {}
 func (*EpollCtlRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{43}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{43}
 }
+
 func (m *EpollCtlRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EpollCtlRequest.Unmarshal(m, b)
 }
 func (m *EpollCtlRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EpollCtlRequest.Marshal(b, m, deterministic)
 }
-func (dst *EpollCtlRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EpollCtlRequest.Merge(dst, src)
+func (m *EpollCtlRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EpollCtlRequest.Merge(m, src)
 }
 func (m *EpollCtlRequest) XXX_Size() int {
 	return xxx_messageInfo_EpollCtlRequest.Size(m)
@@ -3403,16 +2694,17 @@ func (m *EpollCtlResponse) Reset()         { *m = EpollCtlResponse{} }
 func (m *EpollCtlResponse) String() string { return proto.CompactTextString(m) }
 func (*EpollCtlResponse) ProtoMessage()    {}
 func (*EpollCtlResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{44}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{44}
 }
+
 func (m *EpollCtlResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EpollCtlResponse.Unmarshal(m, b)
 }
 func (m *EpollCtlResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EpollCtlResponse.Marshal(b, m, deterministic)
 }
-func (dst *EpollCtlResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EpollCtlResponse.Merge(dst, src)
+func (m *EpollCtlResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EpollCtlResponse.Merge(m, src)
 }
 func (m *EpollCtlResponse) XXX_Size() int {
 	return xxx_messageInfo_EpollCtlResponse.Size(m)
@@ -3441,16 +2733,17 @@ func (m *EpollCreate1Request) Reset()         { *m = EpollCreate1Request{} }
 func (m *EpollCreate1Request) String() string { return proto.CompactTextString(m) }
 func (*EpollCreate1Request) ProtoMessage()    {}
 func (*EpollCreate1Request) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{45}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{45}
 }
+
 func (m *EpollCreate1Request) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EpollCreate1Request.Unmarshal(m, b)
 }
 func (m *EpollCreate1Request) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EpollCreate1Request.Marshal(b, m, deterministic)
 }
-func (dst *EpollCreate1Request) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EpollCreate1Request.Merge(dst, src)
+func (m *EpollCreate1Request) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EpollCreate1Request.Merge(m, src)
 }
 func (m *EpollCreate1Request) XXX_Size() int {
 	return xxx_messageInfo_EpollCreate1Request.Size(m)
@@ -3482,16 +2775,17 @@ func (m *EpollCreate1Response) Reset()         { *m = EpollCreate1Response{} }
 func (m *EpollCreate1Response) String() string { return proto.CompactTextString(m) }
 func (*EpollCreate1Response) ProtoMessage()    {}
 func (*EpollCreate1Response) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{46}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{46}
 }
+
 func (m *EpollCreate1Response) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EpollCreate1Response.Unmarshal(m, b)
 }
 func (m *EpollCreate1Response) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EpollCreate1Response.Marshal(b, m, deterministic)
 }
-func (dst *EpollCreate1Response) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EpollCreate1Response.Merge(dst, src)
+func (m *EpollCreate1Response) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EpollCreate1Response.Merge(m, src)
 }
 func (m *EpollCreate1Response) XXX_Size() int {
 	return xxx_messageInfo_EpollCreate1Response.Size(m)
@@ -3539,68 +2833,12 @@ func (m *EpollCreate1Response) GetFd() uint32 {
 	return 0
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*EpollCreate1Response) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _EpollCreate1Response_OneofMarshaler, _EpollCreate1Response_OneofUnmarshaler, _EpollCreate1Response_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*EpollCreate1Response) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*EpollCreate1Response_ErrorNumber)(nil),
 		(*EpollCreate1Response_Fd)(nil),
 	}
-}
-
-func _EpollCreate1Response_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*EpollCreate1Response)
-	// result
-	switch x := m.Result.(type) {
-	case *EpollCreate1Response_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *EpollCreate1Response_Fd:
-		b.EncodeVarint(2<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Fd))
-	case nil:
-	default:
-		return fmt.Errorf("EpollCreate1Response.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _EpollCreate1Response_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*EpollCreate1Response)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &EpollCreate1Response_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.fd
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &EpollCreate1Response_Fd{uint32(x)}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _EpollCreate1Response_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*EpollCreate1Response)
-	// result
-	switch x := m.Result.(type) {
-	case *EpollCreate1Response_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *EpollCreate1Response_Fd:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Fd))
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type PollRequest struct {
@@ -3615,16 +2853,17 @@ func (m *PollRequest) Reset()         { *m = PollRequest{} }
 func (m *PollRequest) String() string { return proto.CompactTextString(m) }
 func (*PollRequest) ProtoMessage()    {}
 func (*PollRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{47}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{47}
 }
+
 func (m *PollRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PollRequest.Unmarshal(m, b)
 }
 func (m *PollRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PollRequest.Marshal(b, m, deterministic)
 }
-func (dst *PollRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PollRequest.Merge(dst, src)
+func (m *PollRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PollRequest.Merge(m, src)
 }
 func (m *PollRequest) XXX_Size() int {
 	return xxx_messageInfo_PollRequest.Size(m)
@@ -3663,16 +2902,17 @@ func (m *PollResponse) Reset()         { *m = PollResponse{} }
 func (m *PollResponse) String() string { return proto.CompactTextString(m) }
 func (*PollResponse) ProtoMessage()    {}
 func (*PollResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{48}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{48}
 }
+
 func (m *PollResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PollResponse.Unmarshal(m, b)
 }
 func (m *PollResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PollResponse.Marshal(b, m, deterministic)
 }
-func (dst *PollResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PollResponse.Merge(dst, src)
+func (m *PollResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PollResponse.Merge(m, src)
 }
 func (m *PollResponse) XXX_Size() int {
 	return xxx_messageInfo_PollResponse.Size(m)
@@ -3720,68 +2960,12 @@ func (m *PollResponse) GetEvents() uint32 {
 	return 0
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*PollResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _PollResponse_OneofMarshaler, _PollResponse_OneofUnmarshaler, _PollResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*PollResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*PollResponse_ErrorNumber)(nil),
 		(*PollResponse_Events)(nil),
 	}
-}
-
-func _PollResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*PollResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *PollResponse_ErrorNumber:
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.ErrorNumber))
-	case *PollResponse_Events:
-		b.EncodeVarint(2<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Events))
-	case nil:
-	default:
-		return fmt.Errorf("PollResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _PollResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*PollResponse)
-	switch tag {
-	case 1: // result.error_number
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &PollResponse_ErrorNumber{uint32(x)}
-		return true, err
-	case 2: // result.events
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Result = &PollResponse_Events{uint32(x)}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _PollResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*PollResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *PollResponse_ErrorNumber:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.ErrorNumber))
-	case *PollResponse_Events:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Events))
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type SyscallRequest struct {
@@ -3819,16 +3003,17 @@ func (m *SyscallRequest) Reset()         { *m = SyscallRequest{} }
 func (m *SyscallRequest) String() string { return proto.CompactTextString(m) }
 func (*SyscallRequest) ProtoMessage()    {}
 func (*SyscallRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{49}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{49}
 }
+
 func (m *SyscallRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SyscallRequest.Unmarshal(m, b)
 }
 func (m *SyscallRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SyscallRequest.Marshal(b, m, deterministic)
 }
-func (dst *SyscallRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SyscallRequest.Merge(dst, src)
+func (m *SyscallRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SyscallRequest.Merge(m, src)
 }
 func (m *SyscallRequest) XXX_Size() int {
 	return xxx_messageInfo_SyscallRequest.Size(m)
@@ -4149,9 +3334,9 @@ func (m *SyscallRequest) GetReadFile() *ReadFileRequest {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*SyscallRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _SyscallRequest_OneofMarshaler, _SyscallRequest_OneofUnmarshaler, _SyscallRequest_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*SyscallRequest) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*SyscallRequest_Socket)(nil),
 		(*SyscallRequest_Sendmsg)(nil),
 		(*SyscallRequest_Recvmsg)(nil),
@@ -4176,450 +3361,6 @@ func (*SyscallRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer
 		(*SyscallRequest_WriteFile)(nil),
 		(*SyscallRequest_ReadFile)(nil),
 	}
-}
-
-func _SyscallRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*SyscallRequest)
-	// args
-	switch x := m.Args.(type) {
-	case *SyscallRequest_Socket:
-		b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Socket); err != nil {
-			return err
-		}
-	case *SyscallRequest_Sendmsg:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Sendmsg); err != nil {
-			return err
-		}
-	case *SyscallRequest_Recvmsg:
-		b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Recvmsg); err != nil {
-			return err
-		}
-	case *SyscallRequest_Bind:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Bind); err != nil {
-			return err
-		}
-	case *SyscallRequest_Accept:
-		b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Accept); err != nil {
-			return err
-		}
-	case *SyscallRequest_Connect:
-		b.EncodeVarint(6<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Connect); err != nil {
-			return err
-		}
-	case *SyscallRequest_Listen:
-		b.EncodeVarint(7<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Listen); err != nil {
-			return err
-		}
-	case *SyscallRequest_Shutdown:
-		b.EncodeVarint(8<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Shutdown); err != nil {
-			return err
-		}
-	case *SyscallRequest_Close:
-		b.EncodeVarint(9<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Close); err != nil {
-			return err
-		}
-	case *SyscallRequest_GetSockOpt:
-		b.EncodeVarint(10<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.GetSockOpt); err != nil {
-			return err
-		}
-	case *SyscallRequest_SetSockOpt:
-		b.EncodeVarint(11<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.SetSockOpt); err != nil {
-			return err
-		}
-	case *SyscallRequest_GetSockName:
-		b.EncodeVarint(12<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.GetSockName); err != nil {
-			return err
-		}
-	case *SyscallRequest_GetPeerName:
-		b.EncodeVarint(13<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.GetPeerName); err != nil {
-			return err
-		}
-	case *SyscallRequest_EpollWait:
-		b.EncodeVarint(14<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.EpollWait); err != nil {
-			return err
-		}
-	case *SyscallRequest_EpollCtl:
-		b.EncodeVarint(15<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.EpollCtl); err != nil {
-			return err
-		}
-	case *SyscallRequest_EpollCreate1:
-		b.EncodeVarint(16<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.EpollCreate1); err != nil {
-			return err
-		}
-	case *SyscallRequest_Poll:
-		b.EncodeVarint(17<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Poll); err != nil {
-			return err
-		}
-	case *SyscallRequest_Read:
-		b.EncodeVarint(18<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Read); err != nil {
-			return err
-		}
-	case *SyscallRequest_Write:
-		b.EncodeVarint(19<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Write); err != nil {
-			return err
-		}
-	case *SyscallRequest_Open:
-		b.EncodeVarint(20<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Open); err != nil {
-			return err
-		}
-	case *SyscallRequest_Ioctl:
-		b.EncodeVarint(21<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Ioctl); err != nil {
-			return err
-		}
-	case *SyscallRequest_WriteFile:
-		b.EncodeVarint(22<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.WriteFile); err != nil {
-			return err
-		}
-	case *SyscallRequest_ReadFile:
-		b.EncodeVarint(23<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ReadFile); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("SyscallRequest.Args has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _SyscallRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*SyscallRequest)
-	switch tag {
-	case 1: // args.socket
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SocketRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Socket{msg}
-		return true, err
-	case 2: // args.sendmsg
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SendmsgRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Sendmsg{msg}
-		return true, err
-	case 3: // args.recvmsg
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(RecvmsgRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Recvmsg{msg}
-		return true, err
-	case 4: // args.bind
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(BindRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Bind{msg}
-		return true, err
-	case 5: // args.accept
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(AcceptRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Accept{msg}
-		return true, err
-	case 6: // args.connect
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ConnectRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Connect{msg}
-		return true, err
-	case 7: // args.listen
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ListenRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Listen{msg}
-		return true, err
-	case 8: // args.shutdown
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ShutdownRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Shutdown{msg}
-		return true, err
-	case 9: // args.close
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(CloseRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Close{msg}
-		return true, err
-	case 10: // args.get_sock_opt
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(GetSockOptRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_GetSockOpt{msg}
-		return true, err
-	case 11: // args.set_sock_opt
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SetSockOptRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_SetSockOpt{msg}
-		return true, err
-	case 12: // args.get_sock_name
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(GetSockNameRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_GetSockName{msg}
-		return true, err
-	case 13: // args.get_peer_name
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(GetPeerNameRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_GetPeerName{msg}
-		return true, err
-	case 14: // args.epoll_wait
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(EpollWaitRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_EpollWait{msg}
-		return true, err
-	case 15: // args.epoll_ctl
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(EpollCtlRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_EpollCtl{msg}
-		return true, err
-	case 16: // args.epoll_create1
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(EpollCreate1Request)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_EpollCreate1{msg}
-		return true, err
-	case 17: // args.poll
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(PollRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Poll{msg}
-		return true, err
-	case 18: // args.read
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ReadRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Read{msg}
-		return true, err
-	case 19: // args.write
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(WriteRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Write{msg}
-		return true, err
-	case 20: // args.open
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(OpenRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Open{msg}
-		return true, err
-	case 21: // args.ioctl
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(IOCtlRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_Ioctl{msg}
-		return true, err
-	case 22: // args.write_file
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(WriteFileRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_WriteFile{msg}
-		return true, err
-	case 23: // args.read_file
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ReadFileRequest)
-		err := b.DecodeMessage(msg)
-		m.Args = &SyscallRequest_ReadFile{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _SyscallRequest_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*SyscallRequest)
-	// args
-	switch x := m.Args.(type) {
-	case *SyscallRequest_Socket:
-		s := proto.Size(x.Socket)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Sendmsg:
-		s := proto.Size(x.Sendmsg)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Recvmsg:
-		s := proto.Size(x.Recvmsg)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Bind:
-		s := proto.Size(x.Bind)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Accept:
-		s := proto.Size(x.Accept)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Connect:
-		s := proto.Size(x.Connect)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Listen:
-		s := proto.Size(x.Listen)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Shutdown:
-		s := proto.Size(x.Shutdown)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Close:
-		s := proto.Size(x.Close)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_GetSockOpt:
-		s := proto.Size(x.GetSockOpt)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_SetSockOpt:
-		s := proto.Size(x.SetSockOpt)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_GetSockName:
-		s := proto.Size(x.GetSockName)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_GetPeerName:
-		s := proto.Size(x.GetPeerName)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_EpollWait:
-		s := proto.Size(x.EpollWait)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_EpollCtl:
-		s := proto.Size(x.EpollCtl)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_EpollCreate1:
-		s := proto.Size(x.EpollCreate1)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Poll:
-		s := proto.Size(x.Poll)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Read:
-		s := proto.Size(x.Read)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Write:
-		s := proto.Size(x.Write)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Open:
-		s := proto.Size(x.Open)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_Ioctl:
-		s := proto.Size(x.Ioctl)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_WriteFile:
-		s := proto.Size(x.WriteFile)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallRequest_ReadFile:
-		s := proto.Size(x.ReadFile)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type SyscallResponse struct {
@@ -4657,16 +3398,17 @@ func (m *SyscallResponse) Reset()         { *m = SyscallResponse{} }
 func (m *SyscallResponse) String() string { return proto.CompactTextString(m) }
 func (*SyscallResponse) ProtoMessage()    {}
 func (*SyscallResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_syscall_rpc_af15baedfee69149, []int{50}
+	return fileDescriptor_dd04f3a8f0c5288b, []int{50}
 }
+
 func (m *SyscallResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SyscallResponse.Unmarshal(m, b)
 }
 func (m *SyscallResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SyscallResponse.Marshal(b, m, deterministic)
 }
-func (dst *SyscallResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SyscallResponse.Merge(dst, src)
+func (m *SyscallResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SyscallResponse.Merge(m, src)
 }
 func (m *SyscallResponse) XXX_Size() int {
 	return xxx_messageInfo_SyscallResponse.Size(m)
@@ -4987,9 +3729,9 @@ func (m *SyscallResponse) GetReadFile() *ReadFileResponse {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*SyscallResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _SyscallResponse_OneofMarshaler, _SyscallResponse_OneofUnmarshaler, _SyscallResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*SyscallResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*SyscallResponse_Socket)(nil),
 		(*SyscallResponse_Sendmsg)(nil),
 		(*SyscallResponse_Recvmsg)(nil),
@@ -5014,450 +3756,6 @@ func (*SyscallResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffe
 		(*SyscallResponse_WriteFile)(nil),
 		(*SyscallResponse_ReadFile)(nil),
 	}
-}
-
-func _SyscallResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*SyscallResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *SyscallResponse_Socket:
-		b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Socket); err != nil {
-			return err
-		}
-	case *SyscallResponse_Sendmsg:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Sendmsg); err != nil {
-			return err
-		}
-	case *SyscallResponse_Recvmsg:
-		b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Recvmsg); err != nil {
-			return err
-		}
-	case *SyscallResponse_Bind:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Bind); err != nil {
-			return err
-		}
-	case *SyscallResponse_Accept:
-		b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Accept); err != nil {
-			return err
-		}
-	case *SyscallResponse_Connect:
-		b.EncodeVarint(6<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Connect); err != nil {
-			return err
-		}
-	case *SyscallResponse_Listen:
-		b.EncodeVarint(7<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Listen); err != nil {
-			return err
-		}
-	case *SyscallResponse_Shutdown:
-		b.EncodeVarint(8<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Shutdown); err != nil {
-			return err
-		}
-	case *SyscallResponse_Close:
-		b.EncodeVarint(9<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Close); err != nil {
-			return err
-		}
-	case *SyscallResponse_GetSockOpt:
-		b.EncodeVarint(10<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.GetSockOpt); err != nil {
-			return err
-		}
-	case *SyscallResponse_SetSockOpt:
-		b.EncodeVarint(11<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.SetSockOpt); err != nil {
-			return err
-		}
-	case *SyscallResponse_GetSockName:
-		b.EncodeVarint(12<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.GetSockName); err != nil {
-			return err
-		}
-	case *SyscallResponse_GetPeerName:
-		b.EncodeVarint(13<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.GetPeerName); err != nil {
-			return err
-		}
-	case *SyscallResponse_EpollWait:
-		b.EncodeVarint(14<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.EpollWait); err != nil {
-			return err
-		}
-	case *SyscallResponse_EpollCtl:
-		b.EncodeVarint(15<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.EpollCtl); err != nil {
-			return err
-		}
-	case *SyscallResponse_EpollCreate1:
-		b.EncodeVarint(16<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.EpollCreate1); err != nil {
-			return err
-		}
-	case *SyscallResponse_Poll:
-		b.EncodeVarint(17<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Poll); err != nil {
-			return err
-		}
-	case *SyscallResponse_Read:
-		b.EncodeVarint(18<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Read); err != nil {
-			return err
-		}
-	case *SyscallResponse_Write:
-		b.EncodeVarint(19<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Write); err != nil {
-			return err
-		}
-	case *SyscallResponse_Open:
-		b.EncodeVarint(20<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Open); err != nil {
-			return err
-		}
-	case *SyscallResponse_Ioctl:
-		b.EncodeVarint(21<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Ioctl); err != nil {
-			return err
-		}
-	case *SyscallResponse_WriteFile:
-		b.EncodeVarint(22<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.WriteFile); err != nil {
-			return err
-		}
-	case *SyscallResponse_ReadFile:
-		b.EncodeVarint(23<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ReadFile); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("SyscallResponse.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _SyscallResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*SyscallResponse)
-	switch tag {
-	case 1: // result.socket
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SocketResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Socket{msg}
-		return true, err
-	case 2: // result.sendmsg
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SendmsgResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Sendmsg{msg}
-		return true, err
-	case 3: // result.recvmsg
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(RecvmsgResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Recvmsg{msg}
-		return true, err
-	case 4: // result.bind
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(BindResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Bind{msg}
-		return true, err
-	case 5: // result.accept
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(AcceptResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Accept{msg}
-		return true, err
-	case 6: // result.connect
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ConnectResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Connect{msg}
-		return true, err
-	case 7: // result.listen
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ListenResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Listen{msg}
-		return true, err
-	case 8: // result.shutdown
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ShutdownResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Shutdown{msg}
-		return true, err
-	case 9: // result.close
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(CloseResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Close{msg}
-		return true, err
-	case 10: // result.get_sock_opt
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(GetSockOptResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_GetSockOpt{msg}
-		return true, err
-	case 11: // result.set_sock_opt
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SetSockOptResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_SetSockOpt{msg}
-		return true, err
-	case 12: // result.get_sock_name
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(GetSockNameResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_GetSockName{msg}
-		return true, err
-	case 13: // result.get_peer_name
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(GetPeerNameResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_GetPeerName{msg}
-		return true, err
-	case 14: // result.epoll_wait
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(EpollWaitResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_EpollWait{msg}
-		return true, err
-	case 15: // result.epoll_ctl
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(EpollCtlResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_EpollCtl{msg}
-		return true, err
-	case 16: // result.epoll_create1
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(EpollCreate1Response)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_EpollCreate1{msg}
-		return true, err
-	case 17: // result.poll
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(PollResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Poll{msg}
-		return true, err
-	case 18: // result.read
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ReadResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Read{msg}
-		return true, err
-	case 19: // result.write
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(WriteResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Write{msg}
-		return true, err
-	case 20: // result.open
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(OpenResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Open{msg}
-		return true, err
-	case 21: // result.ioctl
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(IOCtlResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_Ioctl{msg}
-		return true, err
-	case 22: // result.write_file
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(WriteFileResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_WriteFile{msg}
-		return true, err
-	case 23: // result.read_file
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ReadFileResponse)
-		err := b.DecodeMessage(msg)
-		m.Result = &SyscallResponse_ReadFile{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _SyscallResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*SyscallResponse)
-	// result
-	switch x := m.Result.(type) {
-	case *SyscallResponse_Socket:
-		s := proto.Size(x.Socket)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Sendmsg:
-		s := proto.Size(x.Sendmsg)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Recvmsg:
-		s := proto.Size(x.Recvmsg)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Bind:
-		s := proto.Size(x.Bind)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Accept:
-		s := proto.Size(x.Accept)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Connect:
-		s := proto.Size(x.Connect)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Listen:
-		s := proto.Size(x.Listen)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Shutdown:
-		s := proto.Size(x.Shutdown)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Close:
-		s := proto.Size(x.Close)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_GetSockOpt:
-		s := proto.Size(x.GetSockOpt)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_SetSockOpt:
-		s := proto.Size(x.SetSockOpt)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_GetSockName:
-		s := proto.Size(x.GetSockName)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_GetPeerName:
-		s := proto.Size(x.GetPeerName)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_EpollWait:
-		s := proto.Size(x.EpollWait)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_EpollCtl:
-		s := proto.Size(x.EpollCtl)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_EpollCreate1:
-		s := proto.Size(x.EpollCreate1)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Poll:
-		s := proto.Size(x.Poll)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Read:
-		s := proto.Size(x.Read)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Write:
-		s := proto.Size(x.Write)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Open:
-		s := proto.Size(x.Open)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_Ioctl:
-		s := proto.Size(x.Ioctl)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_WriteFile:
-		s := proto.Size(x.WriteFile)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SyscallResponse_ReadFile:
-		s := proto.Size(x.ReadFile)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 func init() {
@@ -5517,10 +3815,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("pkg/sentry/socket/rpcinet/syscall_rpc.proto", fileDescriptor_syscall_rpc_af15baedfee69149)
+	proto.RegisterFile("pkg/sentry/socket/rpcinet/syscall_rpc.proto", fileDescriptor_dd04f3a8f0c5288b)
 }
 
-var fileDescriptor_syscall_rpc_af15baedfee69149 = []byte{
+var fileDescriptor_dd04f3a8f0c5288b = []byte{
 	// 1838 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x98, 0xdd, 0x52, 0xe3, 0xc8,
 	0x15, 0x80, 0x6d, 0x6c, 0xc0, 0x1c, 0xff, 0xa2, 0x21, 0xac, 0xf8, 0x67, 0x95, 0xa4, 0x8a, 0x4d,

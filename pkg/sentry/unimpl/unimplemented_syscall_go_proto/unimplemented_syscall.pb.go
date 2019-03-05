@@ -3,10 +3,12 @@
 
 package gvisor
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import registers_go_proto "gvisor.googlesource.com/gvisor/pkg/sentry/arch/registers_go_proto"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	registers_go_proto "gvisor.googlesource.com/gvisor/pkg/sentry/arch/registers_go_proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -17,7 +19,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type UnimplementedSyscall struct {
 	Tid                  int32                         `protobuf:"varint,1,opt,name=tid,proto3" json:"tid,omitempty"`
@@ -31,16 +33,17 @@ func (m *UnimplementedSyscall) Reset()         { *m = UnimplementedSyscall{} }
 func (m *UnimplementedSyscall) String() string { return proto.CompactTextString(m) }
 func (*UnimplementedSyscall) ProtoMessage()    {}
 func (*UnimplementedSyscall) Descriptor() ([]byte, []int) {
-	return fileDescriptor_unimplemented_syscall_8cc2c54807e1df82, []int{0}
+	return fileDescriptor_ddc2fcd2bea3c75d, []int{0}
 }
+
 func (m *UnimplementedSyscall) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_UnimplementedSyscall.Unmarshal(m, b)
 }
 func (m *UnimplementedSyscall) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_UnimplementedSyscall.Marshal(b, m, deterministic)
 }
-func (dst *UnimplementedSyscall) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UnimplementedSyscall.Merge(dst, src)
+func (m *UnimplementedSyscall) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnimplementedSyscall.Merge(m, src)
 }
 func (m *UnimplementedSyscall) XXX_Size() int {
 	return xxx_messageInfo_UnimplementedSyscall.Size(m)
@@ -70,10 +73,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("pkg/sentry/unimpl/unimplemented_syscall.proto", fileDescriptor_unimplemented_syscall_8cc2c54807e1df82)
+	proto.RegisterFile("pkg/sentry/unimpl/unimplemented_syscall.proto", fileDescriptor_ddc2fcd2bea3c75d)
 }
 
-var fileDescriptor_unimplemented_syscall_8cc2c54807e1df82 = []byte{
+var fileDescriptor_ddc2fcd2bea3c75d = []byte{
 	// 149 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xd2, 0x2d, 0xc8, 0x4e, 0xd7,
 	0x2f, 0x4e, 0xcd, 0x2b, 0x29, 0xaa, 0xd4, 0x2f, 0xcd, 0xcb, 0xcc, 0x2d, 0xc8, 0x81, 0x52, 0xa9,

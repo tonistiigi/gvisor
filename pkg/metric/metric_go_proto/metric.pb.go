@@ -3,9 +3,11 @@
 
 package gvisor
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -16,7 +18,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type MetricMetadata_Type int32
 
@@ -27,6 +29,7 @@ const (
 var MetricMetadata_Type_name = map[int32]string{
 	0: "UINT64",
 }
+
 var MetricMetadata_Type_value = map[string]int32{
 	"UINT64": 0,
 }
@@ -34,8 +37,9 @@ var MetricMetadata_Type_value = map[string]int32{
 func (x MetricMetadata_Type) String() string {
 	return proto.EnumName(MetricMetadata_Type_name, int32(x))
 }
+
 func (MetricMetadata_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_metric_dd215cb2dd2cc102, []int{0, 0}
+	return fileDescriptor_87b8778a4ff2ab5c, []int{0, 0}
 }
 
 type MetricMetadata struct {
@@ -53,16 +57,17 @@ func (m *MetricMetadata) Reset()         { *m = MetricMetadata{} }
 func (m *MetricMetadata) String() string { return proto.CompactTextString(m) }
 func (*MetricMetadata) ProtoMessage()    {}
 func (*MetricMetadata) Descriptor() ([]byte, []int) {
-	return fileDescriptor_metric_dd215cb2dd2cc102, []int{0}
+	return fileDescriptor_87b8778a4ff2ab5c, []int{0}
 }
+
 func (m *MetricMetadata) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_MetricMetadata.Unmarshal(m, b)
 }
 func (m *MetricMetadata) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_MetricMetadata.Marshal(b, m, deterministic)
 }
-func (dst *MetricMetadata) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MetricMetadata.Merge(dst, src)
+func (m *MetricMetadata) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MetricMetadata.Merge(m, src)
 }
 func (m *MetricMetadata) XXX_Size() int {
 	return xxx_messageInfo_MetricMetadata.Size(m)
@@ -119,16 +124,17 @@ func (m *MetricRegistration) Reset()         { *m = MetricRegistration{} }
 func (m *MetricRegistration) String() string { return proto.CompactTextString(m) }
 func (*MetricRegistration) ProtoMessage()    {}
 func (*MetricRegistration) Descriptor() ([]byte, []int) {
-	return fileDescriptor_metric_dd215cb2dd2cc102, []int{1}
+	return fileDescriptor_87b8778a4ff2ab5c, []int{1}
 }
+
 func (m *MetricRegistration) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_MetricRegistration.Unmarshal(m, b)
 }
 func (m *MetricRegistration) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_MetricRegistration.Marshal(b, m, deterministic)
 }
-func (dst *MetricRegistration) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MetricRegistration.Merge(dst, src)
+func (m *MetricRegistration) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MetricRegistration.Merge(m, src)
 }
 func (m *MetricRegistration) XXX_Size() int {
 	return xxx_messageInfo_MetricRegistration.Size(m)
@@ -160,16 +166,17 @@ func (m *MetricValue) Reset()         { *m = MetricValue{} }
 func (m *MetricValue) String() string { return proto.CompactTextString(m) }
 func (*MetricValue) ProtoMessage()    {}
 func (*MetricValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_metric_dd215cb2dd2cc102, []int{2}
+	return fileDescriptor_87b8778a4ff2ab5c, []int{2}
 }
+
 func (m *MetricValue) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_MetricValue.Unmarshal(m, b)
 }
 func (m *MetricValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_MetricValue.Marshal(b, m, deterministic)
 }
-func (dst *MetricValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MetricValue.Merge(dst, src)
+func (m *MetricValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MetricValue.Merge(m, src)
 }
 func (m *MetricValue) XXX_Size() int {
 	return xxx_messageInfo_MetricValue.Size(m)
@@ -211,54 +218,11 @@ func (m *MetricValue) GetUint64Value() uint64 {
 	return 0
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*MetricValue) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _MetricValue_OneofMarshaler, _MetricValue_OneofUnmarshaler, _MetricValue_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*MetricValue) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*MetricValue_Uint64Value)(nil),
 	}
-}
-
-func _MetricValue_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*MetricValue)
-	// value
-	switch x := m.Value.(type) {
-	case *MetricValue_Uint64Value:
-		b.EncodeVarint(2<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Uint64Value))
-	case nil:
-	default:
-		return fmt.Errorf("MetricValue.Value has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _MetricValue_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*MetricValue)
-	switch tag {
-	case 2: // value.uint64_value
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &MetricValue_Uint64Value{x}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _MetricValue_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*MetricValue)
-	// value
-	switch x := m.Value.(type) {
-	case *MetricValue_Uint64Value:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Uint64Value))
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type MetricUpdate struct {
@@ -272,16 +236,17 @@ func (m *MetricUpdate) Reset()         { *m = MetricUpdate{} }
 func (m *MetricUpdate) String() string { return proto.CompactTextString(m) }
 func (*MetricUpdate) ProtoMessage()    {}
 func (*MetricUpdate) Descriptor() ([]byte, []int) {
-	return fileDescriptor_metric_dd215cb2dd2cc102, []int{3}
+	return fileDescriptor_87b8778a4ff2ab5c, []int{3}
 }
+
 func (m *MetricUpdate) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_MetricUpdate.Unmarshal(m, b)
 }
 func (m *MetricUpdate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_MetricUpdate.Marshal(b, m, deterministic)
 }
-func (dst *MetricUpdate) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MetricUpdate.Merge(dst, src)
+func (m *MetricUpdate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MetricUpdate.Merge(m, src)
 }
 func (m *MetricUpdate) XXX_Size() int {
 	return xxx_messageInfo_MetricUpdate.Size(m)
@@ -300,16 +265,16 @@ func (m *MetricUpdate) GetMetrics() []*MetricValue {
 }
 
 func init() {
+	proto.RegisterEnum("gvisor.MetricMetadata_Type", MetricMetadata_Type_name, MetricMetadata_Type_value)
 	proto.RegisterType((*MetricMetadata)(nil), "gvisor.MetricMetadata")
 	proto.RegisterType((*MetricRegistration)(nil), "gvisor.MetricRegistration")
 	proto.RegisterType((*MetricValue)(nil), "gvisor.MetricValue")
 	proto.RegisterType((*MetricUpdate)(nil), "gvisor.MetricUpdate")
-	proto.RegisterEnum("gvisor.MetricMetadata_Type", MetricMetadata_Type_name, MetricMetadata_Type_value)
 }
 
-func init() { proto.RegisterFile("pkg/metric/metric.proto", fileDescriptor_metric_dd215cb2dd2cc102) }
+func init() { proto.RegisterFile("pkg/metric/metric.proto", fileDescriptor_87b8778a4ff2ab5c) }
 
-var fileDescriptor_metric_dd215cb2dd2cc102 = []byte{
+var fileDescriptor_87b8778a4ff2ab5c = []byte{
 	// 288 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x91, 0xc1, 0x4b, 0xc3, 0x30,
 	0x14, 0xc6, 0x17, 0xd7, 0x75, 0xfa, 0x3a, 0x86, 0x44, 0xd0, 0x80, 0x20, 0xa5, 0x5e, 0x7a, 0xb1,

@@ -3,9 +3,11 @@
 
 package gvisor_state_statefile
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -16,7 +18,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type Slice struct {
 	Length               uint32   `protobuf:"varint,1,opt,name=length,proto3" json:"length,omitempty"`
@@ -31,16 +33,17 @@ func (m *Slice) Reset()         { *m = Slice{} }
 func (m *Slice) String() string { return proto.CompactTextString(m) }
 func (*Slice) ProtoMessage()    {}
 func (*Slice) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{0}
+	return fileDescriptor_3dee2c1912d4d62d, []int{0}
 }
+
 func (m *Slice) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Slice.Unmarshal(m, b)
 }
 func (m *Slice) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Slice.Marshal(b, m, deterministic)
 }
-func (dst *Slice) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Slice.Merge(dst, src)
+func (m *Slice) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Slice.Merge(m, src)
 }
 func (m *Slice) XXX_Size() int {
 	return xxx_messageInfo_Slice.Size(m)
@@ -83,16 +86,17 @@ func (m *Array) Reset()         { *m = Array{} }
 func (m *Array) String() string { return proto.CompactTextString(m) }
 func (*Array) ProtoMessage()    {}
 func (*Array) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{1}
+	return fileDescriptor_3dee2c1912d4d62d, []int{1}
 }
+
 func (m *Array) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Array.Unmarshal(m, b)
 }
 func (m *Array) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Array.Marshal(b, m, deterministic)
 }
-func (dst *Array) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Array.Merge(dst, src)
+func (m *Array) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Array.Merge(m, src)
 }
 func (m *Array) XXX_Size() int {
 	return xxx_messageInfo_Array.Size(m)
@@ -122,16 +126,17 @@ func (m *Map) Reset()         { *m = Map{} }
 func (m *Map) String() string { return proto.CompactTextString(m) }
 func (*Map) ProtoMessage()    {}
 func (*Map) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{2}
+	return fileDescriptor_3dee2c1912d4d62d, []int{2}
 }
+
 func (m *Map) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Map.Unmarshal(m, b)
 }
 func (m *Map) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Map.Marshal(b, m, deterministic)
 }
-func (dst *Map) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Map.Merge(dst, src)
+func (m *Map) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Map.Merge(m, src)
 }
 func (m *Map) XXX_Size() int {
 	return xxx_messageInfo_Map.Size(m)
@@ -168,16 +173,17 @@ func (m *Interface) Reset()         { *m = Interface{} }
 func (m *Interface) String() string { return proto.CompactTextString(m) }
 func (*Interface) ProtoMessage()    {}
 func (*Interface) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{3}
+	return fileDescriptor_3dee2c1912d4d62d, []int{3}
 }
+
 func (m *Interface) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Interface.Unmarshal(m, b)
 }
 func (m *Interface) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Interface.Marshal(b, m, deterministic)
 }
-func (dst *Interface) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Interface.Merge(dst, src)
+func (m *Interface) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Interface.Merge(m, src)
 }
 func (m *Interface) XXX_Size() int {
 	return xxx_messageInfo_Interface.Size(m)
@@ -213,16 +219,17 @@ func (m *Struct) Reset()         { *m = Struct{} }
 func (m *Struct) String() string { return proto.CompactTextString(m) }
 func (*Struct) ProtoMessage()    {}
 func (*Struct) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{4}
+	return fileDescriptor_3dee2c1912d4d62d, []int{4}
 }
+
 func (m *Struct) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Struct.Unmarshal(m, b)
 }
 func (m *Struct) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Struct.Marshal(b, m, deterministic)
 }
-func (dst *Struct) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Struct.Merge(dst, src)
+func (m *Struct) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Struct.Merge(m, src)
 }
 func (m *Struct) XXX_Size() int {
 	return xxx_messageInfo_Struct.Size(m)
@@ -252,16 +259,17 @@ func (m *Field) Reset()         { *m = Field{} }
 func (m *Field) String() string { return proto.CompactTextString(m) }
 func (*Field) ProtoMessage()    {}
 func (*Field) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{5}
+	return fileDescriptor_3dee2c1912d4d62d, []int{5}
 }
+
 func (m *Field) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Field.Unmarshal(m, b)
 }
 func (m *Field) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Field.Marshal(b, m, deterministic)
 }
-func (dst *Field) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Field.Merge(dst, src)
+func (m *Field) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Field.Merge(m, src)
 }
 func (m *Field) XXX_Size() int {
 	return xxx_messageInfo_Field.Size(m)
@@ -297,16 +305,17 @@ func (m *Uint16S) Reset()         { *m = Uint16S{} }
 func (m *Uint16S) String() string { return proto.CompactTextString(m) }
 func (*Uint16S) ProtoMessage()    {}
 func (*Uint16S) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{6}
+	return fileDescriptor_3dee2c1912d4d62d, []int{6}
 }
+
 func (m *Uint16S) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Uint16S.Unmarshal(m, b)
 }
 func (m *Uint16S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Uint16S.Marshal(b, m, deterministic)
 }
-func (dst *Uint16S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Uint16S.Merge(dst, src)
+func (m *Uint16S) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Uint16S.Merge(m, src)
 }
 func (m *Uint16S) XXX_Size() int {
 	return xxx_messageInfo_Uint16S.Size(m)
@@ -335,16 +344,17 @@ func (m *Uint32S) Reset()         { *m = Uint32S{} }
 func (m *Uint32S) String() string { return proto.CompactTextString(m) }
 func (*Uint32S) ProtoMessage()    {}
 func (*Uint32S) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{7}
+	return fileDescriptor_3dee2c1912d4d62d, []int{7}
 }
+
 func (m *Uint32S) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Uint32S.Unmarshal(m, b)
 }
 func (m *Uint32S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Uint32S.Marshal(b, m, deterministic)
 }
-func (dst *Uint32S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Uint32S.Merge(dst, src)
+func (m *Uint32S) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Uint32S.Merge(m, src)
 }
 func (m *Uint32S) XXX_Size() int {
 	return xxx_messageInfo_Uint32S.Size(m)
@@ -373,16 +383,17 @@ func (m *Uint64S) Reset()         { *m = Uint64S{} }
 func (m *Uint64S) String() string { return proto.CompactTextString(m) }
 func (*Uint64S) ProtoMessage()    {}
 func (*Uint64S) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{8}
+	return fileDescriptor_3dee2c1912d4d62d, []int{8}
 }
+
 func (m *Uint64S) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Uint64S.Unmarshal(m, b)
 }
 func (m *Uint64S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Uint64S.Marshal(b, m, deterministic)
 }
-func (dst *Uint64S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Uint64S.Merge(dst, src)
+func (m *Uint64S) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Uint64S.Merge(m, src)
 }
 func (m *Uint64S) XXX_Size() int {
 	return xxx_messageInfo_Uint64S.Size(m)
@@ -411,16 +422,17 @@ func (m *Uintptrs) Reset()         { *m = Uintptrs{} }
 func (m *Uintptrs) String() string { return proto.CompactTextString(m) }
 func (*Uintptrs) ProtoMessage()    {}
 func (*Uintptrs) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{9}
+	return fileDescriptor_3dee2c1912d4d62d, []int{9}
 }
+
 func (m *Uintptrs) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Uintptrs.Unmarshal(m, b)
 }
 func (m *Uintptrs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Uintptrs.Marshal(b, m, deterministic)
 }
-func (dst *Uintptrs) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Uintptrs.Merge(dst, src)
+func (m *Uintptrs) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Uintptrs.Merge(m, src)
 }
 func (m *Uintptrs) XXX_Size() int {
 	return xxx_messageInfo_Uintptrs.Size(m)
@@ -449,16 +461,17 @@ func (m *Int8S) Reset()         { *m = Int8S{} }
 func (m *Int8S) String() string { return proto.CompactTextString(m) }
 func (*Int8S) ProtoMessage()    {}
 func (*Int8S) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{10}
+	return fileDescriptor_3dee2c1912d4d62d, []int{10}
 }
+
 func (m *Int8S) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Int8S.Unmarshal(m, b)
 }
 func (m *Int8S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Int8S.Marshal(b, m, deterministic)
 }
-func (dst *Int8S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Int8S.Merge(dst, src)
+func (m *Int8S) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Int8S.Merge(m, src)
 }
 func (m *Int8S) XXX_Size() int {
 	return xxx_messageInfo_Int8S.Size(m)
@@ -487,16 +500,17 @@ func (m *Int16S) Reset()         { *m = Int16S{} }
 func (m *Int16S) String() string { return proto.CompactTextString(m) }
 func (*Int16S) ProtoMessage()    {}
 func (*Int16S) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{11}
+	return fileDescriptor_3dee2c1912d4d62d, []int{11}
 }
+
 func (m *Int16S) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Int16S.Unmarshal(m, b)
 }
 func (m *Int16S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Int16S.Marshal(b, m, deterministic)
 }
-func (dst *Int16S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Int16S.Merge(dst, src)
+func (m *Int16S) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Int16S.Merge(m, src)
 }
 func (m *Int16S) XXX_Size() int {
 	return xxx_messageInfo_Int16S.Size(m)
@@ -525,16 +539,17 @@ func (m *Int32S) Reset()         { *m = Int32S{} }
 func (m *Int32S) String() string { return proto.CompactTextString(m) }
 func (*Int32S) ProtoMessage()    {}
 func (*Int32S) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{12}
+	return fileDescriptor_3dee2c1912d4d62d, []int{12}
 }
+
 func (m *Int32S) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Int32S.Unmarshal(m, b)
 }
 func (m *Int32S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Int32S.Marshal(b, m, deterministic)
 }
-func (dst *Int32S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Int32S.Merge(dst, src)
+func (m *Int32S) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Int32S.Merge(m, src)
 }
 func (m *Int32S) XXX_Size() int {
 	return xxx_messageInfo_Int32S.Size(m)
@@ -563,16 +578,17 @@ func (m *Int64S) Reset()         { *m = Int64S{} }
 func (m *Int64S) String() string { return proto.CompactTextString(m) }
 func (*Int64S) ProtoMessage()    {}
 func (*Int64S) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{13}
+	return fileDescriptor_3dee2c1912d4d62d, []int{13}
 }
+
 func (m *Int64S) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Int64S.Unmarshal(m, b)
 }
 func (m *Int64S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Int64S.Marshal(b, m, deterministic)
 }
-func (dst *Int64S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Int64S.Merge(dst, src)
+func (m *Int64S) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Int64S.Merge(m, src)
 }
 func (m *Int64S) XXX_Size() int {
 	return xxx_messageInfo_Int64S.Size(m)
@@ -601,16 +617,17 @@ func (m *Bools) Reset()         { *m = Bools{} }
 func (m *Bools) String() string { return proto.CompactTextString(m) }
 func (*Bools) ProtoMessage()    {}
 func (*Bools) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{14}
+	return fileDescriptor_3dee2c1912d4d62d, []int{14}
 }
+
 func (m *Bools) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Bools.Unmarshal(m, b)
 }
 func (m *Bools) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Bools.Marshal(b, m, deterministic)
 }
-func (dst *Bools) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Bools.Merge(dst, src)
+func (m *Bools) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Bools.Merge(m, src)
 }
 func (m *Bools) XXX_Size() int {
 	return xxx_messageInfo_Bools.Size(m)
@@ -639,16 +656,17 @@ func (m *Float64S) Reset()         { *m = Float64S{} }
 func (m *Float64S) String() string { return proto.CompactTextString(m) }
 func (*Float64S) ProtoMessage()    {}
 func (*Float64S) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{15}
+	return fileDescriptor_3dee2c1912d4d62d, []int{15}
 }
+
 func (m *Float64S) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Float64S.Unmarshal(m, b)
 }
 func (m *Float64S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Float64S.Marshal(b, m, deterministic)
 }
-func (dst *Float64S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Float64S.Merge(dst, src)
+func (m *Float64S) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Float64S.Merge(m, src)
 }
 func (m *Float64S) XXX_Size() int {
 	return xxx_messageInfo_Float64S.Size(m)
@@ -677,16 +695,17 @@ func (m *Float32S) Reset()         { *m = Float32S{} }
 func (m *Float32S) String() string { return proto.CompactTextString(m) }
 func (*Float32S) ProtoMessage()    {}
 func (*Float32S) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{16}
+	return fileDescriptor_3dee2c1912d4d62d, []int{16}
 }
+
 func (m *Float32S) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Float32S.Unmarshal(m, b)
 }
 func (m *Float32S) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Float32S.Marshal(b, m, deterministic)
 }
-func (dst *Float32S) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Float32S.Merge(dst, src)
+func (m *Float32S) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Float32S.Merge(m, src)
 }
 func (m *Float32S) XXX_Size() int {
 	return xxx_messageInfo_Float32S.Size(m)
@@ -739,16 +758,17 @@ func (m *Object) Reset()         { *m = Object{} }
 func (m *Object) String() string { return proto.CompactTextString(m) }
 func (*Object) ProtoMessage()    {}
 func (*Object) Descriptor() ([]byte, []int) {
-	return fileDescriptor_object_05a0b3642a2bb583, []int{17}
+	return fileDescriptor_3dee2c1912d4d62d, []int{17}
 }
+
 func (m *Object) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Object.Unmarshal(m, b)
 }
 func (m *Object) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Object.Marshal(b, m, deterministic)
 }
-func (dst *Object) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Object.Merge(dst, src)
+func (m *Object) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Object.Merge(m, src)
 }
 func (m *Object) XXX_Size() int {
 	return xxx_messageInfo_Object.Size(m)
@@ -1069,9 +1089,9 @@ func (m *Object) GetFloat32ArrayValue() *Float32S {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*Object) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _Object_OneofMarshaler, _Object_OneofUnmarshaler, _Object_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*Object) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*Object_BoolValue)(nil),
 		(*Object_StringValue)(nil),
 		(*Object_Int64Value)(nil),
@@ -1098,421 +1118,6 @@ func (*Object) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error,
 	}
 }
 
-func _Object_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*Object)
-	// value
-	switch x := m.Value.(type) {
-	case *Object_BoolValue:
-		t := uint64(0)
-		if x.BoolValue {
-			t = 1
-		}
-		b.EncodeVarint(1<<3 | proto.WireVarint)
-		b.EncodeVarint(t)
-	case *Object_StringValue:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		b.EncodeRawBytes(x.StringValue)
-	case *Object_Int64Value:
-		b.EncodeVarint(3<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Int64Value))
-	case *Object_Uint64Value:
-		b.EncodeVarint(4<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Uint64Value))
-	case *Object_DoubleValue:
-		b.EncodeVarint(5<<3 | proto.WireFixed64)
-		b.EncodeFixed64(math.Float64bits(x.DoubleValue))
-	case *Object_RefValue:
-		b.EncodeVarint(6<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.RefValue))
-	case *Object_SliceValue:
-		b.EncodeVarint(7<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.SliceValue); err != nil {
-			return err
-		}
-	case *Object_ArrayValue:
-		b.EncodeVarint(8<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ArrayValue); err != nil {
-			return err
-		}
-	case *Object_InterfaceValue:
-		b.EncodeVarint(9<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.InterfaceValue); err != nil {
-			return err
-		}
-	case *Object_StructValue:
-		b.EncodeVarint(10<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.StructValue); err != nil {
-			return err
-		}
-	case *Object_MapValue:
-		b.EncodeVarint(11<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.MapValue); err != nil {
-			return err
-		}
-	case *Object_ByteArrayValue:
-		b.EncodeVarint(12<<3 | proto.WireBytes)
-		b.EncodeRawBytes(x.ByteArrayValue)
-	case *Object_Uint16ArrayValue:
-		b.EncodeVarint(13<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Uint16ArrayValue); err != nil {
-			return err
-		}
-	case *Object_Uint32ArrayValue:
-		b.EncodeVarint(14<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Uint32ArrayValue); err != nil {
-			return err
-		}
-	case *Object_Uint64ArrayValue:
-		b.EncodeVarint(15<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Uint64ArrayValue); err != nil {
-			return err
-		}
-	case *Object_UintptrArrayValue:
-		b.EncodeVarint(16<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.UintptrArrayValue); err != nil {
-			return err
-		}
-	case *Object_Int8ArrayValue:
-		b.EncodeVarint(17<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Int8ArrayValue); err != nil {
-			return err
-		}
-	case *Object_Int16ArrayValue:
-		b.EncodeVarint(18<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Int16ArrayValue); err != nil {
-			return err
-		}
-	case *Object_Int32ArrayValue:
-		b.EncodeVarint(19<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Int32ArrayValue); err != nil {
-			return err
-		}
-	case *Object_Int64ArrayValue:
-		b.EncodeVarint(20<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Int64ArrayValue); err != nil {
-			return err
-		}
-	case *Object_BoolArrayValue:
-		b.EncodeVarint(21<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.BoolArrayValue); err != nil {
-			return err
-		}
-	case *Object_Float64ArrayValue:
-		b.EncodeVarint(22<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Float64ArrayValue); err != nil {
-			return err
-		}
-	case *Object_Float32ArrayValue:
-		b.EncodeVarint(23<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Float32ArrayValue); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("Object.Value has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _Object_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*Object)
-	switch tag {
-	case 1: // value.bool_value
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &Object_BoolValue{x != 0}
-		return true, err
-	case 2: // value.string_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeRawBytes(true)
-		m.Value = &Object_StringValue{x}
-		return true, err
-	case 3: // value.int64_value
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &Object_Int64Value{int64(x)}
-		return true, err
-	case 4: // value.uint64_value
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &Object_Uint64Value{x}
-		return true, err
-	case 5: // value.double_value
-		if wire != proto.WireFixed64 {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeFixed64()
-		m.Value = &Object_DoubleValue{math.Float64frombits(x)}
-		return true, err
-	case 6: // value.ref_value
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &Object_RefValue{x}
-		return true, err
-	case 7: // value.slice_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Slice)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_SliceValue{msg}
-		return true, err
-	case 8: // value.array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Array)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_ArrayValue{msg}
-		return true, err
-	case 9: // value.interface_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Interface)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_InterfaceValue{msg}
-		return true, err
-	case 10: // value.struct_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Struct)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_StructValue{msg}
-		return true, err
-	case 11: // value.map_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Map)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_MapValue{msg}
-		return true, err
-	case 12: // value.byte_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeRawBytes(true)
-		m.Value = &Object_ByteArrayValue{x}
-		return true, err
-	case 13: // value.uint16_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Uint16S)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_Uint16ArrayValue{msg}
-		return true, err
-	case 14: // value.uint32_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Uint32S)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_Uint32ArrayValue{msg}
-		return true, err
-	case 15: // value.uint64_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Uint64S)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_Uint64ArrayValue{msg}
-		return true, err
-	case 16: // value.uintptr_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Uintptrs)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_UintptrArrayValue{msg}
-		return true, err
-	case 17: // value.int8_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Int8S)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_Int8ArrayValue{msg}
-		return true, err
-	case 18: // value.int16_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Int16S)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_Int16ArrayValue{msg}
-		return true, err
-	case 19: // value.int32_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Int32S)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_Int32ArrayValue{msg}
-		return true, err
-	case 20: // value.int64_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Int64S)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_Int64ArrayValue{msg}
-		return true, err
-	case 21: // value.bool_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Bools)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_BoolArrayValue{msg}
-		return true, err
-	case 22: // value.float64_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Float64S)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_Float64ArrayValue{msg}
-		return true, err
-	case 23: // value.float32_array_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Float32S)
-		err := b.DecodeMessage(msg)
-		m.Value = &Object_Float32ArrayValue{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _Object_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*Object)
-	// value
-	switch x := m.Value.(type) {
-	case *Object_BoolValue:
-		n += 1 // tag and wire
-		n += 1
-	case *Object_StringValue:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(len(x.StringValue)))
-		n += len(x.StringValue)
-	case *Object_Int64Value:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Int64Value))
-	case *Object_Uint64Value:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Uint64Value))
-	case *Object_DoubleValue:
-		n += 1 // tag and wire
-		n += 8
-	case *Object_RefValue:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.RefValue))
-	case *Object_SliceValue:
-		s := proto.Size(x.SliceValue)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_ArrayValue:
-		s := proto.Size(x.ArrayValue)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_InterfaceValue:
-		s := proto.Size(x.InterfaceValue)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_StructValue:
-		s := proto.Size(x.StructValue)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_MapValue:
-		s := proto.Size(x.MapValue)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_ByteArrayValue:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(len(x.ByteArrayValue)))
-		n += len(x.ByteArrayValue)
-	case *Object_Uint16ArrayValue:
-		s := proto.Size(x.Uint16ArrayValue)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_Uint32ArrayValue:
-		s := proto.Size(x.Uint32ArrayValue)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_Uint64ArrayValue:
-		s := proto.Size(x.Uint64ArrayValue)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_UintptrArrayValue:
-		s := proto.Size(x.UintptrArrayValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_Int8ArrayValue:
-		s := proto.Size(x.Int8ArrayValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_Int16ArrayValue:
-		s := proto.Size(x.Int16ArrayValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_Int32ArrayValue:
-		s := proto.Size(x.Int32ArrayValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_Int64ArrayValue:
-		s := proto.Size(x.Int64ArrayValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_BoolArrayValue:
-		s := proto.Size(x.BoolArrayValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_Float64ArrayValue:
-		s := proto.Size(x.Float64ArrayValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Object_Float32ArrayValue:
-		s := proto.Size(x.Float32ArrayValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
-}
-
 func init() {
 	proto.RegisterType((*Slice)(nil), "gvisor.state.statefile.Slice")
 	proto.RegisterType((*Array)(nil), "gvisor.state.statefile.Array")
@@ -1534,9 +1139,9 @@ func init() {
 	proto.RegisterType((*Object)(nil), "gvisor.state.statefile.Object")
 }
 
-func init() { proto.RegisterFile("pkg/state/object.proto", fileDescriptor_object_05a0b3642a2bb583) }
+func init() { proto.RegisterFile("pkg/state/object.proto", fileDescriptor_3dee2c1912d4d62d) }
 
-var fileDescriptor_object_05a0b3642a2bb583 = []byte{
+var fileDescriptor_3dee2c1912d4d62d = []byte{
 	// 781 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x96, 0x6f, 0x4f, 0xda, 0x5e,
 	0x14, 0xc7, 0xa9, 0x40, 0x29, 0x07, 0x14, 0xb8, 0xfe, 0x7e, 0x8c, 0xcc, 0x38, 0xb1, 0x7b, 0x42,

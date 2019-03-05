@@ -3,10 +3,12 @@
 
 package gvisor
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import registers_go_proto "gvisor.googlesource.com/gvisor/pkg/sentry/arch/registers_go_proto"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	registers_go_proto "gvisor.googlesource.com/gvisor/pkg/sentry/arch/registers_go_proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -17,7 +19,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type UncaughtSignal struct {
 	Tid                  int32                         `protobuf:"varint,1,opt,name=tid,proto3" json:"tid,omitempty"`
@@ -34,16 +36,17 @@ func (m *UncaughtSignal) Reset()         { *m = UncaughtSignal{} }
 func (m *UncaughtSignal) String() string { return proto.CompactTextString(m) }
 func (*UncaughtSignal) ProtoMessage()    {}
 func (*UncaughtSignal) Descriptor() ([]byte, []int) {
-	return fileDescriptor_uncaught_signal_855be4d0fd3e569d, []int{0}
+	return fileDescriptor_5ca9e03e13704688, []int{0}
 }
+
 func (m *UncaughtSignal) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_UncaughtSignal.Unmarshal(m, b)
 }
 func (m *UncaughtSignal) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_UncaughtSignal.Marshal(b, m, deterministic)
 }
-func (dst *UncaughtSignal) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UncaughtSignal.Merge(dst, src)
+func (m *UncaughtSignal) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UncaughtSignal.Merge(m, src)
 }
 func (m *UncaughtSignal) XXX_Size() int {
 	return xxx_messageInfo_UncaughtSignal.Size(m)
@@ -94,10 +97,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("pkg/sentry/kernel/uncaught_signal.proto", fileDescriptor_uncaught_signal_855be4d0fd3e569d)
+	proto.RegisterFile("pkg/sentry/kernel/uncaught_signal.proto", fileDescriptor_5ca9e03e13704688)
 }
 
-var fileDescriptor_uncaught_signal_855be4d0fd3e569d = []byte{
+var fileDescriptor_5ca9e03e13704688 = []byte{
 	// 210 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x8e, 0x4d, 0x4a, 0xc6, 0x30,
 	0x10, 0x86, 0x89, 0xfd, 0x81, 0xc6, 0x1f, 0x34, 0xab, 0x20, 0x88, 0x45, 0x17, 0x76, 0xd5, 0x80,

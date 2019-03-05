@@ -3,9 +3,11 @@
 
 package gvisor
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -16,7 +18,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type Strace struct {
 	Process  string   `protobuf:"bytes,1,opt,name=process,proto3" json:"process,omitempty"`
@@ -35,16 +37,17 @@ func (m *Strace) Reset()         { *m = Strace{} }
 func (m *Strace) String() string { return proto.CompactTextString(m) }
 func (*Strace) ProtoMessage()    {}
 func (*Strace) Descriptor() ([]byte, []int) {
-	return fileDescriptor_strace_3e509e7526bea4d2, []int{0}
+	return fileDescriptor_50c4b43677c82b5f, []int{0}
 }
+
 func (m *Strace) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Strace.Unmarshal(m, b)
 }
 func (m *Strace) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Strace.Marshal(b, m, deterministic)
 }
-func (dst *Strace) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Strace.Merge(dst, src)
+func (m *Strace) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Strace.Merge(m, src)
 }
 func (m *Strace) XXX_Size() int {
 	return xxx_messageInfo_Strace.Size(m)
@@ -113,78 +116,12 @@ func (m *Strace) GetExit() *StraceExit {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*Strace) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _Strace_OneofMarshaler, _Strace_OneofUnmarshaler, _Strace_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*Strace) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*Strace_Enter)(nil),
 		(*Strace_Exit)(nil),
 	}
-}
-
-func _Strace_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*Strace)
-	// info
-	switch x := m.Info.(type) {
-	case *Strace_Enter:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Enter); err != nil {
-			return err
-		}
-	case *Strace_Exit:
-		b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Exit); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("Strace.Info has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _Strace_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*Strace)
-	switch tag {
-	case 4: // info.enter
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StraceEnter)
-		err := b.DecodeMessage(msg)
-		m.Info = &Strace_Enter{msg}
-		return true, err
-	case 5: // info.exit
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StraceExit)
-		err := b.DecodeMessage(msg)
-		m.Info = &Strace_Exit{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _Strace_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*Strace)
-	// info
-	switch x := m.Info.(type) {
-	case *Strace_Enter:
-		s := proto.Size(x.Enter)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Strace_Exit:
-		s := proto.Size(x.Exit)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type StraceEnter struct {
@@ -197,16 +134,17 @@ func (m *StraceEnter) Reset()         { *m = StraceEnter{} }
 func (m *StraceEnter) String() string { return proto.CompactTextString(m) }
 func (*StraceEnter) ProtoMessage()    {}
 func (*StraceEnter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_strace_3e509e7526bea4d2, []int{1}
+	return fileDescriptor_50c4b43677c82b5f, []int{1}
 }
+
 func (m *StraceEnter) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StraceEnter.Unmarshal(m, b)
 }
 func (m *StraceEnter) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StraceEnter.Marshal(b, m, deterministic)
 }
-func (dst *StraceEnter) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StraceEnter.Merge(dst, src)
+func (m *StraceEnter) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StraceEnter.Merge(m, src)
 }
 func (m *StraceEnter) XXX_Size() int {
 	return xxx_messageInfo_StraceEnter.Size(m)
@@ -231,16 +169,17 @@ func (m *StraceExit) Reset()         { *m = StraceExit{} }
 func (m *StraceExit) String() string { return proto.CompactTextString(m) }
 func (*StraceExit) ProtoMessage()    {}
 func (*StraceExit) Descriptor() ([]byte, []int) {
-	return fileDescriptor_strace_3e509e7526bea4d2, []int{2}
+	return fileDescriptor_50c4b43677c82b5f, []int{2}
 }
+
 func (m *StraceExit) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StraceExit.Unmarshal(m, b)
 }
 func (m *StraceExit) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StraceExit.Marshal(b, m, deterministic)
 }
-func (dst *StraceExit) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StraceExit.Merge(dst, src)
+func (m *StraceExit) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StraceExit.Merge(m, src)
 }
 func (m *StraceExit) XXX_Size() int {
 	return xxx_messageInfo_StraceExit.Size(m)
@@ -285,11 +224,9 @@ func init() {
 	proto.RegisterType((*StraceExit)(nil), "gvisor.StraceExit")
 }
 
-func init() {
-	proto.RegisterFile("pkg/sentry/strace/strace.proto", fileDescriptor_strace_3e509e7526bea4d2)
-}
+func init() { proto.RegisterFile("pkg/sentry/strace/strace.proto", fileDescriptor_50c4b43677c82b5f) }
 
-var fileDescriptor_strace_3e509e7526bea4d2 = []byte{
+var fileDescriptor_50c4b43677c82b5f = []byte{
 	// 255 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x90, 0xdd, 0x4a, 0xf4, 0x30,
 	0x10, 0x86, 0xb7, 0x5f, 0xdb, 0x7c, 0x76, 0x16, 0x4f, 0xc6, 0x1f, 0x82, 0xa0, 0x94, 0x1e, 0x05,

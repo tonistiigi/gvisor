@@ -3,9 +3,11 @@
 
 package gvisor
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -16,7 +18,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type AMD64Registers struct {
 	Rax                  uint64   `protobuf:"varint,1,opt,name=rax,proto3" json:"rax,omitempty"`
@@ -55,16 +57,17 @@ func (m *AMD64Registers) Reset()         { *m = AMD64Registers{} }
 func (m *AMD64Registers) String() string { return proto.CompactTextString(m) }
 func (*AMD64Registers) ProtoMessage()    {}
 func (*AMD64Registers) Descriptor() ([]byte, []int) {
-	return fileDescriptor_registers_20699a1dda6a6428, []int{0}
+	return fileDescriptor_082b7510610e0457, []int{0}
 }
+
 func (m *AMD64Registers) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AMD64Registers.Unmarshal(m, b)
 }
 func (m *AMD64Registers) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AMD64Registers.Marshal(b, m, deterministic)
 }
-func (dst *AMD64Registers) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AMD64Registers.Merge(dst, src)
+func (m *AMD64Registers) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AMD64Registers.Merge(m, src)
 }
 func (m *AMD64Registers) XXX_Size() int {
 	return xxx_messageInfo_AMD64Registers.Size(m)
@@ -277,16 +280,17 @@ func (m *Registers) Reset()         { *m = Registers{} }
 func (m *Registers) String() string { return proto.CompactTextString(m) }
 func (*Registers) ProtoMessage()    {}
 func (*Registers) Descriptor() ([]byte, []int) {
-	return fileDescriptor_registers_20699a1dda6a6428, []int{1}
+	return fileDescriptor_082b7510610e0457, []int{1}
 }
+
 func (m *Registers) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Registers.Unmarshal(m, b)
 }
 func (m *Registers) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Registers.Marshal(b, m, deterministic)
 }
-func (dst *Registers) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Registers.Merge(dst, src)
+func (m *Registers) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Registers.Merge(m, src)
 }
 func (m *Registers) XXX_Size() int {
 	return xxx_messageInfo_Registers.Size(m)
@@ -321,59 +325,11 @@ func (m *Registers) GetAmd64() *AMD64Registers {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*Registers) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _Registers_OneofMarshaler, _Registers_OneofUnmarshaler, _Registers_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*Registers) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*Registers_Amd64)(nil),
 	}
-}
-
-func _Registers_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*Registers)
-	// arch
-	switch x := m.Arch.(type) {
-	case *Registers_Amd64:
-		b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Amd64); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("Registers.Arch has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _Registers_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*Registers)
-	switch tag {
-	case 1: // arch.amd64
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(AMD64Registers)
-		err := b.DecodeMessage(msg)
-		m.Arch = &Registers_Amd64{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _Registers_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*Registers)
-	// arch
-	switch x := m.Arch.(type) {
-	case *Registers_Amd64:
-		s := proto.Size(x.Amd64)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 func init() {
@@ -381,11 +337,9 @@ func init() {
 	proto.RegisterType((*Registers)(nil), "gvisor.Registers")
 }
 
-func init() {
-	proto.RegisterFile("pkg/sentry/arch/registers.proto", fileDescriptor_registers_20699a1dda6a6428)
-}
+func init() { proto.RegisterFile("pkg/sentry/arch/registers.proto", fileDescriptor_082b7510610e0457) }
 
-var fileDescriptor_registers_20699a1dda6a6428 = []byte{
+var fileDescriptor_082b7510610e0457 = []byte{
 	// 354 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x92, 0x4d, 0x6f, 0xe2, 0x30,
 	0x10, 0x86, 0x17, 0x08, 0x01, 0xcc, 0x2e, 0xcb, 0x66, 0x5b, 0x18, 0xda, 0x43, 0x2b, 0x4e, 0x3d,
