@@ -195,6 +195,8 @@ func (x *segment) save(m state.Map) {
 	m.SaveValue("options", options)
 	var rcvdTime unixTime = x.saveRcvdTime()
 	m.SaveValue("rcvdTime", rcvdTime)
+	var xmitTime unixTime = x.saveXmitTime()
+	m.SaveValue("xmitTime", xmitTime)
 	m.Save("segmentEntry", &x.segmentEntry)
 	m.Save("refCnt", &x.refCnt)
 	m.Save("viewToDeliver", &x.viewToDeliver)
@@ -220,6 +222,7 @@ func (x *segment) load(m state.Map) {
 	m.LoadValue("data", new(buffer.VectorisedView), func(y interface{}) { x.loadData(y.(buffer.VectorisedView)) })
 	m.LoadValue("options", new([]byte), func(y interface{}) { x.loadOptions(y.([]byte)) })
 	m.LoadValue("rcvdTime", new(unixTime), func(y interface{}) { x.loadRcvdTime(y.(unixTime)) })
+	m.LoadValue("xmitTime", new(unixTime), func(y interface{}) { x.loadXmitTime(y.(unixTime)) })
 }
 
 func (x *segmentQueue) beforeSave() {}
