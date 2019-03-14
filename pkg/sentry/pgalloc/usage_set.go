@@ -1,4 +1,4 @@
-package filemem
+package pgalloc
 
 import (
 	__generics_imported0 "gvisor.googlesource.com/gvisor/pkg/sentry/platform"

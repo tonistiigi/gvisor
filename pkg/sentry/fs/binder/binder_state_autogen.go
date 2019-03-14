@@ -22,7 +22,7 @@ func (x *Proc) save(m state.Map) {
 	x.beforeSave()
 	m.Save("bd", &x.bd)
 	m.Save("task", &x.task)
-	m.Save("platform", &x.platform)
+	m.Save("mfp", &x.mfp)
 	m.Save("mapped", &x.mapped)
 }
 
@@ -30,7 +30,7 @@ func (x *Proc) afterLoad() {}
 func (x *Proc) load(m state.Map) {
 	m.Load("bd", &x.bd)
 	m.Load("task", &x.task)
-	m.Load("platform", &x.platform)
+	m.Load("mfp", &x.mfp)
 	m.Load("mapped", &x.mapped)
 }
 

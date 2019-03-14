@@ -50,14 +50,14 @@ func (x *aioMappable) beforeSave() {}
 func (x *aioMappable) save(m state.Map) {
 	x.beforeSave()
 	m.Save("AtomicRefCount", &x.AtomicRefCount)
-	m.Save("p", &x.p)
+	m.Save("mfp", &x.mfp)
 	m.Save("fr", &x.fr)
 }
 
 func (x *aioMappable) afterLoad() {}
 func (x *aioMappable) load(m state.Map) {
 	m.Load("AtomicRefCount", &x.AtomicRefCount)
-	m.Load("p", &x.p)
+	m.Load("mfp", &x.mfp)
 	m.Load("fr", &x.fr)
 }
 
@@ -142,6 +142,7 @@ func (x *MemoryManager) save(m state.Map) {
 	if !state.IsZeroValue(x.active) { m.Failf("active is %v, expected zero", x.active) }
 	if !state.IsZeroValue(x.captureInvalidations) { m.Failf("captureInvalidations is %v, expected zero", x.captureInvalidations) }
 	m.Save("p", &x.p)
+	m.Save("mfp", &x.mfp)
 	m.Save("layout", &x.layout)
 	m.Save("privateRefs", &x.privateRefs)
 	m.Save("users", &x.users)
@@ -162,6 +163,7 @@ func (x *MemoryManager) save(m state.Map) {
 
 func (x *MemoryManager) load(m state.Map) {
 	m.Load("p", &x.p)
+	m.Load("mfp", &x.mfp)
 	m.Load("layout", &x.layout)
 	m.Load("privateRefs", &x.privateRefs)
 	m.Load("users", &x.users)
@@ -287,7 +289,7 @@ func (x *SpecialMappable) beforeSave() {}
 func (x *SpecialMappable) save(m state.Map) {
 	x.beforeSave()
 	m.Save("AtomicRefCount", &x.AtomicRefCount)
-	m.Save("p", &x.p)
+	m.Save("mfp", &x.mfp)
 	m.Save("fr", &x.fr)
 	m.Save("name", &x.name)
 }
@@ -295,7 +297,7 @@ func (x *SpecialMappable) save(m state.Map) {
 func (x *SpecialMappable) afterLoad() {}
 func (x *SpecialMappable) load(m state.Map) {
 	m.Load("AtomicRefCount", &x.AtomicRefCount)
-	m.Load("p", &x.p)
+	m.Load("mfp", &x.mfp)
 	m.Load("fr", &x.fr)
 	m.Load("name", &x.name)
 }

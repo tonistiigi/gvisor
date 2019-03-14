@@ -300,7 +300,7 @@ func (x *CachingInodeOperations) beforeSave() {}
 func (x *CachingInodeOperations) save(m state.Map) {
 	x.beforeSave()
 	m.Save("backingFile", &x.backingFile)
-	m.Save("platform", &x.platform)
+	m.Save("mfp", &x.mfp)
 	m.Save("forcePageCache", &x.forcePageCache)
 	m.Save("attr", &x.attr)
 	m.Save("dirtyAttr", &x.dirtyAttr)
@@ -314,7 +314,7 @@ func (x *CachingInodeOperations) save(m state.Map) {
 func (x *CachingInodeOperations) afterLoad() {}
 func (x *CachingInodeOperations) load(m state.Map) {
 	m.Load("backingFile", &x.backingFile)
-	m.Load("platform", &x.platform)
+	m.Load("mfp", &x.mfp)
 	m.Load("forcePageCache", &x.forcePageCache)
 	m.Load("attr", &x.attr)
 	m.Load("dirtyAttr", &x.dirtyAttr)

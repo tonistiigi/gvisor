@@ -1051,14 +1051,14 @@ func (x *UTSNamespace) load(m state.Map) {
 func (x *VDSOParamPage) beforeSave() {}
 func (x *VDSOParamPage) save(m state.Map) {
 	x.beforeSave()
-	m.Save("platform", &x.platform)
+	m.Save("mfp", &x.mfp)
 	m.Save("fr", &x.fr)
 	m.Save("seq", &x.seq)
 }
 
 func (x *VDSOParamPage) afterLoad() {}
 func (x *VDSOParamPage) load(m state.Map) {
-	m.Load("platform", &x.platform)
+	m.Load("mfp", &x.mfp)
 	m.Load("fr", &x.fr)
 	m.Load("seq", &x.seq)
 }

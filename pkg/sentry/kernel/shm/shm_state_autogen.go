@@ -29,7 +29,7 @@ func (x *Shm) beforeSave() {}
 func (x *Shm) save(m state.Map) {
 	x.beforeSave()
 	m.Save("AtomicRefCount", &x.AtomicRefCount)
-	m.Save("p", &x.p)
+	m.Save("mfp", &x.mfp)
 	m.Save("registry", &x.registry)
 	m.Save("ID", &x.ID)
 	m.Save("creator", &x.creator)
@@ -50,7 +50,7 @@ func (x *Shm) save(m state.Map) {
 func (x *Shm) afterLoad() {}
 func (x *Shm) load(m state.Map) {
 	m.Load("AtomicRefCount", &x.AtomicRefCount)
-	m.Load("p", &x.p)
+	m.Load("mfp", &x.mfp)
 	m.Load("registry", &x.registry)
 	m.Load("ID", &x.ID)
 	m.Load("creator", &x.creator)
