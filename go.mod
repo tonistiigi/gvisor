@@ -4,7 +4,7 @@ require (
 	github.com/cenkalti/backoff v2.0.1-0.20180725110945-66e726b43552+incompatible
 	github.com/gofrs/flock v0.6.1-0.20180915234121-886344bea079
 	github.com/golang/protobuf v1.3.0
-	github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c
+	github.com/google/btree v1.0.0
 	github.com/google/subcommands v0.0.0-20170224175846-ce3d4cfc062f
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/kr/pty v1.1.1
