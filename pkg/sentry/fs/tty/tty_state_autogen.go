@@ -126,20 +126,20 @@ func (x *masterFileOperations) load(m state.Map) {
 func (x *queue) beforeSave() {}
 func (x *queue) save(m state.Map) {
 	x.beforeSave()
-	var readBuf []byte = x.saveReadBuf()
-	m.SaveValue("readBuf", readBuf)
-	var waitBuf []byte = x.saveWaitBuf()
-	m.SaveValue("waitBuf", waitBuf)
+	m.Save("readBuf", &x.readBuf)
+	m.Save("waitBuf", &x.waitBuf)
+	m.Save("waitBufLen", &x.waitBufLen)
 	m.Save("readable", &x.readable)
 	m.Save("transformer", &x.transformer)
 }
 
 func (x *queue) afterLoad() {}
 func (x *queue) load(m state.Map) {
+	m.Load("readBuf", &x.readBuf)
+	m.Load("waitBuf", &x.waitBuf)
+	m.Load("waitBufLen", &x.waitBufLen)
 	m.Load("readable", &x.readable)
 	m.Load("transformer", &x.transformer)
-	m.LoadValue("readBuf", new([]byte), func(y interface{}) { x.loadReadBuf(y.([]byte)) })
-	m.LoadValue("waitBuf", new([]byte), func(y interface{}) { x.loadWaitBuf(y.([]byte)) })
 }
 
 func (x *slaveInodeOperations) beforeSave() {}
