@@ -209,8 +209,9 @@ func (x *pma) beforeSave() {}
 func (x *pma) save(m state.Map) {
 	x.beforeSave()
 	m.Save("off", &x.off)
-	m.Save("vmaEffectivePerms", &x.vmaEffectivePerms)
-	m.Save("vmaMaxPerms", &x.vmaMaxPerms)
+	m.Save("translatePerms", &x.translatePerms)
+	m.Save("effectivePerms", &x.effectivePerms)
+	m.Save("maxPerms", &x.maxPerms)
 	m.Save("needCOW", &x.needCOW)
 	m.Save("private", &x.private)
 }
@@ -218,8 +219,9 @@ func (x *pma) save(m state.Map) {
 func (x *pma) afterLoad() {}
 func (x *pma) load(m state.Map) {
 	m.Load("off", &x.off)
-	m.Load("vmaEffectivePerms", &x.vmaEffectivePerms)
-	m.Load("vmaMaxPerms", &x.vmaMaxPerms)
+	m.Load("translatePerms", &x.translatePerms)
+	m.Load("effectivePerms", &x.effectivePerms)
+	m.Load("maxPerms", &x.maxPerms)
 	m.Load("needCOW", &x.needCOW)
 	m.Load("private", &x.private)
 }
