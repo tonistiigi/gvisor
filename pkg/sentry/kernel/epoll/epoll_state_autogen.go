@@ -22,7 +22,7 @@ func (x *FileIdentifier) load(m state.Map) {
 func (x *pollEntry) beforeSave() {}
 func (x *pollEntry) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
+	m.Save("pollEntryEntry", &x.pollEntryEntry)
 	m.Save("id", &x.id)
 	m.Save("userData", &x.userData)
 	m.Save("mask", &x.mask)
@@ -31,7 +31,7 @@ func (x *pollEntry) save(m state.Map) {
 }
 
 func (x *pollEntry) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
+	m.Load("pollEntryEntry", &x.pollEntryEntry)
 	m.LoadWait("id", &x.id)
 	m.Load("userData", &x.userData)
 	m.Load("mask", &x.mask)
@@ -64,8 +64,36 @@ func (x *EventPoll) load(m state.Map) {
 	m.AfterLoad(x.afterLoad)
 }
 
+func (x *pollEntryList) beforeSave() {}
+func (x *pollEntryList) save(m state.Map) {
+	x.beforeSave()
+	m.Save("head", &x.head)
+	m.Save("tail", &x.tail)
+}
+
+func (x *pollEntryList) afterLoad() {}
+func (x *pollEntryList) load(m state.Map) {
+	m.Load("head", &x.head)
+	m.Load("tail", &x.tail)
+}
+
+func (x *pollEntryEntry) beforeSave() {}
+func (x *pollEntryEntry) save(m state.Map) {
+	x.beforeSave()
+	m.Save("next", &x.next)
+	m.Save("prev", &x.prev)
+}
+
+func (x *pollEntryEntry) afterLoad() {}
+func (x *pollEntryEntry) load(m state.Map) {
+	m.Load("next", &x.next)
+	m.Load("prev", &x.prev)
+}
+
 func init() {
 	state.Register("epoll.FileIdentifier", (*FileIdentifier)(nil), state.Fns{Save: (*FileIdentifier).save, Load: (*FileIdentifier).load})
 	state.Register("epoll.pollEntry", (*pollEntry)(nil), state.Fns{Save: (*pollEntry).save, Load: (*pollEntry).load})
 	state.Register("epoll.EventPoll", (*EventPoll)(nil), state.Fns{Save: (*EventPoll).save, Load: (*EventPoll).load})
+	state.Register("epoll.pollEntryList", (*pollEntryList)(nil), state.Fns{Save: (*pollEntryList).save, Load: (*pollEntryList).load})
+	state.Register("epoll.pollEntryEntry", (*pollEntryEntry)(nil), state.Fns{Save: (*pollEntryEntry).save, Load: (*pollEntryEntry).load})
 }
