@@ -34,7 +34,9 @@ func (x *fileInodeOperations) save(m state.Map) {
 	m.Save("memUsage", &x.memUsage)
 	m.Save("attr", &x.attr)
 	m.Save("mappings", &x.mappings)
+	m.Save("writableMappingPages", &x.writableMappingPages)
 	m.Save("data", &x.data)
+	m.Save("seals", &x.seals)
 }
 
 func (x *fileInodeOperations) afterLoad() {}
@@ -44,7 +46,9 @@ func (x *fileInodeOperations) load(m state.Map) {
 	m.Load("memUsage", &x.memUsage)
 	m.Load("attr", &x.attr)
 	m.Load("mappings", &x.mappings)
+	m.Load("writableMappingPages", &x.writableMappingPages)
 	m.Load("data", &x.data)
+	m.Load("seals", &x.seals)
 }
 
 func (x *Dir) beforeSave() {}
