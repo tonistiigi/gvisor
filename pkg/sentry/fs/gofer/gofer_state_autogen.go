@@ -49,7 +49,6 @@ func (x *inodeFileState) save(m state.Map) {
 	m.SaveValue("loading", loading)
 	m.Save("s", &x.s)
 	m.Save("sattr", &x.sattr)
-	m.Save("writebackRW", &x.writebackRW)
 	m.Save("savedUAttr", &x.savedUAttr)
 	m.Save("hostMappable", &x.hostMappable)
 }
@@ -57,7 +56,6 @@ func (x *inodeFileState) save(m state.Map) {
 func (x *inodeFileState) load(m state.Map) {
 	m.LoadWait("s", &x.s)
 	m.LoadWait("sattr", &x.sattr)
-	m.Load("writebackRW", &x.writebackRW)
 	m.Load("savedUAttr", &x.savedUAttr)
 	m.Load("hostMappable", &x.hostMappable)
 	m.LoadValue("loading", new(struct{}), func(y interface{}) { x.loadLoading(y.(struct{})) })
