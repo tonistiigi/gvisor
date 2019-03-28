@@ -69,6 +69,7 @@ func (x *endpoint) save(m state.Map) {
 	m.Save("snd", &x.snd)
 	m.Save("bindAddress", &x.bindAddress)
 	m.Save("connectingAddress", &x.connectingAddress)
+	m.Save("gso", &x.gso)
 }
 
 func (x *endpoint) load(m state.Map) {
@@ -111,6 +112,7 @@ func (x *endpoint) load(m state.Map) {
 	m.LoadWait("snd", &x.snd)
 	m.Load("bindAddress", &x.bindAddress)
 	m.Load("connectingAddress", &x.connectingAddress)
+	m.Load("gso", &x.gso)
 	m.LoadValue("lastError", new(string), func(y interface{}) { x.loadLastError(y.(string)) })
 	m.LoadValue("state", new(endpointState), func(y interface{}) { x.loadState(y.(endpointState)) })
 	m.LoadValue("hardError", new(string), func(y interface{}) { x.loadHardError(y.(string)) })
@@ -266,6 +268,7 @@ func (x *sender) save(m state.Map) {
 	m.Save("rto", &x.rto)
 	m.Save("srttInited", &x.srttInited)
 	m.Save("maxPayloadSize", &x.maxPayloadSize)
+	m.Save("gso", &x.gso)
 	m.Save("sndWndScale", &x.sndWndScale)
 	m.Save("maxSentAck", &x.maxSentAck)
 	m.Save("cc", &x.cc)
@@ -291,6 +294,7 @@ func (x *sender) load(m state.Map) {
 	m.Load("rto", &x.rto)
 	m.Load("srttInited", &x.srttInited)
 	m.Load("maxPayloadSize", &x.maxPayloadSize)
+	m.Load("gso", &x.gso)
 	m.Load("sndWndScale", &x.sndWndScale)
 	m.Load("maxSentAck", &x.maxSentAck)
 	m.Load("cc", &x.cc)

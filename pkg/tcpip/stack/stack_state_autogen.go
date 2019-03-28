@@ -23,6 +23,37 @@ func (x *TransportEndpointID) load(m state.Map) {
 	m.Load("RemoteAddress", &x.RemoteAddress)
 }
 
+func (x *GSOType) save(m state.Map) {
+	m.SaveValue("", (int)(*x))
+}
+
+func (x *GSOType) load(m state.Map) {
+	m.LoadValue("", new(int), func(y interface{}) { *x = (GSOType)(y.(int)) })
+}
+
+func (x *GSO) beforeSave() {}
+func (x *GSO) save(m state.Map) {
+	x.beforeSave()
+	m.Save("Type", &x.Type)
+	m.Save("NeedsCsum", &x.NeedsCsum)
+	m.Save("CsumOffset", &x.CsumOffset)
+	m.Save("MSS", &x.MSS)
+	m.Save("L3HdrLen", &x.L3HdrLen)
+	m.Save("MaxSize", &x.MaxSize)
+}
+
+func (x *GSO) afterLoad() {}
+func (x *GSO) load(m state.Map) {
+	m.Load("Type", &x.Type)
+	m.Load("NeedsCsum", &x.NeedsCsum)
+	m.Load("CsumOffset", &x.CsumOffset)
+	m.Load("MSS", &x.MSS)
+	m.Load("L3HdrLen", &x.L3HdrLen)
+	m.Load("MaxSize", &x.MaxSize)
+}
+
 func init() {
 	state.Register("stack.TransportEndpointID", (*TransportEndpointID)(nil), state.Fns{Save: (*TransportEndpointID).save, Load: (*TransportEndpointID).load})
+	state.Register("stack.GSOType", (*GSOType)(nil), state.Fns{Save: (*GSOType).save, Load: (*GSOType).load})
+	state.Register("stack.GSO", (*GSO)(nil), state.Fns{Save: (*GSO).save, Load: (*GSO).load})
 }
