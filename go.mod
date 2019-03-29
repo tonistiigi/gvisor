@@ -10,7 +10,7 @@ require (
 	github.com/kr/pty v1.1.1
 	github.com/opencontainers/runtime-spec v0.1.2-0.20171211145439-b2d941ef6a78
 	github.com/syndtr/gocapability v0.0.0-20180916011248-d98352740cb2
-	github.com/vishvananda/netlink v0.0.0-20180206203732-d35d6b58e1cb
+	github.com/vishvananda/netlink v1.0.1-0.20190318003149-adb577d4a45e
 	github.com/vishvananda/netns v0.0.0-20171111001504-be1fbeda1936 // indirect
 	golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6 // indirect
 	golang.org/x/sys v0.0.0-20180830151530-49385e6e1522
