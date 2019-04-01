@@ -5,6 +5,7 @@ package kernel
 import (
 	"gvisor.googlesource.com/gvisor/pkg/state"
 	"gvisor.googlesource.com/gvisor/pkg/bpf"
+	"gvisor.googlesource.com/gvisor/pkg/sentry/device"
 	"gvisor.googlesource.com/gvisor/pkg/tcpip"
 )
 
@@ -114,6 +115,8 @@ func (x *Kernel) save(m state.Map) {
 	x.beforeSave()
 	var danglingEndpoints []tcpip.Endpoint = x.saveDanglingEndpoints()
 	m.SaveValue("danglingEndpoints", danglingEndpoints)
+	var deviceRegistry *device.Registry = x.saveDeviceRegistry()
+	m.SaveValue("deviceRegistry", deviceRegistry)
 	m.Save("featureSet", &x.featureSet)
 	m.Save("timekeeper", &x.timekeeper)
 	m.Save("tasks", &x.tasks)
@@ -165,6 +168,7 @@ func (x *Kernel) load(m state.Map) {
 	m.Load("netlinkPorts", &x.netlinkPorts)
 	m.Load("socketTable", &x.socketTable)
 	m.LoadValue("danglingEndpoints", new([]tcpip.Endpoint), func(y interface{}) { x.loadDanglingEndpoints(y.([]tcpip.Endpoint)) })
+	m.LoadValue("deviceRegistry", new(*device.Registry), func(y interface{}) { x.loadDeviceRegistry(y.(*device.Registry)) })
 }
 
 func (x *socketEntry) beforeSave() {}
