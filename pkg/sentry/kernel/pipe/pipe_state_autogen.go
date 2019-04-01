@@ -6,16 +6,42 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/state"
 )
 
+func (x *bufferList) beforeSave() {}
+func (x *bufferList) save(m state.Map) {
+	x.beforeSave()
+	m.Save("head", &x.head)
+	m.Save("tail", &x.tail)
+}
+
+func (x *bufferList) afterLoad() {}
+func (x *bufferList) load(m state.Map) {
+	m.Load("head", &x.head)
+	m.Load("tail", &x.tail)
+}
+
+func (x *bufferEntry) beforeSave() {}
+func (x *bufferEntry) save(m state.Map) {
+	x.beforeSave()
+	m.Save("next", &x.next)
+	m.Save("prev", &x.prev)
+}
+
+func (x *bufferEntry) afterLoad() {}
+func (x *bufferEntry) load(m state.Map) {
+	m.Load("next", &x.next)
+	m.Load("prev", &x.prev)
+}
+
 func (x *Buffer) beforeSave() {}
 func (x *Buffer) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
+	m.Save("bufferEntry", &x.bufferEntry)
 	m.Save("data", &x.data)
 }
 
 func (x *Buffer) afterLoad() {}
 func (x *Buffer) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
+	m.Load("bufferEntry", &x.bufferEntry)
 	m.Load("data", &x.data)
 }
 
@@ -93,6 +119,8 @@ func (x *Writer) load(m state.Map) {
 }
 
 func init() {
+	state.Register("pipe.bufferList", (*bufferList)(nil), state.Fns{Save: (*bufferList).save, Load: (*bufferList).load})
+	state.Register("pipe.bufferEntry", (*bufferEntry)(nil), state.Fns{Save: (*bufferEntry).save, Load: (*bufferEntry).load})
 	state.Register("pipe.Buffer", (*Buffer)(nil), state.Fns{Save: (*Buffer).save, Load: (*Buffer).load})
 	state.Register("pipe.inodeOperations", (*inodeOperations)(nil), state.Fns{Save: (*inodeOperations).save, Load: (*inodeOperations).load})
 	state.Register("pipe.Pipe", (*Pipe)(nil), state.Fns{Save: (*Pipe).save, Load: (*Pipe).load})

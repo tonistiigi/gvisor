@@ -228,6 +228,32 @@ func (x *direntEntry) load(m state.Map) {
 	m.Load("prev", &x.prev)
 }
 
+func (x *eventList) beforeSave() {}
+func (x *eventList) save(m state.Map) {
+	x.beforeSave()
+	m.Save("head", &x.head)
+	m.Save("tail", &x.tail)
+}
+
+func (x *eventList) afterLoad() {}
+func (x *eventList) load(m state.Map) {
+	m.Load("head", &x.head)
+	m.Load("tail", &x.tail)
+}
+
+func (x *eventEntry) beforeSave() {}
+func (x *eventEntry) save(m state.Map) {
+	x.beforeSave()
+	m.Save("next", &x.next)
+	m.Save("prev", &x.prev)
+}
+
+func (x *eventEntry) afterLoad() {}
+func (x *eventEntry) load(m state.Map) {
+	m.Load("next", &x.next)
+	m.Load("prev", &x.prev)
+}
+
 func (x *File) save(m state.Map) {
 	x.beforeSave()
 	m.Save("AtomicRefCount", &x.AtomicRefCount)
@@ -399,7 +425,7 @@ func (x *Inotify) load(m state.Map) {
 func (x *Event) beforeSave() {}
 func (x *Event) save(m state.Map) {
 	x.beforeSave()
-	m.Save("Entry", &x.Entry)
+	m.Save("eventEntry", &x.eventEntry)
 	m.Save("wd", &x.wd)
 	m.Save("mask", &x.mask)
 	m.Save("cookie", &x.cookie)
@@ -409,7 +435,7 @@ func (x *Event) save(m state.Map) {
 
 func (x *Event) afterLoad() {}
 func (x *Event) load(m state.Map) {
-	m.Load("Entry", &x.Entry)
+	m.Load("eventEntry", &x.eventEntry)
 	m.Load("wd", &x.wd)
 	m.Load("mask", &x.mask)
 	m.Load("cookie", &x.cookie)
@@ -549,6 +575,8 @@ func init() {
 	state.Register("fs.DirentCache", (*DirentCache)(nil), state.Fns{Save: (*DirentCache).save, Load: (*DirentCache).load})
 	state.Register("fs.direntList", (*direntList)(nil), state.Fns{Save: (*direntList).save, Load: (*direntList).load})
 	state.Register("fs.direntEntry", (*direntEntry)(nil), state.Fns{Save: (*direntEntry).save, Load: (*direntEntry).load})
+	state.Register("fs.eventList", (*eventList)(nil), state.Fns{Save: (*eventList).save, Load: (*eventList).load})
+	state.Register("fs.eventEntry", (*eventEntry)(nil), state.Fns{Save: (*eventEntry).save, Load: (*eventEntry).load})
 	state.Register("fs.File", (*File)(nil), state.Fns{Save: (*File).save, Load: (*File).load})
 	state.Register("fs.overlayFileOperations", (*overlayFileOperations)(nil), state.Fns{Save: (*overlayFileOperations).save, Load: (*overlayFileOperations).load})
 	state.Register("fs.overlayMappingIdentity", (*overlayMappingIdentity)(nil), state.Fns{Save: (*overlayMappingIdentity).save, Load: (*overlayMappingIdentity).load})
