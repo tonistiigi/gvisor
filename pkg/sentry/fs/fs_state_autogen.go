@@ -314,6 +314,7 @@ func (x *MountSourceFlags) save(m state.Map) {
 	m.Save("ReadOnly", &x.ReadOnly)
 	m.Save("NoAtime", &x.NoAtime)
 	m.Save("ForcePageCache", &x.ForcePageCache)
+	m.Save("NoExec", &x.NoExec)
 }
 
 func (x *MountSourceFlags) afterLoad() {}
@@ -321,6 +322,7 @@ func (x *MountSourceFlags) load(m state.Map) {
 	m.Load("ReadOnly", &x.ReadOnly)
 	m.Load("NoAtime", &x.NoAtime)
 	m.Load("ForcePageCache", &x.ForcePageCache)
+	m.Load("NoExec", &x.NoExec)
 }
 
 func (x *FileFlags) beforeSave() {}
