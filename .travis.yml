@@ -10,7 +10,7 @@ go:
   - "1.11.x"
 
 before_install:
-  - wget https://github.com/bazelbuild/bazel/releases/download/0.22.0/bazel-0.22.0-linux-x86_64 && chmod +x bazel-0.22.0-linux-x86_64 && sudo mv bazel-0.22.0-linux-x86_64 /usr/local/bin/bazel
+  - wget https://github.com/bazelbuild/bazel/releases/download/0.24.0/bazel-0.24.0-linux-x86_64 && chmod +x bazel-0.24.0-linux-x86_64 && sudo mv bazel-0.24.0-linux-x86_64 /usr/local/bin/bazel
   - |
       declare -r SSH_FILE="$(mktemp -u $HOME/.ssh/XXXXX)"
       openssl aes-256-cbc \
