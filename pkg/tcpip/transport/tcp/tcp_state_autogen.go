@@ -206,6 +206,8 @@ func (x *segment) save(m state.Map) {
 	m.Save("ackNumber", &x.ackNumber)
 	m.Save("flags", &x.flags)
 	m.Save("window", &x.window)
+	m.Save("csum", &x.csum)
+	m.Save("csumValid", &x.csumValid)
 	m.Save("parsedOptions", &x.parsedOptions)
 	m.Save("hasNewSACKInfo", &x.hasNewSACKInfo)
 }
@@ -219,6 +221,8 @@ func (x *segment) load(m state.Map) {
 	m.Load("ackNumber", &x.ackNumber)
 	m.Load("flags", &x.flags)
 	m.Load("window", &x.window)
+	m.Load("csum", &x.csum)
+	m.Load("csumValid", &x.csumValid)
 	m.Load("parsedOptions", &x.parsedOptions)
 	m.Load("hasNewSACKInfo", &x.hasNewSACKInfo)
 	m.LoadValue("data", new(buffer.VectorisedView), func(y interface{}) { x.loadData(y.(buffer.VectorisedView)) })
