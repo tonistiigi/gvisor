@@ -70,14 +70,12 @@ func (x *DirtySegmentDataSlices) load(m state.Map) {
 func (x *StaticDirFileOperations) beforeSave() {}
 func (x *StaticDirFileOperations) save(m state.Map) {
 	x.beforeSave()
-	m.Save("DirFileOperations", &x.DirFileOperations)
 	m.Save("dentryMap", &x.dentryMap)
 	m.Save("dirCursor", &x.dirCursor)
 }
 
 func (x *StaticDirFileOperations) afterLoad() {}
 func (x *StaticDirFileOperations) load(m state.Map) {
-	m.Load("DirFileOperations", &x.DirFileOperations)
 	m.Load("dentryMap", &x.dentryMap)
 	m.Load("dirCursor", &x.dirCursor)
 }
