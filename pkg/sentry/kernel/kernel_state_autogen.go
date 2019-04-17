@@ -140,6 +140,7 @@ func (x *Kernel) save(m state.Map) {
 	m.Save("nextInotifyCookie", &x.nextInotifyCookie)
 	m.Save("netlinkPorts", &x.netlinkPorts)
 	m.Save("socketTable", &x.socketTable)
+	m.Save("DirentCacheLimiter", &x.DirentCacheLimiter)
 }
 
 func (x *Kernel) afterLoad() {}
@@ -167,6 +168,7 @@ func (x *Kernel) load(m state.Map) {
 	m.Load("nextInotifyCookie", &x.nextInotifyCookie)
 	m.Load("netlinkPorts", &x.netlinkPorts)
 	m.Load("socketTable", &x.socketTable)
+	m.Load("DirentCacheLimiter", &x.DirentCacheLimiter)
 	m.LoadValue("danglingEndpoints", new([]tcpip.Endpoint), func(y interface{}) { x.loadDanglingEndpoints(y.([]tcpip.Endpoint)) })
 	m.LoadValue("deviceRegistry", new(*device.Registry), func(y interface{}) { x.loadDeviceRegistry(y.(*device.Registry)) })
 }

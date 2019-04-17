@@ -195,11 +195,25 @@ func (x *DirentCache) save(m state.Map) {
 	if !state.IsZeroValue(x.currentSize) { m.Failf("currentSize is %v, expected zero", x.currentSize) }
 	if !state.IsZeroValue(x.list) { m.Failf("list is %v, expected zero", x.list) }
 	m.Save("maxSize", &x.maxSize)
+	m.Save("limit", &x.limit)
 }
 
 func (x *DirentCache) afterLoad() {}
 func (x *DirentCache) load(m state.Map) {
 	m.Load("maxSize", &x.maxSize)
+	m.Load("limit", &x.limit)
+}
+
+func (x *DirentCacheLimiter) beforeSave() {}
+func (x *DirentCacheLimiter) save(m state.Map) {
+	x.beforeSave()
+	if !state.IsZeroValue(x.count) { m.Failf("count is %v, expected zero", x.count) }
+	m.Save("max", &x.max)
+}
+
+func (x *DirentCacheLimiter) afterLoad() {}
+func (x *DirentCacheLimiter) load(m state.Map) {
+	m.Load("max", &x.max)
 }
 
 func (x *direntList) beforeSave() {}
@@ -577,6 +591,7 @@ func init() {
 	state.Register("fs.SortedDentryMap", (*SortedDentryMap)(nil), state.Fns{Save: (*SortedDentryMap).save, Load: (*SortedDentryMap).load})
 	state.Register("fs.Dirent", (*Dirent)(nil), state.Fns{Save: (*Dirent).save, Load: (*Dirent).load})
 	state.Register("fs.DirentCache", (*DirentCache)(nil), state.Fns{Save: (*DirentCache).save, Load: (*DirentCache).load})
+	state.Register("fs.DirentCacheLimiter", (*DirentCacheLimiter)(nil), state.Fns{Save: (*DirentCacheLimiter).save, Load: (*DirentCacheLimiter).load})
 	state.Register("fs.direntList", (*direntList)(nil), state.Fns{Save: (*direntList).save, Load: (*direntList).load})
 	state.Register("fs.direntEntry", (*direntEntry)(nil), state.Fns{Save: (*direntEntry).save, Load: (*direntEntry).load})
 	state.Register("fs.eventList", (*eventList)(nil), state.Fns{Save: (*eventList).save, Load: (*eventList).load})
