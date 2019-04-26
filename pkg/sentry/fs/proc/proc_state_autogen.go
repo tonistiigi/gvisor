@@ -60,23 +60,6 @@ func (x *fdDirFile) load(m state.Map) {
 	m.Load("t", &x.t)
 }
 
-func (x *fdInfoInode) beforeSave() {}
-func (x *fdInfoInode) save(m state.Map) {
-	x.beforeSave()
-	m.Save("staticFileInodeOps", &x.staticFileInodeOps)
-	m.Save("file", &x.file)
-	m.Save("flags", &x.flags)
-	m.Save("fdFlags", &x.fdFlags)
-}
-
-func (x *fdInfoInode) afterLoad() {}
-func (x *fdInfoInode) load(m state.Map) {
-	m.Load("staticFileInodeOps", &x.staticFileInodeOps)
-	m.Load("file", &x.file)
-	m.Load("flags", &x.flags)
-	m.Load("fdFlags", &x.fdFlags)
-}
-
 func (x *fdInfoDir) beforeSave() {}
 func (x *fdInfoDir) save(m state.Map) {
 	x.beforeSave()
@@ -624,7 +607,6 @@ func init() {
 	state.Register("proc.execArgFile", (*execArgFile)(nil), state.Fns{Save: (*execArgFile).save, Load: (*execArgFile).load})
 	state.Register("proc.fdDir", (*fdDir)(nil), state.Fns{Save: (*fdDir).save, Load: (*fdDir).load})
 	state.Register("proc.fdDirFile", (*fdDirFile)(nil), state.Fns{Save: (*fdDirFile).save, Load: (*fdDirFile).load})
-	state.Register("proc.fdInfoInode", (*fdInfoInode)(nil), state.Fns{Save: (*fdInfoInode).save, Load: (*fdInfoInode).load})
 	state.Register("proc.fdInfoDir", (*fdInfoDir)(nil), state.Fns{Save: (*fdInfoDir).save, Load: (*fdInfoDir).load})
 	state.Register("proc.filesystemsData", (*filesystemsData)(nil), state.Fns{Save: (*filesystemsData).save, Load: (*filesystemsData).load})
 	state.Register("proc.filesystem", (*filesystem)(nil), state.Fns{Save: (*filesystem).save, Load: (*filesystem).load})
