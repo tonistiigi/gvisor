@@ -1,14 +1,13 @@
 package ring0
 
 import (
-	"syscall"
-
 	"fmt"
 	"gvisor.googlesource.com/gvisor/pkg/cpuid"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/platform/ring0/pagetables"
 	"gvisor.googlesource.com/gvisor/pkg/sentry/usermem"
 	"io"
 	"reflect"
+	"syscall"
 )
 
 var (
@@ -390,7 +389,7 @@ const (
 //
 // Note that sign-extension semantics apply to the highest order bit.
 //
-// FIXME: This should use the cpuid passed to Init.
+// FIXME(b/69382326): This should use the cpuid passed to Init.
 func VirtualAddressBits() uint32 {
 	ax, _, _, _ := cpuid.HostID(0x80000008, 0)
 	return (ax >> 8) & 0xff
@@ -398,7 +397,7 @@ func VirtualAddressBits() uint32 {
 
 // PhysicalAddressBits returns the number of bits available for physical addresses.
 //
-// FIXME: This should use the cpuid passed to Init.
+// FIXME(b/69382326): This should use the cpuid passed to Init.
 func PhysicalAddressBits() uint32 {
 	ax, _, _, _ := cpuid.HostID(0x80000008, 0)
 	return ax & 0xff
