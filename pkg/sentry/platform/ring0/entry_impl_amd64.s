@@ -62,7 +62,7 @@
 #define PTRACE_SS       0xa0
 #define PTRACE_FS       0xa8
 #define PTRACE_GS       0xb0
-// Copyright 2018 Google LLC
+// Copyright 2018 The gVisor Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
