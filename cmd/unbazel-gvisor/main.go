@@ -255,6 +255,12 @@ func readWorkspaceDeps() (deps []dep, err error) {
 	for _, res := range r.FindAllStringSubmatch(string(dt), -1) {
 		deps = append(deps, dep{Name: res[1], SHA: res[2]})
 	}
+
+	r = regexp.MustCompile("commit\\s+=\\s+\"([^\"]+)\",\\s+importpath\\s+=\\s+\"([^\"]+)\"")
+	for _, res := range r.FindAllStringSubmatch(string(dt), -1) {
+		deps = append(deps, dep{Name: res[2], SHA: res[1]})
+	}
+
 	return deps, nil
 }
 
