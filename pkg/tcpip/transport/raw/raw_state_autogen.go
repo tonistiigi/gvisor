@@ -7,32 +7,6 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/tcpip/buffer"
 )
 
-func (x *packetList) beforeSave() {}
-func (x *packetList) save(m state.Map) {
-	x.beforeSave()
-	m.Save("head", &x.head)
-	m.Save("tail", &x.tail)
-}
-
-func (x *packetList) afterLoad() {}
-func (x *packetList) load(m state.Map) {
-	m.Load("head", &x.head)
-	m.Load("tail", &x.tail)
-}
-
-func (x *packetEntry) beforeSave() {}
-func (x *packetEntry) save(m state.Map) {
-	x.beforeSave()
-	m.Save("next", &x.next)
-	m.Save("prev", &x.prev)
-}
-
-func (x *packetEntry) afterLoad() {}
-func (x *packetEntry) load(m state.Map) {
-	m.Load("next", &x.next)
-	m.Load("prev", &x.prev)
-}
-
 func (x *packet) beforeSave() {}
 func (x *packet) save(m state.Map) {
 	x.beforeSave()
@@ -90,9 +64,35 @@ func (x *endpoint) load(m state.Map) {
 	m.AfterLoad(x.afterLoad)
 }
 
+func (x *packetList) beforeSave() {}
+func (x *packetList) save(m state.Map) {
+	x.beforeSave()
+	m.Save("head", &x.head)
+	m.Save("tail", &x.tail)
+}
+
+func (x *packetList) afterLoad() {}
+func (x *packetList) load(m state.Map) {
+	m.Load("head", &x.head)
+	m.Load("tail", &x.tail)
+}
+
+func (x *packetEntry) beforeSave() {}
+func (x *packetEntry) save(m state.Map) {
+	x.beforeSave()
+	m.Save("next", &x.next)
+	m.Save("prev", &x.prev)
+}
+
+func (x *packetEntry) afterLoad() {}
+func (x *packetEntry) load(m state.Map) {
+	m.Load("next", &x.next)
+	m.Load("prev", &x.prev)
+}
+
 func init() {
-	state.Register("raw.packetList", (*packetList)(nil), state.Fns{Save: (*packetList).save, Load: (*packetList).load})
-	state.Register("raw.packetEntry", (*packetEntry)(nil), state.Fns{Save: (*packetEntry).save, Load: (*packetEntry).load})
 	state.Register("raw.packet", (*packet)(nil), state.Fns{Save: (*packet).save, Load: (*packet).load})
 	state.Register("raw.endpoint", (*endpoint)(nil), state.Fns{Save: (*endpoint).save, Load: (*endpoint).load})
+	state.Register("raw.packetList", (*packetList)(nil), state.Fns{Save: (*packetList).save, Load: (*packetList).load})
+	state.Register("raw.packetEntry", (*packetEntry)(nil), state.Fns{Save: (*packetEntry).save, Load: (*packetEntry).load})
 }
