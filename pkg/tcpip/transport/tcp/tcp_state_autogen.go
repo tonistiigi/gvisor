@@ -327,6 +327,8 @@ func (x *fastRecovery) save(m state.Map) {
 	m.Save("first", &x.first)
 	m.Save("last", &x.last)
 	m.Save("maxCwnd", &x.maxCwnd)
+	m.Save("highRxt", &x.highRxt)
+	m.Save("rescueRxt", &x.rescueRxt)
 }
 
 func (x *fastRecovery) afterLoad() {}
@@ -335,6 +337,8 @@ func (x *fastRecovery) load(m state.Map) {
 	m.Load("first", &x.first)
 	m.Load("last", &x.last)
 	m.Load("maxCwnd", &x.maxCwnd)
+	m.Load("highRxt", &x.highRxt)
+	m.Load("rescueRxt", &x.rescueRxt)
 }
 
 func (x *unixTime) beforeSave() {}
