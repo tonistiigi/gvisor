@@ -485,7 +485,7 @@ func (x *MountSource) save(m state.Map) {
 	x.beforeSave()
 	m.Save("AtomicRefCount", &x.AtomicRefCount)
 	m.Save("MountSourceOperations", &x.MountSourceOperations)
-	m.Save("Filesystem", &x.Filesystem)
+	m.Save("FilesystemType", &x.FilesystemType)
 	m.Save("Flags", &x.Flags)
 	m.Save("fscache", &x.fscache)
 	m.Save("direntRefs", &x.direntRefs)
@@ -499,7 +499,7 @@ func (x *MountSource) afterLoad() {}
 func (x *MountSource) load(m state.Map) {
 	m.Load("AtomicRefCount", &x.AtomicRefCount)
 	m.Load("MountSourceOperations", &x.MountSourceOperations)
-	m.Load("Filesystem", &x.Filesystem)
+	m.Load("FilesystemType", &x.FilesystemType)
 	m.Load("Flags", &x.Flags)
 	m.Load("fscache", &x.fscache)
 	m.Load("direntRefs", &x.direntRefs)
