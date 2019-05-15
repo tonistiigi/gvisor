@@ -198,6 +198,7 @@ func (x *proc) save(m state.Map) {
 	m.Save("Dir", &x.Dir)
 	m.Save("k", &x.k)
 	m.Save("pidns", &x.pidns)
+	m.Save("cgroupControllers", &x.cgroupControllers)
 }
 
 func (x *proc) afterLoad() {}
@@ -205,6 +206,7 @@ func (x *proc) load(m state.Map) {
 	m.Load("Dir", &x.Dir)
 	m.Load("k", &x.k)
 	m.Load("pidns", &x.pidns)
+	m.Load("cgroupControllers", &x.cgroupControllers)
 }
 
 func (x *self) beforeSave() {}
@@ -370,14 +372,14 @@ func (x *subtasks) save(m state.Map) {
 	x.beforeSave()
 	m.Save("Dir", &x.Dir)
 	m.Save("t", &x.t)
-	m.Save("pidns", &x.pidns)
+	m.Save("p", &x.p)
 }
 
 func (x *subtasks) afterLoad() {}
 func (x *subtasks) load(m state.Map) {
 	m.Load("Dir", &x.Dir)
 	m.Load("t", &x.t)
-	m.Load("pidns", &x.pidns)
+	m.Load("p", &x.p)
 }
 
 func (x *subtasksFile) beforeSave() {}
