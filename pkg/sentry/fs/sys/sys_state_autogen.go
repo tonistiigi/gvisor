@@ -11,14 +11,12 @@ func (x *cpunum) save(m state.Map) {
 	x.beforeSave()
 	m.Save("InodeSimpleAttributes", &x.InodeSimpleAttributes)
 	m.Save("InodeStaticFileGetter", &x.InodeStaticFileGetter)
-	m.Save("k", &x.k)
 }
 
 func (x *cpunum) afterLoad() {}
 func (x *cpunum) load(m state.Map) {
 	m.Load("InodeSimpleAttributes", &x.InodeSimpleAttributes)
 	m.Load("InodeStaticFileGetter", &x.InodeStaticFileGetter)
-	m.Load("k", &x.k)
 }
 
 func (x *filesystem) beforeSave() {}
