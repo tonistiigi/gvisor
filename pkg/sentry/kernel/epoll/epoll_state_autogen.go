@@ -47,8 +47,8 @@ func (x *EventPoll) save(m state.Map) {
 	if !state.IsZeroValue(x.FileNotDirReaddir) { m.Failf("FileNotDirReaddir is %v, expected zero", x.FileNotDirReaddir) }
 	if !state.IsZeroValue(x.FileNoFsync) { m.Failf("FileNoFsync is %v, expected zero", x.FileNoFsync) }
 	if !state.IsZeroValue(x.FileNoopFlush) { m.Failf("FileNoopFlush is %v, expected zero", x.FileNoopFlush) }
-	if !state.IsZeroValue(x.FileNoMMap) { m.Failf("FileNoMMap is %v, expected zero", x.FileNoMMap) }
 	if !state.IsZeroValue(x.FileNoIoctl) { m.Failf("FileNoIoctl is %v, expected zero", x.FileNoIoctl) }
+	if !state.IsZeroValue(x.FileNoMMap) { m.Failf("FileNoMMap is %v, expected zero", x.FileNoMMap) }
 	if !state.IsZeroValue(x.Queue) { m.Failf("Queue is %v, expected zero", x.Queue) }
 	m.Save("files", &x.files)
 	m.Save("readyList", &x.readyList)
