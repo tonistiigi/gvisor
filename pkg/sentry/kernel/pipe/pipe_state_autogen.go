@@ -6,6 +6,23 @@ import (
 	"gvisor.googlesource.com/gvisor/pkg/state"
 )
 
+func (x *buffer) beforeSave() {}
+func (x *buffer) save(m state.Map) {
+	x.beforeSave()
+	m.Save("data", &x.data)
+	m.Save("read", &x.read)
+	m.Save("write", &x.write)
+	m.Save("bufferEntry", &x.bufferEntry)
+}
+
+func (x *buffer) afterLoad() {}
+func (x *buffer) load(m state.Map) {
+	m.Load("data", &x.data)
+	m.Load("read", &x.read)
+	m.Load("write", &x.write)
+	m.Load("bufferEntry", &x.bufferEntry)
+}
+
 func (x *bufferList) beforeSave() {}
 func (x *bufferList) save(m state.Map) {
 	x.beforeSave()
@@ -32,19 +49,6 @@ func (x *bufferEntry) load(m state.Map) {
 	m.Load("prev", &x.prev)
 }
 
-func (x *Buffer) beforeSave() {}
-func (x *Buffer) save(m state.Map) {
-	x.beforeSave()
-	m.Save("bufferEntry", &x.bufferEntry)
-	m.Save("data", &x.data)
-}
-
-func (x *Buffer) afterLoad() {}
-func (x *Buffer) load(m state.Map) {
-	m.Load("bufferEntry", &x.bufferEntry)
-	m.Load("data", &x.data)
-}
-
 func (x *inodeOperations) beforeSave() {}
 func (x *inodeOperations) save(m state.Map) {
 	x.beforeSave()
@@ -62,26 +66,26 @@ func (x *Pipe) beforeSave() {}
 func (x *Pipe) save(m state.Map) {
 	x.beforeSave()
 	m.Save("isNamed", &x.isNamed)
+	m.Save("atomicIOBytes", &x.atomicIOBytes)
 	m.Save("Dirent", &x.Dirent)
+	m.Save("readers", &x.readers)
+	m.Save("writers", &x.writers)
 	m.Save("data", &x.data)
 	m.Save("max", &x.max)
 	m.Save("size", &x.size)
-	m.Save("atomicIOBytes", &x.atomicIOBytes)
-	m.Save("readers", &x.readers)
-	m.Save("writers", &x.writers)
 	m.Save("hadWriter", &x.hadWriter)
 }
 
 func (x *Pipe) afterLoad() {}
 func (x *Pipe) load(m state.Map) {
 	m.Load("isNamed", &x.isNamed)
+	m.Load("atomicIOBytes", &x.atomicIOBytes)
 	m.Load("Dirent", &x.Dirent)
+	m.Load("readers", &x.readers)
+	m.Load("writers", &x.writers)
 	m.Load("data", &x.data)
 	m.Load("max", &x.max)
 	m.Load("size", &x.size)
-	m.Load("atomicIOBytes", &x.atomicIOBytes)
-	m.Load("readers", &x.readers)
-	m.Load("writers", &x.writers)
 	m.Load("hadWriter", &x.hadWriter)
 }
 
@@ -119,9 +123,9 @@ func (x *Writer) load(m state.Map) {
 }
 
 func init() {
+	state.Register("pipe.buffer", (*buffer)(nil), state.Fns{Save: (*buffer).save, Load: (*buffer).load})
 	state.Register("pipe.bufferList", (*bufferList)(nil), state.Fns{Save: (*bufferList).save, Load: (*bufferList).load})
 	state.Register("pipe.bufferEntry", (*bufferEntry)(nil), state.Fns{Save: (*bufferEntry).save, Load: (*bufferEntry).load})
-	state.Register("pipe.Buffer", (*Buffer)(nil), state.Fns{Save: (*Buffer).save, Load: (*Buffer).load})
 	state.Register("pipe.inodeOperations", (*inodeOperations)(nil), state.Fns{Save: (*inodeOperations).save, Load: (*inodeOperations).load})
 	state.Register("pipe.Pipe", (*Pipe)(nil), state.Fns{Save: (*Pipe).save, Load: (*Pipe).load})
 	state.Register("pipe.Reader", (*Reader)(nil), state.Fns{Save: (*Reader).save, Load: (*Reader).load})
