@@ -489,10 +489,6 @@ func (x *MountSource) save(m state.Map) {
 	m.Save("Flags", &x.Flags)
 	m.Save("fscache", &x.fscache)
 	m.Save("direntRefs", &x.direntRefs)
-	m.Save("id", &x.id)
-	m.Save("root", &x.root)
-	m.Save("parent", &x.parent)
-	m.Save("children", &x.children)
 }
 
 func (x *MountSource) afterLoad() {}
@@ -503,10 +499,6 @@ func (x *MountSource) load(m state.Map) {
 	m.Load("Flags", &x.Flags)
 	m.Load("fscache", &x.fscache)
 	m.Load("direntRefs", &x.direntRefs)
-	m.Load("id", &x.id)
-	m.Load("root", &x.root)
-	m.Load("parent", &x.parent)
-	m.Load("children", &x.children)
 }
 
 func (x *SimpleMountSourceOperations) beforeSave() {}
@@ -542,6 +534,23 @@ func (x *overlayFilesystem) save(m state.Map) {
 
 func (x *overlayFilesystem) afterLoad() {}
 func (x *overlayFilesystem) load(m state.Map) {
+}
+
+func (x *Mount) beforeSave() {}
+func (x *Mount) save(m state.Map) {
+	x.beforeSave()
+	m.Save("ID", &x.ID)
+	m.Save("ParentID", &x.ParentID)
+	m.Save("root", &x.root)
+	m.Save("previous", &x.previous)
+}
+
+func (x *Mount) afterLoad() {}
+func (x *Mount) load(m state.Map) {
+	m.Load("ID", &x.ID)
+	m.Load("ParentID", &x.ParentID)
+	m.Load("root", &x.root)
+	m.Load("previous", &x.previous)
 }
 
 func (x *MountNamespace) beforeSave() {}
@@ -611,6 +620,7 @@ func init() {
 	state.Register("fs.SimpleMountSourceOperations", (*SimpleMountSourceOperations)(nil), state.Fns{Save: (*SimpleMountSourceOperations).save, Load: (*SimpleMountSourceOperations).load})
 	state.Register("fs.overlayMountSourceOperations", (*overlayMountSourceOperations)(nil), state.Fns{Save: (*overlayMountSourceOperations).save, Load: (*overlayMountSourceOperations).load})
 	state.Register("fs.overlayFilesystem", (*overlayFilesystem)(nil), state.Fns{Save: (*overlayFilesystem).save, Load: (*overlayFilesystem).load})
+	state.Register("fs.Mount", (*Mount)(nil), state.Fns{Save: (*Mount).save, Load: (*Mount).load})
 	state.Register("fs.MountNamespace", (*MountNamespace)(nil), state.Fns{Save: (*MountNamespace).save, Load: (*MountNamespace).load})
 	state.Register("fs.overlayEntry", (*overlayEntry)(nil), state.Fns{Save: (*overlayEntry).save, Load: (*overlayEntry).load})
 }
