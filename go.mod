@@ -1,7 +1,7 @@
 module gvisor.googlesource.com/gvisor
 
 require (
-	github.com/cenkalti/backoff v2.1.1+incompatible
+	github.com/cenkalti/backoff v0.0.0-20190506075156-2146c9339422
 	github.com/gofrs/flock v0.6.1-0.20180915234121-886344bea079
 	github.com/golang/protobuf v1.3.0
 	github.com/google/btree v1.0.0
