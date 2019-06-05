@@ -159,6 +159,7 @@ func (x *MemoryManager) save(m state.Map) {
 	m.Save("envv", &x.envv)
 	m.Save("auxv", &x.auxv)
 	m.Save("executable", &x.executable)
+	m.Save("dumpability", &x.dumpability)
 	m.Save("aioManager", &x.aioManager)
 }
 
@@ -181,6 +182,7 @@ func (x *MemoryManager) load(m state.Map) {
 	m.Load("envv", &x.envv)
 	m.Load("auxv", &x.auxv)
 	m.Load("executable", &x.executable)
+	m.Load("dumpability", &x.dumpability)
 	m.Load("aioManager", &x.aioManager)
 	m.AfterLoad(x.afterLoad)
 }
