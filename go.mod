@@ -5,7 +5,7 @@ require (
 	github.com/gofrs/flock v0.6.1-0.20180915234121-886344bea079
 	github.com/golang/protobuf v1.3.0
 	github.com/google/btree v1.0.0
-	github.com/google/subcommands v0.0.0-20170224175846-ce3d4cfc062f
+	github.com/google/subcommands v1.0.2-0.20190508160503-636abe8753b8
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/kr/pty v1.1.4
 	github.com/opencontainers/runtime-spec v0.1.2-0.20171211145439-b2d941ef6a78
